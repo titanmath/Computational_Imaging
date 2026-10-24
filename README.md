@@ -26,33 +26,3 @@ exercices pratiques (caméra sténopé, courbe de réponse, mesure de PSF) à la
 Ce sont des notes personnelles et non officielles, rédigées en suivant un cours universitaire
 d'imagerie computationnelle. Toutes les illustrations sont recréées : images générées par le code,
 schémas et rendus 3D.
-
-## Lancer le site sur son ordinateur
-
-Il faut [Node.js](https://nodejs.org) (version 22 ou plus) et [pnpm](https://pnpm.io).
-
-```bash
-pnpm install
-pnpm dev
-```
-
-Le site est alors disponible sur http://localhost:4321.
-
-Autres commandes utiles :
-
-- `pnpm build` : construit le site statique dans `dist/` ;
-- `pnpm test` : lance les tests des calculs (FFT, débruitage, calibration…) ;
-- `pnpm check` : vérifie les types.
-
-## Ajouter un chapitre
-
-Un chapitre est un simple dossier dans `src/content/chapitres/`, avec une fiche `_chapitre.yaml` et une
-leçon par fichier `.mdx`. Un modèle prêt à copier se trouve dans [`modele-chapitre/`](modele-chapitre/LISEZMOI.md).
-La page d'accueil et la navigation se mettent à jour automatiquement.
-
-## Technique
-
-Site statique construit avec [Astro](https://astro.build) et [MDX](https://mdxjs.com), simulations en
-[Svelte](https://svelte.dev), scènes 3D avec [three.js](https://threejs.org) et des shaders écrits à la
-main (dont un petit moteur de rendu par lancer de rayons), formules avec [KaTeX](https://katex.org).
-Le site est publié sur GitHub Pages à chaque mise à jour de la branche `main`.
