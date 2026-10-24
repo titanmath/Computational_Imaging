@@ -1,0 +1,44 @@
+---
+titre: "Un a priori pour la déconvolution : la variation totale"
+resume: "Les images naturelles ont surtout des zones lisses séparées de bords nets : peu de gradients non nuls. La variation totale encode cet a priori, et améliore nettement la déconvolution."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import DeconvolutionImage from '@/components/sims/ch07/DeconvolutionImage.svelte';
+
+Quelles propriétés une image nette naturelle a-t-elle, qu’une image bruitée n’a pas ? Les pixels voisins sont **souvent semblables**. Les différences entre voisins (les gradients) sont presque toutes nulles, sauf sur quelques bords.
+
+<Formule titre="Variation totale (anisotrope)">
+$$
+\Psi(I) = \mathrm{TV}(I) = \|K_x * I\|_1 + \|K_y * I\|_1
+$$
+
+$$
+K_x = \begin{pmatrix} 0&0&0\\0&-1&1\\0&0&0\end{pmatrix}, \qquad K_y = \begin{pmatrix} 0&0&0\\0&-1&0\\0&1&0\end{pmatrix}
+$$
+
+La norme 1 somme les valeurs absolues des différences horizontales et verticales sur tous les pixels. La <Terme en="total variation" sigle="TV">variation totale</Terme> favorise des **gradients parcimonieux**.
+</Formule>
+
+## L’optimiser
+
+Le même cadre de descente de gradient accepte un a priori différentiable :
+$$
+\min_x \|b - Ax\|_2^2 + \lambda\, \Psi(x).
+$$
+
+<Attention titre="La TV n’est pas dérivable partout">
+$|t|$ n’a pas de dérivée en 0. On utilise un solveur adapté (ADMM, méthodes proximales) ou une **approximation lisse**, $\sqrt{t^2 + \varepsilon}$, comme dans la simulation ci-dessous (optimiseur Adam).
+</Attention>
+
+<Figure legende="La même image floue et bruitée, reconstruite par TV : on voit les itérations de l’optimiseur. Compare le PSNR avec Wiener (bascule « Reconstruction »). Trop de λ donne un aspect « dessin animé » en aplats ; trop peu laisse passer le bruit.">
+  <DeconvolutionImage client:visible methodeInitiale="tv" />
+</Figure>
+
+<Concept titre="Ce que montrent les slides">
+Sur l’exemple de Wetzstein (Stanford EE367), le filtre de Wiener atteint 19,5 dB et la TV, optimisée avec Adam, 26,1 dB. Un a priori adapté supprime le bruit **tout en préservant la structure** de l’image (ses bords). Le chapitre 08 compare plusieurs a priori, des pénalités de gradient aux réseaux de neurones.
+</Concept>

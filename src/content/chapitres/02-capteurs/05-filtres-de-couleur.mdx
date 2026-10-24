@@ -1,0 +1,32 @@
+---
+titre: "La couleur : une mosaïque de filtres"
+resume: "Un pixel ne voit qu’une couleur. Le filtre de Bayer répartit rouge, vert et bleu sur la grille ; l’image RAW contient donc une seule valeur par photosite."
+duree: 5
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import MosaiqueBayer from '@/components/sims/ch02/MosaiqueBayer.svelte';
+
+Une photodiode compte des électrons : elle ne « voit » pas la couleur. Pour obtenir une image couleur avec un seul capteur, on place devant les pixels une <Terme en="color filter array" sigle="CFA">matrice de filtres colorés</Terme>. Le motif le plus répandu est le <Terme en="Bayer pattern">filtre de Bayer</Terme> : des blocs 2 × 2 RGGB, avec **deux verts** pour un rouge et un bleu, car l’œil est plus sensible au vert et y perçoit le mieux les détails.
+
+<Figure legende="Bascule entre la scène, le RAW coloré selon le filtre de chaque photosite, et le RAW brut (une seule valeur par site). Promène la loupe : chaque pixel ne contient qu’un tiers de l’information couleur.">
+  <MosaiqueBayer client:visible />
+</Figure>
+
+<Concept titre="L’image RAW avant dématriçage">
+Le fichier RAW stocke **une valeur scalaire par photosite**. Les deux couleurs manquantes de chaque pixel seront **estimées** par le traitement d’image (le *dématriçage*, chapitre 03). Une image couleur de 12 Mpx ne contient donc en réalité que 12 millions de mesures, pas 36.
+</Concept>
+
+## Sensibilités spectrales
+
+Chaque filtre a une courbe de transmission large, qui chevauche celle des autres. Combinée à l’efficacité quantique, elle définit la <Terme en="spectral sensitivity">sensibilité spectrale</Terme> de chaque canal. Elle varie d’un modèle de caméra à l’autre : photographiée par trois appareils, la même scène n’a pas exactement les mêmes couleurs.
+
+<Attention titre="Le RGB d’une caméra n’est pas le RGB de l’écran">
+Le triplet mesuré par une caméra est exprimé dans **son propre espace couleur**, défini par ses filtres. Il faut une transformation calibrée pour passer à un espace standard (XYZ, sRGB). C’est l’objet de la matrice de couleur (chapitre 03) et de la calibration couleur (chapitre 05).
+</Attention>
+
+## D’autres motifs
+
+Trouver la « meilleure » mosaïque est un sujet de recherche : on trouve des motifs CYGM (cyan, jaune, vert, magenta, chez Canon), RGBE (avec un « émeraude », chez Sony), ou encore des filtres sans filtre (pixels blancs) pour la basse lumière. Le bon choix dépend de la **tâche** : sensibilité, fidélité des couleurs, résolution…

@@ -1,0 +1,52 @@
+---
+titre: "Les moindres carrés et la pseudo-inverse"
+resume: "Pour un modèle linéaire, on peut résoudre exactement : la solution des moindres carrés est x = (AᵀA)⁻¹Aᵀb. Elégante, mais souvent impraticable pour une image."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+## L’inverse matricielle
+
+Pour $b = Ax$ avec $A$ **carrée et de rang plein**, $x^* = A^{-1} b$. Mais en pratique :
+- $A$ est souvent **non carrée** ($M \ne N$) ou **de rang déficient** : l’inverse n’existe pas ;
+- l’inverser explicitement coûte très cher.
+
+## La pseudo-inverse
+
+On multiplie à gauche par $A^\top$ : $A^\top b = A^\top A\, x$. Si $A$ est de **rang colonne plein**, $A^\top A$ (carrée, $N\times N$) est inversible :
+
+<Formule titre="Solution des moindres carrés">
+$$
+x = \left(A^\top A\right)^{-1} A^\top b
+$$
+
+$(A^\top A)^{-1}A^\top$ est la <Terme en="pseudoinverse">pseudo-inverse</Terme> de $A$. $A$ peut être rectangulaire, mais doit être de rang colonne plein.
+</Formule>
+
+## D’où vient cette formule ?
+
+On cherche $x$ qui **minimise** la somme des carrés des résidus $\|Ax - b\|_2^2$.
+
+1. **Développer** :
+$$
+\|Ax - b\|^2 = (Ax - b)^\top(Ax - b) = x^\top A^\top A x - 2 b^\top A x + b^\top b.
+$$
+2. **Annuler le gradient** :
+$$
+\nabla_x \|Ax - b\|^2 = 2A^\top(Ax - b) = 0 \;\Longrightarrow\; A^\top A\, x = A^\top b.
+$$
+3. Ce sont les <Terme en="normal equations">équations normales</Terme>. Si $A$ est de rang colonne plein, la solution est **unique** : $x = (A^\top A)^{-1}A^\top b$.
+
+<Concept titre="Interprétation">
+La pseudo-inverse donne le $x$ dont la prédiction $Ax$ est la **plus proche** des mesures au sens des moindres carrés. C’est déjà ce qu’on a utilisé pour la matrice couleur (chapitre 03), la réponse d’écran et la distorsion (chapitre 05), et Debevec-Malik (chapitre 06).
+</Concept>
+
+<Attention titre="Pourquoi on ne le fait pas pour une image">
+Former $A^\top A$ et l’inverser coûte énormément de calcul et de mémoire.
+
+**Exemple** : une image de 512 × 512 a 262 144 inconnues. Une matrice carrée **dense** de cette taille en float32 occuperait **256 Gio**. Pour la déconvolution, il faut une méthode qui exploite la structure de $A$ : le domaine de Fourier.
+</Attention>

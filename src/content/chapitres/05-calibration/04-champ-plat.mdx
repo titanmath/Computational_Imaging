@@ -1,0 +1,29 @@
+---
+titre: "Mesure directe : le champ plat"
+resume: "Photographier une surface parfaitement uniforme révèle la réponse relative de chaque pixel : vignetage, poussières, non-uniformités. On la divise ensuite."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import ChampPlat from '@/components/sims/ch05/ChampPlat.svelte';
+
+<Formule titre="Réponse spatiale du capteur">
+$$
+I(\mathbf x) = D(\mathbf x) + S(\mathbf x)\,P(\mathbf x)
+$$
+
+- $P$ : signal idéal ; $S$ : <Terme en="relative sensitivity">sensibilité relative</Terme> de chaque pixel ; $D$ : carte de noir ; $I$ : capture
+</Formule>
+
+<Concept titre="Protocole">
+1. Capturer un **champ uniforme** (sphère intégrante, écran diffusant, ciel couvert…) à travers l’objectif, en **RAW linéaire et non écrêté**.
+2. **Objectif, ouverture, mise au point et gain fixes**, identiques aux prises de vue à corriger.
+3. Moyenner plusieurs champs plats, **soustraire le noir**, **normaliser** : on obtient la carte $\hat S$.
+4. Correction : $\hat P = (I - D)\,/\,\hat S$.
+</Concept>
+
+<Figure legende="La réponse estimée montre le vignetage, des poussières sur le capteur et la non-uniformité pixel à pixel. La correction les retire de l’image. Avec un seul champ plat, son bruit se retrouve dans l’image corrigée.">
+  <ChampPlat client:visible />
+</Figure>

@@ -1,0 +1,11 @@
+numero: 0
+titre: "Introduction"
+sousTitre: "Et si la caméra faisait partie de l’algorithme ?"
+resume: "Ce qu’est l’imagerie computationnelle, pourquoi on conçoit ensemble la mesure et le calcul, à quoi cela sert, et comment le cours est organisé."
+objectifs:
+  - "décrire le trajet de l’information, de la scène à l’image, en quatre étapes"
+  - "expliquer la différence entre une chaîne de vision classique et une conception conjointe matériel + logiciel"
+  - "distinguer encodage optique (couche physique) et décodage numérique (couche calcul)"
+  - "situer les grands domaines d’application et l’organisation du semestre"
+icone: source
+source: 0_intro_2026.pdf

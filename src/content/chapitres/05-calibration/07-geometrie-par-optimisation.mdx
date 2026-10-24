@@ -1,0 +1,33 @@
+---
+titre: "Optimisation : focale et distorsion"
+resume: "On photographie une mire connue, on prédit où ses coins devraient tomber avec des paramètres θ, et on ajuste θ pour minimiser l’erreur de reprojection."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import SurfaceErreur from '@/components/sims/ch05/SurfaceErreur.svelte';
+
+## Des mires connues
+
+- **Mire 3D** : des points connus non coplanaires.
+- **Mire plane** : un seul damier, photographié sous **plusieurs inclinaisons**. C’est beaucoup plus pratique (Zhang, 2000).
+
+On initialise le modèle, puis on **minimise l’erreur de reprojection**.
+
+<Formule titre="Prédiction par projection">
+$$
+\hat y = F_\text{projection}(P;\, \theta)
+$$
+
+$P$ : points connus de la mire et leur pose ; $\theta$ : focale $f_x$ et distorsion $k_1$ (par exemple) ; $y$ : coins **détectés** dans l’image. L’<Terme en="reprojection error">erreur de reprojection</Terme> est la distance (en pixels) entre coins prédits et détectés.
+</Formule>
+
+<Figure legende="À gauche, l’erreur de reprojection pour chaque couple (fₓ, k₁) : plus c’est clair, plus l’erreur est faible ; le cercle vert marque les vraies valeurs. Choisis un point de départ, puis lance l’optimisation : chaque itération de Gauss-Newton linéarise le modèle et résout un petit système de moindres carrés. À droite, les résidus (orange) entre coins observés et prédits se résorbent.">
+  <SurfaceErreur client:visible />
+</Figure>
+
+<Concept titre="Pourquoi Gauss-Newton ?">
+On minimise une **somme de carrés** de résidus $r_i(\theta)$. En linéarisant $r(\theta + \delta) \approx r + J\delta$ ($J$ : jacobien), le pas optimal est la solution des équations normales $(J^\top J)\,\delta = -J^\top r$. C’est la descente de gradient « intelligente » des problèmes de moindres carrés, qu’on reverra au chapitre 07. Sa variante amortie, **Levenberg-Marquardt**, est utilisée par OpenCV.
+</Concept>

@@ -1,0 +1,38 @@
+---
+titre: "Calibrer des systèmes complets, ou les apprendre"
+resume: "PSF à partir de motifs, segments d’un télescope, distorsion d’un casque VR, et quand la physique est trop complexe, un réseau de neurones comme modèle direct."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Miroir3D from '@/components/sims/ch05/Miroir3D.svelte';
+
+## La PSF à partir de motifs connus
+
+$\hat y = F_\text{blur}(P;\, \theta)$ : $P$ est un motif net (avec les réglages de prise de vue), $\theta$ un **modèle de PSF**, $y$ l’image capturée. On ajuste la PSF pour que la prédiction colle à la capture, puis on **valide sur un nouveau motif**. Lin et al. (*Learning Lens Blur Fields*, TPAMI 2025) modélisent la PSF en fonction de la position sur le capteur, de la distance de la cible et du réglage de mise au point, et ajustent ce champ à partir de quelques captures.
+
+## Aligner les segments d’un télescope
+
+<Figure legende="Le miroir primaire de Webb est fait de 18 segments. Mal orientés, ils renvoient 18 images de la même étoile ; on ajuste les actionneurs jusqu’à les superposer. Modèle direct : ŷ = F_étoile(P ; θ), avec P une étoile de référence et θ les poses des segments.">
+  <Miroir3D client:visible />
+</Figure>
+
+## La distorsion d’un casque de réalité virtuelle
+
+$\hat y = F_\text{warp}(P;\, \theta)$ : $P$ est une grille affichée, $\theta$ les paramètres de déformation de la lentille, $y$ la grille vue par une caméra placée à la position de la pupille. On ajuste une déformation **par canal de couleur** (la lentille a de l’aberration chromatique latérale), puis on **pré-déforme** l’image affichée avec la déformation inverse, et on répète pour plusieurs positions de pupille.
+
+## Quand le modèle physique ne suffit pas : l’apprendre
+
+<Formule titre="Modèle direct appris">
+$$
+\hat y = F(P;\, \theta), \qquad \theta = \text{poids d’un réseau}
+$$
+
+Même boucle : entrée connue fixe, comparaison $r = \hat y - y$, mise à jour de $\theta$. Seule la nature du modèle change.
+</Formule>
+
+<Concept titre="Deux exemples">
+- **Holographie** (Chakravarthula et al., SIGGRAPH Asia 2020) : entrée = motif de phase affiché sur le modulateur spatial de lumière (SLM), sortie = intensité capturée. Un modèle appris des aberrations du vrai matériel permet de calculer des hologrammes bien plus fidèles.
+- **Réponse optique non linéaire** (Wright et al., *Nature* 2022) : un réseau apprend la relation entre une impulsion laser façonnée et le spectre de sortie mesuré (génération de seconde harmonique). On utilise ensuite **ses gradients** pour optimiser les commandes du système physique.
+</Concept>

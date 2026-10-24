@@ -1,0 +1,7 @@
+---
+import Encadre from './Encadre.astro';
+interface Props {
+  titre?: string;
+}
+---
+<Encadre type="retenir" titre={Astro.props.titre}><slot /></Encadre>

@@ -1,0 +1,23 @@
+---
+titre: "Le débruitage"
+resume: "Un filtre médian remplace chaque valeur par la médiane de ses voisines. Il efface le bruit et les valeurs aberrantes, et aussi un peu de texture : tout est affaire de compromis."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Median from '@/components/sims/ch03/Median.svelte';
+
+## Le filtre médian
+
+Pour chaque pixel (et chaque canal) : on prend les 9 valeurs du voisinage 3 × 3, on les **trie**, et on garde la **valeur du milieu**. Contrairement à une moyenne, la médiane ignore une valeur aberrante isolée et préserve mieux les bords francs.
+
+<Figure legende="À gauche, la médiane sur un exemple numérique. Au centre et à droite, une image bruitée et filtrée. Agrandis la fenêtre : le PSNR augmente puis diminue, et les détails fins (briques, texte) disparaissent.">
+  <Median client:visible />
+</Figure>
+
+<Concept titre="Un paramètre, un objectif">
+La taille de la fenêtre $\theta$ est un **paramètre de l’ISP**. 1 × 1 : aucun filtrage ; 3 × 3 : moins de bruit, un peu de texture perdue ; 7 × 7 : très lisse, aspect « peinture ». Le « bon » réglage dépend de l’**objectif** : regarder une photo, détecter des objets, mesurer une grandeur physique… On reviendra sur l’optimisation de ces paramètres en fin de chapitre, et sur des débruiteurs fondés sur des *a priori* d’image au chapitre 08.
+</Concept>
+
+Dans l’exemple des slides, on applique un médian 3 × 3 **canal par canal** après le dématriçage : le bruit diminue, certaines textures fines disparaissent, et l’image garde la teinte de l’illuminant. C’est la prochaine étape.

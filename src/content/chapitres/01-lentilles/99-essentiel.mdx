@@ -1,0 +1,36 @@
+---
+titre: "L’essentiel : lentilles"
+resume: "Les formules et les idées du chapitre sur une seule page."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+Former une image, c’est associer chaque point de la scène à un point du capteur. Le sténopé le fait en **bloquant** des rayons, la lentille en les **courbant**. Tout défaut de cette association se résume dans la **PSF**.
+</Retenir>
+
+## Formules
+
+| Notion | Formule | Remarque |
+| --- | --- | --- |
+| Projection (plan virtuel) | $x = fX/Z,\ y = fY/Z$ | capteur réel : signe moins, image renversée |
+| Rétroprojection | $(X, Y, Z) = Z\,(x/f,\ y/f,\ 1)$ | il faut connaître $Z$ |
+| Profondeur / distance | $Z = \rho\cos\theta,\ \rho^2 = X^2+Y^2+Z^2$ | ToF mesure $\rho$ |
+| Champ de vision | $\mathrm{FoV} = 2\arctan(H/2f)$ | H = 24 mm : f = 12 → 90°, 24 → 53,1°, 48 → 28,1° |
+| Sténopé | $b_g = d(s+f)/s,\ b_d = 2{,}44\lambda f/d$ | $d_\text{opt} \approx \sqrt{2{,}44\lambda f}$ |
+| Snell | $n_1\sin\theta_1 = n_2\sin\theta_2$ | $n = c_0/v_p$ |
+| Lentille mince | $1/Z + 1/S = 1/f$ | f = 50 : S = 60 → Z = 300 mm |
+| Nombre d’ouverture | $N = f/D$, $\mathrm{NA} \approx 1/(2N)$ | lumière ∝ $1/N^2$ |
+| Profondeur de champ | $\mathrm{DoF} \approx 2cZ_0^2/(fD)$ | ↑ quand on ferme |
+| Formation d’image | $I = h * I_0$ | intensités linéaires, PSF invariante |
+| Tache d’Airy | $r_0 = 1{,}22\lambda N$ | f/4 à 550 nm : 2,68 µm |
+| Distorsion | $g = 1 + k_1r^2 + k_2r^4 + k_3r^6$ | $k_1 < 0$ : barillet |
+
+## Les compromis à savoir expliquer
+
+- **Petit trou / petite ouverture** : plus net (moins de défocus, plus de profondeur de champ) mais plus sombre, et à la fin limité par la **diffraction**.
+- **Grande ouverture** : lumineux, faible profondeur de champ, plus d’aberrations.
+- **Focale longue** : image plus grande, champ plus étroit, profondeur de champ plus faible.
+- Les aberrations (sphérique, coma, chromatique) **déforment** la PSF ; la distorsion **déplace** les points sans flouter.
+- On **simule** une PSF par rayons (Monte-Carlo, bruit en 1/√N) ou par ondes (diffraction), et on la **mesure** avec une source ponctuelle ou un motif connu. Elle varie souvent dans le champ.

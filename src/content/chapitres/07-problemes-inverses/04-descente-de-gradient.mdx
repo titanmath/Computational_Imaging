@@ -1,0 +1,37 @@
+---
+titre: "Résoudre par descente de gradient"
+resume: "On améliore une estimation en descendant pas à pas la pente de l’erreur. Simple et universel, mais sensible au pas et aux minima locaux."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import PaysagePerte from '@/components/sims/ch07/PaysagePerte.svelte';
+
+Idée : on part d’une estimation $x_0$, on **prédit** la mesure $f(x_0)$, on la **compare** à $b$, et on corrige $x$ dans la direction qui réduit l’écart.
+
+<Formule titre="Descente de gradient">
+$$
+L(x) = \|f(x) - b\|_2^2, \qquad x_{k+1} = x_k - \eta\, \nabla_x L(x_k)
+$$
+
+- $L$ : la perte (somme des carrés des résidus) ; $\nabla_x L$ : son gradient
+- $k$ : itération ; $\eta > 0$ : <Terme en="step size / learning rate">pas</Terme>
+</Formule>
+
+<Exemple titre="Un exemple scalaire">
+Avec $L(x) = (x - 1)^2$, $\nabla L = 2(x - 1)$. En partant de $x = 4$ avec $\eta = 0{,}25$ : $x_1 = 4 - 0{,}25 \times 6 = 2{,}5$, puis $1{,}75$, puis $1{,}375$… vers le minimum en $x = 1$.
+</Exemple>
+
+<Figure legende="Une bille suit la descente de gradient sur un paysage de perte. Sur le paysage convexe, elle atteint le minimum. Dans la vallée étroite, un pas trop grand la fait osciller. Sur le paysage à plusieurs creux, elle s’arrête dans le minimum le plus proche de son départ.">
+  <PaysagePerte client:visible />
+</Figure>
+
+<Attention titre="Les limites">
+- **Minima locaux** : pour un problème non convexe, on peut rester bloqué loin du meilleur minimum.
+- **Convergence lente ou oscillations** : un pas trop petit avance lentement, un pas trop grand oscille ou diverge, surtout dans les vallées étroites (problème mal conditionné).
+
+Des variantes (moment, Adam, Gauss-Newton du chapitre 05) atténuent ces défauts.
+</Attention>

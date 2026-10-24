@@ -1,0 +1,53 @@
+---
+// Mesure directe vs estimation par optimisation (et méthode non calibrée).
+---
+<figure class="deborde anime schema">
+  <div class="cols">
+    <div class="col">
+      <p class="t">Mesure directe</p>
+      <ol>
+        <li><span class="b">Entrée contrôlée</span> (noir, champ uniforme, point source…)</li>
+        <li><span class="b">Système</span> → mesures</li>
+        <li><span class="b coeur">Moyenner / normaliser</span></li>
+        <li>→ paramètres θ (carte de noir, gain, PSF…)</li>
+      </ol>
+      <p class="ex">EMVA 1288, réponse du capteur, PSF par point source, sensibilité spectrale, réponse d’écran</p>
+    </div>
+    <div class="col">
+      <p class="t">Estimation par optimisation</p>
+      <ol>
+        <li><span class="b">Entrée connue P</span> (mire, patchs…)</li>
+        <li><span class="b coeur">Modèle direct ŷ = F(P ; θ)</span></li>
+        <li>comparer aux mesures : <span class="b">r = ŷ − y</span></li>
+        <li>mettre à jour θ pour réduire r → boucle</li>
+      </ol>
+      <p class="ex">géométrie (focale, distorsion, pose), couleur, PSF par motifs, modèles appris</p>
+    </div>
+    <div class="col">
+      <p class="t">Méthode non calibrée</p>
+      <ol>
+        <li><span class="b">Scène P inconnue</span></li>
+        <li><span class="b coeur">même modèle ŷ = F(P ; θ)</span></li>
+        <li>on met à jour <span class="b">P et θ</span> ensemble</li>
+        <li>des a priori contraignent la solution</li>
+      </ol>
+      <p class="ex">déconvolution aveugle, auto-calibration à partir de photos</p>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .schema { margin-block: 2rem; }
+  .cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; }
+  .col { border: 1px solid var(--filet); border-radius: 12px; padding: 1rem 1.1rem; opacity: 0; transform: translateY(10px); transition: opacity 0.6s var(--ease), transform 0.6s var(--ease); }
+  .col:nth-child(2) { transition-delay: 0.12s; }
+  .col:nth-child(3) { transition-delay: 0.24s; }
+  .en-vue .col { opacity: 1; transform: none; }
+  .t { margin: 0 0 0.6rem; font-family: var(--f-titre); font-size: 1.12rem; }
+  ol { margin: 0; padding-left: 1.2em; font-size: 0.9rem; display: grid; gap: 0.3rem; }
+  li::marker { color: var(--accent); font-weight: 700; }
+  .b { font-weight: 600; }
+  .coeur { color: var(--accent); }
+  .ex { margin: 0.7rem 0 0; font-size: 0.82rem; color: var(--encre-3); }
+  @media (prefers-reduced-motion: reduce) { .col { opacity: 1; transform: none; } }
+</style>

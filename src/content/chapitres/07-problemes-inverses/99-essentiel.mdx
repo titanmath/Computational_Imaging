@@ -1,0 +1,25 @@
+---
+titre: "L’essentiel : problèmes inverses"
+resume: "Modéliser, résoudre, stabiliser, appliquer."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+**Modéliser** : un modèle direct prédit les mesures. **Résoudre** : dérivées, algèbre linéaire ou structure de Fourier. **Stabiliser** : tenir compte du bruit et ajouter un a priori adapté. **Appliquer** : choisir modèle et a priori selon la tâche.
+</Retenir>
+
+| Notion | Formule | À retenir |
+| --- | --- | --- |
+| Direct | $b = f(x)$ ; linéaire : $b = Ax$ | convolution : lignes de A = noyau décalé |
+| Gradient | $x_{k+1} = x_k - \eta\nabla L$ | minima locaux, oscillations |
+| Diff. auto | règle de la chaîne à l’envers | PyTorch, JAX… |
+| Moindres carrés | $x = (A^\top A)^{-1}A^\top b$ | rang colonne plein ; 512² px → 256 Gio dense |
+| Fourier | $\mathcal F(I)\odot\mathcal F(K) = \mathcal F(J)$ | FFT en $O(N\log N)$ |
+| Inverse | $I^* = \mathcal F^{-1}(Y/H)$ | amplifie le bruit là où $\lvert H\rvert$ est petit |
+| Wiener | $I^* = \mathcal F^{-1}\big(H^* Y / (\lvert H\rvert^2 + \alpha)\big)$ | α amortit |
+| ML | $\arg\min \lVert Ax - b\rVert^2/2\sigma^2$ | = moindres carrés (bruit gaussien) |
+| MAP | $\arg\min \lVert Ax - b\rVert^2/2\sigma^2 + \Psi(x)$ | $\Psi = -\log p(x)$ |
+| Mal posé | sur- / sous-déterminé, instable | il faut un a priori |
+| TV | $\lVert K_x * I\rVert_1 + \lVert K_y * I\rVert_1$ | gradients parcimonieux ; Wiener 19,5 dB → TV 26,1 dB |

@@ -1,0 +1,40 @@
+---
+titre: "Le dématriçage"
+resume: "Chaque pixel n’a mesuré qu’une couleur ; on estime les deux autres à partir des voisins. L’interpolation bilinéaire est la méthode de base, avec ses artefacts."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Dematricage from '@/components/sims/ch03/Dematricage.svelte';
+
+Le <Terme en="demosaicing">dématriçage</Terme> reconstruit une image à trois canaux à partir de la mosaïque, qui n’a qu’un canal mesuré par site.
+
+## L’interpolation bilinéaire
+
+Méthode de base : pour chaque couleur manquante, on fait la **moyenne des voisins proches** qui l’ont mesurée. Prenons un site rouge au centre d’un voisinage 3 × 3 :
+
+$$
+\begin{matrix} B_1 & G_2 & B_3 \\ G_4 & \boxed{R_5} & G_6 \\ B_7 & G_8 & B_9 \end{matrix}
+$$
+
+<Formule titre="Dématriçage bilinéaire au site rouge 5">
+$$
+R_5 = R_5 \;(\text{mesuré}), \qquad
+G_5 = \frac{G_2 + G_4 + G_6 + G_8}{4}, \qquad
+B_5 = \frac{B_1 + B_3 + B_7 + B_9}{4}
+$$
+
+Pour un site vert, le rouge et le bleu viennent des deux voisins horizontaux ou verticaux selon la ligne.
+</Formule>
+
+<Figure legende="Sur des détails fins (une mire, des montants de fenêtre, des feuilles), le bilinéaire produit de fausses couleurs et des motifs en « fermeture éclair » (zipper) le long des bords.">
+  <Dematricage client:visible />
+</Figure>
+
+<Concept titre="Pourquoi des artefacts ?">
+L’interpolation suppose que la couleur varie lentement. Près d’un bord net ou d’une texture plus fine que la période de la mosaïque (2 pixels), les trois canaux sont estimés à partir de positions **différentes** : ils ne sont plus cohérents, et des couleurs apparaissent là où il n’y en avait pas. Les méthodes avancées interpolent **le long** des bords, exploitent la corrélation entre canaux (prior inter-canaux, chapitre 08) ou apprennent le dématriçage, souvent en même temps que le débruitage.
+</Concept>
+
+Après le dématriçage seul, l’image a trois canaux par pixel mais elle reste **bruitée** et exprimée dans le **RGB de la caméra**.

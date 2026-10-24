@@ -1,0 +1,161 @@
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--barre-h) + 1.5rem);
+  background: var(--papier);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--papier);
+  color: var(--encre);
+  font-family: var(--f-texte);
+  font-size: 1.125rem;
+  line-height: 1.65;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+canvas,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration-color: color-mix(in oklab, var(--accent) 55%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+a:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 28%, transparent);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--f-titre);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+.visuellement-cache {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* --- Mise en page --- */
+.colonne {
+  width: min(100% - 2 * var(--gouttiere), var(--colonne));
+  margin-inline: auto;
+}
+.large {
+  width: min(100% - 2 * var(--gouttiere), var(--large));
+  margin-inline: auto;
+}
+
+/* Petites capitales d'étiquette (« 03 · ISP », « Idée clé »…) */
+.etiquette {
+  font-family: var(--f-texte);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--encre-3);
+}
+
+/* --- Motif : rayon qui se diffracte en spectre --- */
+.rayon,
+hr {
+  position: relative;
+  height: 14px;
+  border: 0;
+  margin: 3rem 0;
+  overflow: visible;
+}
+.rayon::before,
+hr::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 38%;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--encre-3) 30%, var(--encre-2));
+}
+.rayon::after,
+hr::after {
+  content: '';
+  position: absolute;
+  left: 62%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    #9a2b2b 0%,
+    #d0612a 18%,
+    #d8b13a 34%,
+    #4f9a4a 50%,
+    #2f8a9a 66%,
+    #3657b5 82%,
+    #6a3fa8 100%
+  );
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  opacity: 0.75;
+  -webkit-mask-image: linear-gradient(90deg, #000 20%, transparent);
+  mask-image: linear-gradient(90deg, #000 20%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

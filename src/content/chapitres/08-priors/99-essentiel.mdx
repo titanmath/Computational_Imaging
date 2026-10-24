@@ -1,0 +1,28 @@
+---
+titre: "L’essentiel : a priori d’image"
+resume: "Écrits à la main, appris, ou portés par une architecture : trois familles d’a priori pour un même problème."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+**Un a priori note les images** : $\min_x \tfrac12\|b - f(x)\|^2 + \lambda\Psi(x)$. Sans lui ($\lambda = 0$), la mesure bruitée est la solution. **Écrits à la main** : pénalités L0, L1, L2 et TV sur les gradients, a priori inter-canaux, canal sombre. **Appris** : un réseau entraîné sur des paires (bruitée, propre). **Non entraînés** : DIP et champs neuronaux, ajustés à une seule mesure et arrêtés tôt.
+</Retenir>
+
+| Notion | Formule | À retenir |
+| --- | --- | --- |
+| Normes | $\|x\|_2$, $\|x\|_1$, $\|x\|_0$ | $(0,-3,4)$ : 5 (25 au carré), 7, 2 ; L0 compte, ce n’est pas une norme |
+| Parcimonie | boule L1 = octaèdre | contact par une pointe : composantes nulles |
+| Seuillage | L2² : $b/(1+2\lambda)$ · L1 : doux · L0 : dur | L1 et L0 annulent les petits coefficients |
+| Gradients | $g_p = \|\nabla x(p)\|_2$ | 99,65 % non nuls sur une photo |
+| L0 | $\|g(x)\|_0$, $\lambda_0 = 0{,}02$ | aplats « peints », optimisation approchée |
+| TV isotrope | $\|g(x)\|_1$, $\lambda_1 = 0{,}07$ | bords nets, effet escalier |
+| L2² | $\|g(x)\|_2^2$, $\lambda_2 = 0{,}65$ | forme fermée, flou |
+| Iso / aniso | $\sqrt{3^2+4^2} = 5$ vs $3 + 4 = 7$ | l’anisotrope favorise les bords alignés sur la grille |
+| Force λ | 0,015 · 0,07 · 0,22 | plus de λ : moins de bruit, moins de texture |
+| Inter-canaux | $\sum_p \|x_\mathrm G\nabla x_\mathrm R - x_\mathrm R\nabla x_\mathrm G\|_1$ | bords alignés entre canaux (Heide 2013) |
+| Canal sombre | $\min_{\Omega}\min_c x_c \approx 0$ | $\tilde t = 1 - \omega\,\mathrm{dark}(I/A)$ ; débrumage et profondeur (He 2009) |
+| Appris | $\min_\theta \frac1M\sum\|F_\theta(b_i) - x_i\|^2$ | a priori implicite dans les données (RED30) |
+| DIP | $\min_\theta \frac12\|F_\theta(z) - b\|^2$ | structure avant bruit : arrêt précoce |
+| Champ neuronal | $F_\theta(p) = (R,G,B)$ | WIRE : 17,6 → 30,2 dB |

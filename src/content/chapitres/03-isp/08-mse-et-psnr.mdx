@@ -1,0 +1,41 @@
+---
+titre: "Mesurer la qualité : MSE et PSNR"
+resume: "Pour comparer deux images, on mesure l’erreur quadratique moyenne, ou son pendant logarithmique, le PSNR. Simple et utile, mais pas toujours fidèle à ce que voit l’œil."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+<Formule titre="Erreur quadratique moyenne">
+$$
+\mathrm{MSE} = \frac{1}{N}\sum_{i=1}^{N} \big(\hat x_i - x_i\big)^2
+$$
+
+On soustrait, on élève au carré, puis on moyenne sur les $N$ échantillons.
+</Formule>
+
+<Exemple titre="Quatre pixels">
+Référence $(0{,}2;\ 0{,}2;\ 0{,}8;\ 0{,}8)$, reconstruction $(0{,}4;\ 0{,}2;\ 0{,}8;\ 0{,}8)$. Erreurs au carré : $0{,}04$ ; 0 ; 0 ; 0. Donc $\mathrm{MSE} = 0{,}04/4 = 0{,}01$.
+</Exemple>
+
+<Formule titre="Rapport signal sur bruit de crête">
+$$
+\mathrm{PSNR} = 10 \log_{10}\!\left(\frac{P^2}{\mathrm{MSE}}\right) \ \text{dB}
+$$
+
+$P$ : valeur maximale possible (1 pour des images normalisées, 255 pour du 8 bits).
+</Formule>
+
+<Exemple titre="Deux reconstructions">
+Avec $P = 1$ : MSE = 0,01 donne **20 dB** ; MSE = 0,0025 donne **26,02 dB**. Diviser l’erreur quadratique par 4 fait gagner environ 6 dB.
+</Exemple>
+
+<Attention titre="Comparer ce qui est comparable">
+On compare des images **alignées**, dans les **mêmes canaux**, le **même encodage** (linéaire ou sRGB) et la **même plage** d’intensité. Un PSNR calculé en linéaire n’est pas comparable à un PSNR calculé en sRGB.
+</Attention>
+
+<Attention titre="Le PSNR ne voit pas comme nous">
+Deux images de même PSNR peuvent paraître très différentes : un léger décalage de luminosité global choque peu l’œil, un flou beaucoup plus. Le chapitre 04 présente des métriques <Terme en="perceptual metrics">perceptuelles</Terme> (SSIM, LPIPS) qui collent mieux au jugement humain.
+</Attention>

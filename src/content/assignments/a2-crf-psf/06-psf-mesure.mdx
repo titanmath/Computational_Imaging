@@ -1,0 +1,86 @@
+---
+titre: "Tâche 2 : mesurer et comparer"
+resume: "Le montage, la photo du bord et de la source, SFRMAT5 sur le canal vert, la dérivée normalisée de l’ESF, la projection de la tache, et la comparaison des FWHM en pixels."
+duree: 9
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Pseudocode from '@/components/contenu/Pseudocode.astro';
+import Checklist from '@/components/contenu/Checklist.svelte';
+
+## Le montage
+
+<Concept titre="Mêmes conditions pour les deux méthodes">
+- La **cible** (bord A4 noir/blanc, puis source ponctuelle) est **dehors**, devant le trou, à une distance **mesurée** ; le rapport donne la géométrie, le diamètre du trou, les distances cible–trou et trou–écran.
+- Même distance de cible, même **zone de l’écran**, même géométrie du téléphone, même mise au point, même zoom, même résolution.
+- **Pas de saturation**, ni sur le blanc du bord, ni sur la source.
+- Les valeurs sont **linéarisées** avec la CRF de la tâche 1 : $E\,t = e^{g(z)}$, canal par canal.
+</Concept>
+
+<Concept titre="Le bord : une feuille A4 noir / blanc">
+Sur la photo, choisis un bord incliné de **5 à 10°** par rapport à la verticale (de préférence 5°), **noir à gauche, blanc à droite**. Découpe une ROI rectangulaire qui contient ce bord et rien d’autre : pas de coin, pas de bord de l’écran, pas de reflet.
+</Concept>
+
+## SFRMAT5 : ce qu’il fait, ce qu’il rend
+
+SFRMAT5 (P. D. Burns, fourni sur PLMS) prend une ROI à **un seul canal** (le **vert** est recommandé). Il localise le bord, projette les lignes, et renvoie l’**ESF suréchantillonnée** et le pas **dx** (≈ 0,25 pixel d’origine). Il calcule la LSF en interne mais **ne la renvoie pas** : c’est à toi de dériver l’ESF.
+
+<Pseudocode titre="De l’ESF renvoyée à la PSF 1D du bord">
+```text
+roi ← canal vert de la photo linéarisée, restreint au bord choisi
+esf, dx ← sfrmat5(roi)                       # outil fourni : on n'en réécrit pas l'intérieur
+u ← (0, 1, 2, …) · dx  ;  u ← u − position du maximum de la dérivée   # recentrer
+lsf ← dérivée de esf par rapport à u          # différences finies, pas dx (commandes du ZIP)
+(si lissage : le dire, et garder la dérivée brute à part du fenêtrage SFR)
+h_bord ← lsf / (somme(lsf) · dx)              # aire = 1
+FWHM_bord ← distance entre les deux passages à mi-hauteur du pic principal (interpolation linéaire)
+```
+</Pseudocode>
+
+## La source ponctuelle
+
+<Pseudocode titre="De la tache 2D à un profil 1D comparable">
+```text
+img ← photo linéarisée de la source (canal vert), ROI autour de la tache
+img ← img − fond (médiane d'une zone sans lumière)
+θ ← angle du bord ajusté par SFRMAT5 (par rapport à la verticale)
+pour chaque pixel (x, y) :
+    u ← (x − xc)·cos θ − (y − yc)·sin θ        # coordonnée le long de la normale au bord
+    profil[case(u)] ← profil[case(u)] + img[x, y]    # somme parallèle au bord
+h_point ← profil / (somme(profil) · pas)       # aire = 1
+FWHM_point ← comme ci-dessus
+```
+</Pseudocode>
+
+<Formule titre="Ce que demande la comparaison">
+$$
+\text{FWHM}_\text{bord}, \qquad \text{FWHM}_\text{point}, \qquad \Delta = \big|\text{FWHM}_\text{bord} - \text{FWHM}_\text{point}\big| \ \text{(en pixels)}
+$$
+
+Superpose les deux profils normalisés, recentrés au même maximum, sur le même axe en pixels. Exemple illustratif du guide : 4,2 et 5,0 pixels diffèrent de 0,8 pixel.
+</Formule>
+
+<Exemple titre="D’où peut venir un écart ?">
+Les cibles diffèrent (un bord vs un point), le bruit, l’ajustement, la capture, une source pas tout à fait ponctuelle (trop grosse, saturée) ou un léger changement de géométrie entre les deux photos. En revanche, le flou de l’écran et celui du téléphone **font partie du système** : ce n’est pas une erreur de mesure, c’est ce qu’on mesure.
+</Exemple>
+
+<Attention titre="Les unités">
+Tout est en **pixels de la photo du téléphone** : pas de taille de photosite, pas de conversion en millimètres sur l’écran. Pour relier tes FWHM aux flous prédits dans l’A1 (en mm sur l’écran), il faudrait l’échelle mm/pixel de l’écran dans la photo. C’est un bon commentaire à faire, mais ce n’est pas demandé.
+</Attention>
+
+<Checklist
+  client:visible
+  id="a2-psf-mesure"
+  items={[
+    'Documenter le montage : diamètre du trou, distances cible–trou et trou–écran, géométrie',
+    'Photographier le bord (5°, noir à gauche) et la source dans les MÊMES conditions, sans saturation',
+    'Linéariser les photos avec la CRF de la tâche 1 avant toute mesure',
+    'Lancer SFRMAT5 sur une ROI du canal vert et récupérer ESF et dx',
+    'Dériver l’ESF avec le pas dx, normaliser l’aire, calculer la FWHM',
+    'Projeter la tache de la source parallèlement au bord, normaliser, calculer la FWHM',
+    'Superposer les deux profils et donner les deux FWHM et leur écart en pixels',
+    'Discuter l’écart (cible, bruit, ajustement, taille de la source, géométrie)',
+  ]}
+/>

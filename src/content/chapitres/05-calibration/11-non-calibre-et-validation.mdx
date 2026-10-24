@@ -1,0 +1,40 @@
+---
+titre: "Sans référence, et la validation"
+resume: "Parfois la scène elle-même est inconnue : on estime scène et système ensemble, avec des a priori. Dans tous les cas, une calibration ne vaut que si elle prédit de nouvelles mesures."
+duree: 5
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Retenir from '@/components/contenu/Retenir.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Validation from '@/components/sims/ch05/Validation.svelte';
+
+## Les méthodes non calibrées
+
+Même modèle $\hat y = F(P;\, \theta)$, mais la **scène $P$ est inconnue**. On garde les mesures $y$ fixes et on met à jour **$P$ et $\theta$** ensemble.
+
+- <Terme en="blind deconvolution">Déconvolution aveugle</Terme> : $P$ = image nette inconnue, $\theta$ = PSF inconnue (par exemple un bougé de la caméra), $y$ = photo floue. On estime le noyau de flou et l’image nette à partir d’**une seule** photo (Fergus et al., *Removing Camera Shake from a Single Photograph*, SIGGRAPH 2006).
+- **Auto-calibration à partir de photos** : $P$ = points 3D inconnus, $\theta$ = poses et focales des caméras, $y$ = correspondances entre images. On estime tout conjointement à partir de photos qui se chevauchent (*Photo Tourism*, Snavely et al. 2006). Il faut des vues variées, un modèle de caméra adapté, et une **longueur de référence** pour obtenir l’échelle métrique.
+
+<Attention titre="Le prix à payer">
+Avec plus d’inconnues, le problème devient **mal posé** : plusieurs couples (scène, système) expliquent les mêmes mesures. Il faut des **a priori** (sur les images naturelles, sur la forme de la PSF…) pour choisir. C’est le sujet des chapitres 07 et 08.
+</Attention>
+
+## Valider au-delà des données d’ajustement
+
+<Concept titre="Le principe">
+**Geler** les paramètres ajustés, puis **prédire des mesures indépendantes** : de nouvelles positions dans l’image, de nouveaux patchs de couleur, une nouvelle mire. Une erreur faible sur les données d’ajustement ne prouve rien.
+</Concept>
+
+<Figure legende="Un modèle de distorsion (k₁, k₂) ajusté seulement sur des coins du centre explique très bien ces coins… et se trompe sur les bords. Ajusté sur tout le champ, il généralise.">
+  <Validation client:visible />
+</Figure>
+
+**Valider aussi dans les bonnes conditions** : une PSF calibrée à une mise au point donnée ne prédit plus les images si l’on change la mise au point. Si l’optique change, on **recalibre**, ou on valide un modèle qui couvre ces réglages.
+
+<Retenir>
+Pour l’A2 (validation facultative de la tâche 1) : sépare **des positions et des expositions** avant l’ajustement, ajuste la courbe uniquement sur l’ensemble d’entraînement, puis prédis les expositions réservées et mesure la RMSE par canal. Exactement le principe de cette leçon.
+</Retenir>

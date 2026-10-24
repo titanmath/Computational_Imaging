@@ -1,0 +1,68 @@
+---
+titre: "Simuler et mesurer une PSF"
+resume: "On peut prédire une PSF par tracé de rayons ou par optique ondulatoire, ou la mesurer avec une source ponctuelle ou une mire connue. Et la PSF varie dans le champ."
+duree: 6
+assignments: ["a2"]
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import ConvergenceRayons from '@/components/sims/ch01/ConvergenceRayons.svelte';
+
+## Simuler : par rayons
+
+Objectif : prédire l’image d’un point à partir d’une conception de lentille connue. On **échantillonne la pupille** (des points de départ répartis sur l’ouverture), on **trace** chaque rayon à travers chaque surface (Snell), puis on **compte** les impacts sur le capteur dans des cases (*binning*) et on normalise.
+
+<Figure legende="Tracé de rayons Monte-Carlo d’un point défocalisé. Avec peu de rayons, l’histogramme est bruité ; l’erreur décroît comme 1/√N. Dans les slides : 100 rayons → erreur 1,46 ; 2 500 → 0,28 ; 62 500 → 0,06.">
+  <ConvergenceRayons client:visible />
+</Figure>
+
+Le tracé de rayons prédit le **flou géométrique** (défocus, aberrations). Pour la **diffraction**, il faut l’optique ondulatoire : on propage des fronts d’onde plutôt que des rayons, comme dans la leçon précédente sur la diffraction.
+
+## Mesurer : avec une source ponctuelle
+
+<Concept titre="Le protocole de base">
+1. **Fixer les conditions d’imagerie** : mise au point, ouverture, zoom, distance objet $Z$ connue, exposition. Enregistrer en **RAW** (données linéaires).
+2. **Approximer un point** : une LED derrière un petit trou, assez loin pour que son image soit **plus petite que la structure de la PSF** à mesurer. Un collimateur permet de simuler un objet à l’infini.
+3. **Échantillonner la réponse** : l’image de ce « point » *est* la PSF (après soustraction du fond).
+</Concept>
+
+C’est exactement la **méthode 1 de l’assignment 2** : photographier une petite source lumineuse à travers ton sténopé.
+
+<Attention titre="Si la source n’est pas assez petite">
+Ce qu’on mesure est alors la convolution de la PSF par l’image de la source : on surestime la largeur. La source doit être négligeable devant le flou du système.
+</Attention>
+
+## Une PSF qui varie dans le champ
+
+La PSF n’est en général pas la même partout : le centre reste net et un flou directionnel apparaît vers les bords. On décrit alors un **champ de PSF** :
+
+<Formule titre="Flou invariant vs variable spatialement">
+$$
+I(\mathbf x) = \sum_{\mathbf u} h(\mathbf u)\,I_0(\mathbf x - \mathbf u)
+\qquad\longrightarrow\qquad
+I(\mathbf x) = \sum_{\mathbf u} h_{\mathbf x}(\mathbf u)\,I_0(\mathbf x - \mathbf u)
+$$
+
+À gauche : un même noyau partout. À droite : un noyau $h_{\mathbf x}$ choisi pour chaque position de sortie $\mathbf x$.
+</Formule>
+
+Pour le calibrer, on déplace la source ponctuelle dans le champ (même profondeur, même mise au point, même ouverture, même spectre). Pour chaque position, on soustrait le fond, on recadre autour du point image de référence en conservant le centroïde et l’énergie totale, puis on **interpole** entre les noyaux mesurés ou on **ajuste** un modèle continu. On recommence pour d’autres profondeurs et réglages.
+
+## Mesurer avec des motifs connus
+
+Une alternative qui n’exige pas de source parfaite : afficher un **motif net connu** sur un écran, le photographier à plusieurs positions, mises au point et distances, **recaler** le motif sur chaque capture (projection perspective, distorsion, correction de luminosité), puis chercher le champ de PSF dont le flou prédit colle aux mesures (Lin et al., *Learning Lens Blur Fields*, TPAMI 2025, avec un petit réseau de neurones comme modèle continu). La **méthode 2 de l’A2**, le *slanted edge*, relève de cette famille : un bord net connu révèle le profil de la PSF.
+
+## Concevoir une lentille, c’est optimiser une PSF
+
+<Formule titre="Optimisation d’une conception optique">
+$$
+\min_{\mathbf p}\; M(\mathbf p) = \sum_i w_i \big[m_i(\mathbf p) - t_i\big]^2
+$$
+
+$\mathbf p$ : paramètres de la lentille (courbures, asphériques, épaisseurs, verres, ouverture) ; $m_i$ : métriques simulées (taille de tache, MTF, distorsion, encombrement…) ; $t_i$ : cibles ; $w_i \ge 0$ : poids.
+</Formule>
+
+Avec une simulation **différentiable** de la formation d’image, on peut même optimiser **conjointement** la lentille et le réseau qui reconstruit l’image (Sun et al., SIGGRAPH 2021). C’est la conception conjointe du chapitre 00, appliquée à l’optique.

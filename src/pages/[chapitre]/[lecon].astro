@@ -1,0 +1,55 @@
+---
+import { render } from 'astro:content';
+import Lecon from '@/layouts/Lecon.astro';
+import { getCours, sequenceChapitres, voisins, url, type ChapitreNav, type LeconNav } from '@/lib/navigation';
+
+export async function getStaticPaths() {
+  const cours = await getCours();
+  return cours.chapitres.flatMap((chapitre) =>
+    chapitre.lecons.map((lecon) => ({
+      params: { chapitre: chapitre.id, lecon: lecon.url.split('/').filter(Boolean).pop() },
+      props: { chapitre, lecon },
+    })),
+  );
+}
+
+interface Props {
+  chapitre: ChapitreNav;
+  lecon: LeconNav;
+}
+const { chapitre, lecon } = Astro.props;
+const cours = await getCours();
+const { prec, suiv } = voisins(sequenceChapitres(cours), lecon.url);
+const { Content } = await render(lecon.entree);
+const d = lecon.entree.data;
+const liens = d.assignments
+  .map((code) => cours.assignments.find((a) => a.entree.data.code.toLowerCase() === code.toLowerCase()))
+  .filter((a) => a !== undefined)
+  .map((a) => ({ label: `Utilisé dans ${a.entree.data.code} · ${a.entree.data.titre}`, href: a.url }));
+---
+<Lecon
+  titre={d.titre}
+  resume={d.resume}
+  surtitre={d.essentiel ? `${chapitre.code} · Synthèse` : `${chapitre.code} · Leçon ${lecon.index}`}
+  duree={d.duree}
+  accent={chapitre.accent}
+  fil={[
+    { label: 'Carte', href: url('/') },
+    { label: chapitre.entree.data.titre, href: chapitre.url, code: chapitre.code },
+    { label: lecon.court },
+  ]}
+  segments={chapitre.lecons.map((l) => ({
+    url: l.url,
+    titre: l.court,
+    courant: l.url === lecon.url,
+    passe: l.index < lecon.index,
+  }))}
+  prec={prec}
+  suiv={suiv}
+  finHref={url('/')}
+  liens={liens}
+  complement={d.complement}
+  essentiel={d.essentiel}
+>
+  <Content />
+</Lecon>

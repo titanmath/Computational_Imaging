@@ -1,0 +1,25 @@
+---
+titre: "L’essentiel : HDR"
+resume: "Capturer, reconstruire, afficher, en une page."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+**Capturer** sans perdre de lumière mesurable (éviter bruit et écrêtage), **reconstruire** en calibrant, alignant et pondérant les mesures fiables, **afficher** en ramenant la radiance à la dynamique de l’écran.
+</Retenir>
+
+| Notion | À retenir |
+| --- | --- |
+| Dynamique | $\mathrm{DR} = S_\max/S_\min$ ; diaphragmes $= \log_2 \mathrm{DR}$ ; 4 096:1 = 12 IL |
+| Limites | bruit (ombres), saturation (hautes lumières) ; bits ≠ dynamique utile |
+| Bracketing | seul le temps de pose varie (ouverture, gain, traitement fixes) |
+| Modèle linéaire | $q_j = \mathrm{clip}(t_j E + n_j)$ ; $\hat E_j = q_j / t_j$ |
+| Fusion | $\hat E = \sum_j w_j q_j / t_j \,/\, \sum_j w_j$ ; poids nuls si saturé |
+| CRF | $z = f(Et)$, $g = \ln f^{-1}$ ; Debevec-Malik : moindres carrés + lissage λ + poids chapeau ; $g(128) = 0$ |
+| Mouvement | alignement, rejet robuste ; rafale de poses courtes ; $\sigma_N = \sigma_1/\sqrt N$ |
+| Capteur | double gain : une intégration, deux lectures, pas de fantômes |
+| Optique | encodage de l’éblouissement + décodage |
+| Tone mapping | $L_d = L/(1+L)$ (Reinhard, global) |
+| Écran HDR | $L_\text{out} = B \cdot T$ (LED basse résolution × LCD) |

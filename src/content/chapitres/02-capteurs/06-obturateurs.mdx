@@ -1,0 +1,24 @@
+---
+titre: "Obturateur global, obturateur roulant"
+resume: "Toutes les lignes du capteur sont-elles exposées en même temps ? Avec un obturateur roulant, non : les objets rapides se déforment."
+duree: 5
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Obturateur from '@/components/sims/ch02/Obturateur.svelte';
+
+- Avec un <Terme en="global shutter">obturateur global</Terme>, **toutes les lignes** partagent le même intervalle d’exposition. L’image est un instantané.
+- Avec un <Terme en="rolling shutter">obturateur roulant</Terme>, l’intervalle d’exposition est **décalé d’une ligne à l’autre** : la première ligne est lue, puis la suivante un peu plus tard, etc. C’est le cas de la plupart des capteurs CMOS de téléphones, parce que c’est plus simple et moins coûteux à fabriquer.
+
+<Figure legende="L’image du capteur (à droite) est construite ligne par ligne, chaque bande étant rendue à l’instant où elle est lue (ligne verte, à gauche). Accélère l’hélice ou allonge la lecture : les pales se courbent et se détachent. Passe en obturateur global pour comparer.">
+  <Obturateur client:visible />
+</Figure>
+
+<Concept titre="Pourquoi les pales se courbent">
+Des lignes exposées à des instants différents enregistrent l’objet à des **positions différentes**. Une pale qui tourne pendant que la lecture descend est « vue » de plus en plus tard en bas de l’image : sa forme apparente est un mélange de positions. D’où les hélices impossibles, les poteaux penchés filmés depuis une voiture, ou les bandes sous un éclairage qui scintille.
+</Concept>
+
+## Exposition programmable par pixel
+
+On peut aller plus loin : donner à **chaque pixel** sa propre fenêtre d’exposition (par exemple quatre durées de 1 à 4 ms réparties en mosaïque). Une seule image codée contient alors des informations temporelles, qu’un algorithme peut décoder, par exemple pour reconstruire une courte vidéo. Cela demande un matériel programmable : le capteur-processeur **SCAMP-5** (256 × 256 pixels avec calcul et mémoire locaux) exécute un programme d’exposition dans chaque pixel (Martel et al., *Neural Sensors*, TPAMI 2020). Les caméras ordinaires, elles, appliquent la même règle de temps à tous les pixels.

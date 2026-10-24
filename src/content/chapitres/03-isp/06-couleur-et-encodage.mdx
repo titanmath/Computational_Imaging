@@ -1,0 +1,61 @@
+---
+titre: "Matrice couleur et encodage sRGB"
+resume: "Une matrice 3 × 3 calibrée fait passer du RGB caméra à un espace standard, puis une courbe non linéaire convertit les intensités en codes d’affichage."
+duree: 6
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import CourbeSRGB from '@/components/sims/ch03/CourbeSRGB.svelte';
+
+## Du RGB caméra au XYZ
+
+Les sensibilités spectrales d’une caméra (Canon 1D, Nikon D40…) diffèrent des fonctions colorimétriques standard de la CIE ($\bar x, \bar y, \bar z$, chapitre 04). On approxime le passage de l’une à l’autre par une **matrice 3 × 3** :
+
+<Formule titre="Transformation couleur calibrée">
+$$
+\begin{pmatrix} X \\ Y \\ Z \end{pmatrix} \approx
+\begin{pmatrix} m_{11} & m_{12} & m_{13} \\ m_{21} & m_{22} & m_{23} \\ m_{31} & m_{32} & m_{33} \end{pmatrix}
+\begin{pmatrix} r_\text{wb} \\ g_\text{wb} \\ b_\text{wb} \end{pmatrix}
+$$
+</Formule>
+
+On l’obtient par **moindres carrés** sur des patchs de couleur connus (une charte ColorChecker) :
+
+$$
+M^* = \arg\min_M \sum_i \| M\,\mathbf c_i - \mathbf x_i \|_2^2,
+$$
+
+où $\mathbf c_i$ est le RGB caméra **linéaire** mesuré pour le patch $i$, et $\mathbf x_i$ son XYZ de référence. Le protocole : mesurer beaucoup de patchs, **ajuster** les 9 coefficients, puis **valider** sur des patchs mis de côté. Une matrice 3 × 3 n’est qu’une approximation, car les sensibilités de la caméra ne sont pas une combinaison linéaire exacte de celles de la CIE. On reprendra cette calibration au chapitre 05.
+
+## Du XYZ au sRGB
+
+<Formule titre="Étape 1 : conversion linéaire XYZ (D65) → sRGB linéaire">
+$$
+\begin{pmatrix} R_\text{lin} \\ G_\text{lin} \\ B_\text{lin} \end{pmatrix} =
+\begin{pmatrix} 3{,}2406 & -1{,}5372 & -0{,}4986 \\ -0{,}9689 & 1{,}8758 & 0{,}0415 \\ 0{,}0557 & -0{,}2040 & 1{,}0570 \end{pmatrix}
+\begin{pmatrix} X \\ Y \\ Z \end{pmatrix}
+$$
+</Formule>
+
+<Formule titre="Étape 2 : encodage sRGB, canal par canal">
+$$
+C' = \begin{cases} 12{,}92\,C & 0 \le C \le 0{,}0031308 \\ 1{,}055\,C^{1/2{,}4} - 0{,}055 & 0{,}0031308 < C \le 1 \end{cases}
+$$
+</Formule>
+
+<Figure legende="La courbe sRGB : un petit segment linéaire près de zéro, puis une puissance 1/2,4. Elle donne beaucoup de codes aux tons sombres, là où l’œil est le plus sensible aux écarts.">
+  <CourbeSRGB client:visible />
+</Figure>
+
+<Exemple titre="Le gris moyen">
+Une réflectance de 18 % ($C = 0{,}18$) donne $C' = 0{,}46136$, soit le code **118/255**. Affichée sans encodage, la même valeur linéaire donnerait 46/255 : l’image paraîtrait beaucoup trop sombre. Correctement gérées, les deux versions (linéaire + profil, ou encodée) ont la même apparence à l’écran.
+</Exemple>
+
+<Attention titre="Linéaire ≠ encodé : c’est le cœur de l’A2">
+Après l’encodage sRGB, les valeurs ne sont **plus proportionnelles** à la lumière. Ton téléphone applique en plus ses propres courbes de tonalité. C’est pour cela qu’en A2 tu dois **estimer la courbe de réponse (CRF)** avant de faire des mesures : sans cela, « deux fois plus de lumière » ne donne pas « deux fois la valeur du pixel ».
+</Attention>

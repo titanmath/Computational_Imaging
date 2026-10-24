@@ -1,0 +1,220 @@
+---
+import Base from '@/layouts/Base.astro';
+import TopBar from '@/components/nav/TopBar.astro';
+import PrecSuiv from '@/components/nav/PrecSuiv.astro';
+import { getCours, sequenceChapitres, voisins, url, type ChapitreNav } from '@/lib/navigation';
+
+export async function getStaticPaths() {
+  const cours = await getCours();
+  return cours.chapitres.map((chapitre) => ({ params: { chapitre: chapitre.id }, props: { chapitre } }));
+}
+interface Props {
+  chapitre: ChapitreNav;
+}
+const { chapitre } = Astro.props;
+const cours = await getCours();
+const { prec, suiv } = voisins(sequenceChapitres(cours), chapitre.url);
+const d = chapitre.entree.data;
+const assignmentsLies = cours.assignments.filter((a) => a.entree.data.chapitresLies.includes(chapitre.id));
+---
+<Base titre={`${chapitre.code} · ${d.titre}`} description={d.resume} accent={chapitre.accent}>
+  <TopBar
+    slot="barre"
+    fil={[{ label: 'Carte', href: url('/') }, { label: `${chapitre.code} · ${d.titre}` }]}
+    segments={chapitre.lecons.map((l) => ({ url: l.url, titre: l.court, courant: false, passe: false }))}
+  />
+  <main class="ouverture">
+    <header class="colonne entete">
+      <p class="numero" aria-hidden="true">{chapitre.code}</p>
+      <p class="etiquette">Chapitre {chapitre.numero} · {chapitre.lecons.length} leçons · ≈ {chapitre.duree} min</p>
+      <h1>{d.titre}</h1>
+      <p class="sous-titre">{d.sousTitre}</p>
+      <div class="rayon" aria-hidden="true"></div>
+      <p class="resume">{d.resume}</p>
+    </header>
+
+    <section class="colonne objectifs" aria-labelledby="obj">
+      <h2 id="obj" class="etiquette">À la fin de ce chapitre, tu sauras</h2>
+      <ul>
+        {d.objectifs.map((o) => <li>{o}</li>)}
+      </ul>
+    </section>
+
+    <section class="colonne plan" aria-labelledby="plan">
+      <h2 id="plan" class="etiquette">Plan</h2>
+      <ol>
+        {
+          chapitre.lecons.map((l) => (
+            <li>
+              <a href={l.url} class:list={{ essentiel: l.entree.data.essentiel }}>
+                <span class="n">{l.entree.data.essentiel ? '◆' : String(l.index).padStart(2, '0')}</span>
+                <span class="corps">
+                  <span class="t">{l.entree.data.titre}</span>
+                  <span class="r">{l.entree.data.resume}</span>
+                </span>
+                <span class="min">{l.entree.data.duree} min</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      {
+        chapitre.lecons[0] && (
+          <a class="commencer" href={chapitre.lecons[0].url}>
+            Commencer <span aria-hidden="true">→</span>
+          </a>
+        )
+      }
+    </section>
+
+    {
+      assignmentsLies.length > 0 && (
+        <section class="colonne lies">
+          <h2 class="etiquette">Ce chapitre sert dans</h2>
+          {assignmentsLies.map((a) => (
+            <a class="assign" href={a.url}>
+              <strong>{a.entree.data.code}</strong> {a.entree.data.titre}
+            </a>
+          ))}
+        </section>
+      )
+    }
+
+    <PrecSuiv prec={prec} suiv={suiv} />
+  </main>
+</Base>
+
+<style>
+  .ouverture {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+  }
+  .entete {
+    position: relative;
+  }
+  .numero {
+    font-family: var(--f-titre);
+    font-size: clamp(5rem, 18vw, 9rem);
+    line-height: 0.8;
+    font-weight: 300;
+    margin: 0 0 1.2rem;
+    color: var(--accent);
+    font-variation-settings: 'SOFT' 100;
+    letter-spacing: -0.04em;
+  }
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 3.6rem);
+    font-weight: 450;
+    margin-top: 0.4rem;
+  }
+  .sous-titre {
+    margin: 0.5rem 0 0;
+    font-family: var(--f-titre);
+    font-style: italic;
+    font-size: 1.3rem;
+    color: var(--encre-2);
+  }
+  .rayon {
+    margin: 2rem 0 1.5rem;
+  }
+  .resume {
+    font-size: 1.2rem;
+    color: var(--encre-2);
+    margin: 0;
+  }
+  section {
+    margin-top: 3rem;
+  }
+  section h2 {
+    margin-bottom: 1rem;
+  }
+  .objectifs ul {
+    margin: 0;
+    padding-left: 1.2em;
+  }
+  .objectifs li + li {
+    margin-top: 0.4em;
+  }
+  .objectifs li::marker {
+    color: var(--accent);
+  }
+  .plan ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--filet);
+  }
+  .plan a {
+    display: grid;
+    grid-template-columns: 2.4rem 1fr auto;
+    gap: 0.75rem;
+    align-items: baseline;
+    padding: 0.9rem 0.25rem;
+    border-bottom: 1px solid var(--filet);
+    text-decoration: none;
+    transition: background 0.2s var(--ease), padding 0.25s var(--ease);
+  }
+  .plan a:hover {
+    background: var(--papier-2);
+    padding-left: 0.6rem;
+    color: inherit;
+  }
+  .n {
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .corps {
+    display: flex;
+    flex-direction: column;
+  }
+  .t {
+    font-family: var(--f-titre);
+    font-size: 1.15rem;
+  }
+  .r {
+    font-size: 0.95rem;
+    color: var(--encre-3);
+    line-height: 1.4;
+  }
+  .min {
+    font-size: 0.85rem;
+    color: var(--encre-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .commencer {
+    display: inline-flex;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    background: var(--encre);
+    color: var(--papier);
+    text-decoration: none;
+    font-weight: 600;
+    transition: background 0.2s var(--ease), transform 0.2s var(--ease);
+  }
+  .commencer:hover {
+    background: var(--accent);
+    color: var(--papier);
+    transform: translateX(3px);
+  }
+  .lies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    align-items: baseline;
+  }
+  .lies h2 {
+    width: 100%;
+    margin-bottom: 0.2rem;
+  }
+  .assign {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--filet-fort);
+    border-radius: 999px;
+    text-decoration: none;
+  }
+  .assign:hover {
+    border-color: var(--accent);
+  }
+</style>

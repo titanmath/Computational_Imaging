@@ -1,0 +1,31 @@
+---
+titre: "Le filtre de Wiener"
+resume: "Au lieu de diviser par la fonction de transfert H, on divise par |H|² + α : aux fréquences où H est faible, on renonce à amplifier, et le bruit reste sous contrôle."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import DeconvolutionImage from '@/components/sims/ch07/DeconvolutionImage.svelte';
+
+Notons $H = \mathcal F(K)$ la <Terme en="transfer function">fonction de transfert</Terme> du flou et $Y = \mathcal F(J)$ le spectre de la mesure. Le filtrage inverse calcule $I^* = \mathcal F^{-1}(Y/H)$.
+
+<Formule titre="Filtre de Wiener">
+$$
+I^* = \mathcal F^{-1}\!\left(\frac{H^*}{|H|^2 + \alpha}\, Y\right)
+$$
+
+- $H^*$ : conjugué complexe de $H$
+- $\alpha > 0$ : force de l’**amortissement** ; $\alpha = 0$ redonne le filtre inverse
+</Formule>
+
+<Concept titre="Comment ça marche">
+Là où $|H|^2 \gg \alpha$ (basses fréquences bien transmises), on retrouve $1/H$ : on déconvolue normalement. Là où $|H|^2 \ll \alpha$ (fréquences écrasées par le flou), le gain tend vers $H^*/\alpha \to 0$ : on **n’amplifie plus** le bruit. La valeur idéale de $\alpha$ est liée au rapport bruit sur signal : plus le bruit est fort, plus il faut amortir.
+</Concept>
+
+<Figure legende="Déconvolution 2D d’une image floue et bruitée. Compare le filtre inverse (envahi de bruit) et Wiener ; augmente le bruit et cherche la valeur de α qui maximise le PSNR.">
+  <DeconvolutionImage client:visible methodeInitiale="wiener" />
+</Figure>
+
+Avec peu de bruit, Wiener retrouve beaucoup de détails ; avec un bruit fort, il doit amortir davantage et l’image reste floue, avec des oscillations près des bords (« *ringing* »). Pour aller plus loin, il faut dire ce qu’est une image plausible : c’est le rôle de l’a priori.

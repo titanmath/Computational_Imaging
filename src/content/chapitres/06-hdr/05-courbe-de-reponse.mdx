@@ -1,0 +1,72 @@
+---
+titre: "Quand l’image n’est pas linéaire : la courbe de réponse"
+resume: "Un JPEG de téléphone n’est pas proportionnel à la lumière. La méthode de Debevec et Malik retrouve la courbe de réponse de la caméra à partir de photos prises à plusieurs temps de pose."
+duree: 9
+assignments: ["a2"]
+complement: "Complément au cours, d’après l’article cité par l’A2"
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import DebevecMalik from '@/components/sims/a2/DebevecMalik.svelte';
+
+## Le problème
+
+Un ISP applique des courbes non linéaires : gamma, tonalité, « look » maison (chapitre 03). La valeur 8 bits $z$ d’un pixel n’est donc pas proportionnelle à l’exposition. On modélise :
+
+<Formule titre="Courbe de réponse de la caméra">
+$$
+z = f(E\,t), \qquad g(z) = \ln f^{-1}(z) = \ln E + \ln t
+$$
+
+- $z$ : valeur du pixel (0–255) ; $t$ : temps de pose ; $E$ : éclairement du capteur ; $E\,t$ : exposition
+- $f$ : la <Terme en="camera response function" sigle="CRF">courbe de réponse</Terme>, supposée **monotone** et **identique pour toutes les photos**
+- $g$ : son inverse en logarithme, ce qu’on va estimer
+</Formule>
+
+<Concept titre="L’astuce de Debevec et Malik (SIGGRAPH 1997)">
+On ne connaît ni $f$ ni les radiances $E_i$ de la scène. Mais on connaît les temps de pose $t_j$. Si un même point $i$ est photographié avec plusieurs temps de pose, l’équation $g(z_{ij}) = \ln E_i + \ln t_j$ relie des valeurs $g(z)$ **différentes** à la **même** inconnue $\ln E_i$. Avec assez de points et de poses, on peut résoudre **à la fois** les 256 valeurs de $g$ et les $\ln E_i$.
+</Concept>
+
+## Le système à résoudre
+
+<Formule titre="L’objectif de Debevec et Malik">
+$$
+\mathcal O = \sum_{i=1}^{N}\sum_{j=1}^{P} \Big\{ w(z_{ij})\big[g(z_{ij}) - \ln E_i - \ln t_j\big] \Big\}^2
+\;+\; \lambda \sum_{z=1}^{254} \big[w(z)\, g''(z)\big]^2
+$$
+
+- **Premier terme (données)** : chaque observation (position $i$, pose $j$) doit vérifier l’équation de réponse.
+- **Second terme (lissage)** : $g''(z) \approx g(z-1) - 2g(z) + g(z+1)$ ; $\lambda$ règle la régularité de la courbe.
+- **Poids** $w(z)$ : fonction « chapeau », nulle en 0 et 255, maximale au milieu. Elle ignore les pixels sous-exposés et saturés.
+</Formule>
+
+Ce problème est **linéaire** en ses inconnues $\big(g(0), \ldots, g(255), \ln E_1, \ldots, \ln E_N\big)$ : c’est un système de **moindres carrés** $A\mathbf x \approx \mathbf b$, résolu par les équations normales ou une décomposition SVD (l’appendice MATLAB de l’article s’appelle `gsolve`).
+
+<Attention titre="Une inconnue de trop : l’échelle">
+Si $(g, \ln E)$ est solution, alors $(g + c,\ \ln E + c)$ l’est aussi : la radiance n’est connue qu’**à une constante près**. On fixe cette constante en imposant **$g(128) = 0$** : la valeur 128 correspond par convention à une exposition relative de 1. C’est exactement ce que demande l’énoncé de l’A2, **pour chaque canal indépendamment**.
+</Attention>
+
+<Figure legende="Le même algorithme sur des expositions simulées d’une scène HDR. En pointillés, la vraie courbe cachée ; en trait plein, celle que retrouve gsolve (une par canal). Réduis le nombre de poses ou de positions, mets λ = 0, augmente le bruit : vois ce qui casse.">
+  <DebevecMalik client:visible />
+</Figure>
+
+## Lire la courbe
+
+<Exemple titre="Comme la figure de l’assistant">
+On trace la courbe **directe** : $z$ (axe vertical) en fonction de $\log_2$ de l’exposition relative (axe horizontal, en diaphragmes). Zéro diaphragme ↔ $z = 128$ ; +1 diaphragme = exposition doublée. Les valeurs extrêmes (près de 0 et 255) sont mal contraintes : l’assistant indique une plage « supportée » de 6 à 249.
+</Exemple>
+
+## Ce qu’il faut pour que ça marche
+
+<Concept titre="Conditions de capture">
+- **Une seule variable** : le temps de pose. ISO bas et **fixe**, ouverture, mise au point, **balance des blancs fixes**, même scène et même éclairage.
+- **Trépied** : les positions doivent correspondre exactement d’une photo à l’autre.
+- **Des luminosités variées** dans la scène, et des poses qui se **chevauchent** : chaque niveau de gris doit être observé non saturé dans plusieurs poses.
+- **Assez d’équations** : il faut $N(P - 1) > 255$ environ (par exemple 50 positions × 6 poses, ou plus). En pratique, on prend des patchs lisses et on moyenne leurs pixels.
+</Concept>
+
+Une fois $g$ connue, on **linéarise** n’importe quelle photo : $E\,t = \exp g(z)$. On peut alors fusionner en HDR (avec $\ln E_i = \sum_j w(z_{ij})(g(z_{ij}) - \ln t_j) / \sum_j w(z_{ij})$), ou faire des mesures physiques. C’est ce qu’exige la **tâche 2 de l’A2** (PSF « après correction de la CRF »).

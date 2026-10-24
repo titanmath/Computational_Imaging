@@ -1,0 +1,30 @@
+---
+titre: "Anatomie d’un pixel"
+resume: "Microlentille, filtre couleur, photodiode, puits de charge, circuit de lecture : un pixel est un empilement de couches, chacune avec un rôle."
+duree: 5
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import PixelCoupe from '@/components/sims/ch02/PixelCoupe.svelte';
+
+La lumière venue de l’objectif traverse plusieurs couches avant d’être mesurée :
+
+1. une <Terme en="microlens">microlentille</Terme>, qui concentre la lumière sur la zone sensible ;
+2. un <Terme en="color filter">filtre couleur</Terme> (rouge, vert ou bleu), qui ne laisse passer qu’une bande de longueurs d’onde ;
+3. la <Terme en="photodiode / photosite">photodiode</Terme> en silicium, qui génère les photoélectrons ;
+4. le <Terme en="charge well">puits de charge</Terme>, qui stocke les électrons pendant la pose ;
+5. le **circuit de lecture**, gravé dans le silicium, qui convertit la charge en tension.
+
+<Figure legende="Une coupe de 3 × 3 pixels (mosaïque RGGB). Chaque photon a la couleur de sa longueur d’onde : le filtre absorbe les autres couleurs, la photodiode en convertit une partie en électrons (QE), qui remplissent le puits jusqu’à saturation. Retire les microlentilles : beaucoup de photons tombent à côté de la zone sensible.">
+  <PixelCoupe client:visible />
+</Figure>
+
+## Pas de pixel et facteur de remplissage
+
+- Le <Terme en="pixel pitch">pas du pixel</Terme> est la distance de centre à centre entre deux pixels voisins (≈ 1 µm sur un téléphone, ≈ 4–6 µm sur un reflex).
+- Le <Terme en="fill factor">facteur de remplissage</Terme> est la fraction de la surface du pixel réellement sensible : *surface photosensible / surface totale*. Le reste est occupé par les transistors et les pistes de lecture.
+
+<Concept titre="À quoi servent les microlentilles">
+Elles redirigent vers la photodiode la lumière qui tomberait sinon sur les zones aveugles du pixel. Elles augmentent l’efficacité effective du capteur sans agrandir la photodiode. C’est indispensable pour les très petits pixels.
+</Concept>

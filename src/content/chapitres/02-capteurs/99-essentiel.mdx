@@ -1,0 +1,27 @@
+---
+titre: "L’essentiel : capteurs"
+resume: "Des photons aux nombres en une page."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+Un pixel compte des photons, en convertit une fraction α en électrons, les stocke jusqu’à $Q_{FW}$, puis les lit sous forme d’un nombre : $I = Q(g(N_e + n_\text{read}) + b)$.
+</Retenir>
+
+| Notion | À retenir |
+| --- | --- |
+| Photon | $E = hc/\lambda$ (450 nm : 4,41 × 10⁻¹⁹ J) ; on compte $N_\gamma$ |
+| QE | $\alpha(\lambda) = \mathbb E[N_e]/N_\gamma$ ; $\mu_s = \alpha N_\gamma$ |
+| Saturation | $N_e \le Q_{FW}$ : au-delà, information perdue |
+| Pixel | microlentille → filtre → photodiode → puits → lecture ; pas, facteur de remplissage |
+| Bayer | RGGB : 1 valeur par photosite, 2 verts ; couleurs manquantes estimées par l’ISP |
+| Obturateurs | global : même instant ; roulant : lignes décalées → déformations |
+| Exposition | $N_\gamma \propto R^2 \cdot T$ ; l’ISO change le gain, pas les photons |
+| Valeur | $I \approx g N_e + b$ (b ≈ 64 DN : niveau noir) |
+| Bruits | photonique $\sqrt{\mu_s}$, obscurité $\sqrt{Dt}$, lecture $\sigma_\text{read}$, quantification $1/\sqrt{12}$ |
+| Variance | $\sigma_I^2 = g^2(\mu_s + \mu_d + \sigma_\text{read}^2) + 1/12$ |
+| SNR | $\approx \sqrt{\mu_s}$ quand le bruit photonique domine |
+
+**La suite :** le RAW de Bayer, bruité et linéaire, est le point de départ de la chaîne de traitement d’image (ISP), qui reconstruit la couleur et produit la photo finale.

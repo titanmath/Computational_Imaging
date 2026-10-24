@@ -1,0 +1,56 @@
+---
+titre: "Les sources de bruit"
+resume: "Deux mesures de la même scène ne donnent jamais les mêmes valeurs. Bruit photonique, courant d’obscurité, bruit de lecture et quantification s’additionnent."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import BruitPhotonique from '@/components/sims/ch02/BruitPhotonique.svelte';
+
+Répétons trois fois la même pose de la même scène : les valeurs des pixels changent à chaque fois. Ces fluctuations ont quatre origines.
+
+## 1. Le bruit photonique
+
+L’arrivée des photons est un processus aléatoire. Le nombre d’électrons détectés suit une **loi de Poisson** : sa variance est égale à sa moyenne.
+
+<Formule titre="Bruit photonique (shot noise)">
+$$
+N_e \sim \mathrm{Poisson}(\mu_s), \qquad \sigma = \sqrt{\mu_s}
+$$
+</Formule>
+
+<Figure legende="Histogramme de 1 000 mesures d’un même pixel (barres) et loi de Poisson théorique (trait). Plus μ est grand, plus la distribution s’élargit en absolu, mais plus elle est étroite par rapport à la moyenne. À droite, une image limitée par les photons.">
+  <BruitPhotonique client:visible />
+</Figure>
+
+<Concept titre="Le bruit absolu augmente, le bruit relatif diminue">
+Pour μ = 1, 10, 100 électrons, σ = 1 ; 3,2 ; 10. Le bruit **absolu** croît, mais le bruit **relatif** σ/μ = 1/√μ diminue : 100 %, 32 %, 10 %. Plus de lumière donne une image plus propre. Ce bruit est **inévitable** : c’est une propriété de la lumière, pas un défaut du capteur.
+</Concept>
+
+## 2. Le courant d’obscurité
+
+Même capteur couvert, l’agitation thermique crée des électrons parasites, eux aussi poissonniens. Ils s’ajoutent aux photoélectrons :
+
+<Formule titre="Électrons d’obscurité">
+$$
+N_d \sim \mathrm{Poisson}(D\,t), \qquad N_e = N_p + N_d \sim \mathrm{Poisson}(\mu_s + \mu_d)
+$$
+
+$D$ : taux d’obscurité (e⁻/s), qui augmente avec la température ; $t$ : durée de pose ; $\mu_d = Dt$. Les poses longues y sont sensibles (par exemple tes poses de 30 s en A1).
+</Formule>
+
+## 3. Le bruit de lecture
+
+L’électronique de lecture ajoute une fluctuation gaussienne, rapportée à l’entrée en électrons :
+
+$$
+n_\text{read} \sim \mathcal N(0, \sigma_\text{read}^2).
+$$
+
+Il ne dépend pas du signal : il domine dans les **ombres**.
+
+## 4. La quantification
+
+L’ADC arrondit la tension à un code entier. Avec trop peu de niveaux, on voit des **bandes** dans les dégradés. L’erreur d’arrondi, uniforme sur un pas, a une variance de $1/12$ DN².

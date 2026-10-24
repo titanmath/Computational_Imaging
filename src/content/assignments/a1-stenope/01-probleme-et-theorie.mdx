@@ -1,0 +1,69 @@
+---
+titre: "Le problème : une image sans lentille"
+resume: "Un trou dans une boîte forme une image renversée sur le fond. Sa taille dépend de la longueur de la boîte, sa netteté et sa luminosité du diamètre du trou. Deux flous s’opposent : la géométrie et la diffraction."
+duree: 8
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import StenopePT from '@/components/sims/ch01/StenopePT.svelte';
+import SimulateurBoite from '@/components/sims/a1/SimulateurBoite.svelte';
+
+## Le montage
+
+Une boîte opaque, noire à l’intérieur pour éviter les reflets parasites. Sur une face, un **trou** de diamètre $d$, percé dans une plaque interchangeable. Sur la face opposée, à la distance $f$, un **écran** en papier blanc. Le **téléphone**, fixé à côté du trou et tourné vers l’intérieur, photographie l’écran. Tout le reste est rendu étanche à la lumière.
+
+<Figure legende="Vue path-tracée à travers une boîte de 26 cm de long, la géométrie typique de l’A1. Change le diamètre : un grand trou donne une image claire mais floue, un petit trou une image nette mais sombre. Avec « Gain compensé », on remonte l’ISO comme en vrai : l’image redevient lumineuse, mais bruitée.">
+  <StenopePT client:visible focale={0.26} />
+</Figure>
+
+## Ce que la physique impose
+
+<Formule titre="Projection et champ de vision (chapitre 01)">
+$$
+x = -f\,\frac{X}{Z}, \qquad y = -f\,\frac{Y}{Z}, \qquad
+\theta_h = 2\arctan\frac{w_e}{2f}, \qquad \theta_v = 2\arctan\frac{h_e}{2f}
+$$
+
+$(X, Y, Z)$ : point de la scène, à la distance $Z$ du trou ; $(x, y)$ : sa position sur l’écran ; $f$ : distance trou–écran ; $w_e \times h_e$ : taille de l’écran. Le signe moins traduit l’image **renversée** (haut-bas et gauche-droite, une rotation de 180°).
+</Formule>
+
+<Concept titre="La longueur de la boîte, c’est la focale">
+Une boîte plus longue donne une image **plus grande** (proportionnelle à $f$) et un champ de vision **plus étroit**. La même lumière est alors étalée sur une plus grande surface, et l’écran est **plus sombre**. Pour comparer avec un appareil classique, on calcule la focale équivalente 24 × 36 : $f_{35} = f \cdot 43{,}27\,\text{mm} / d_e$, où $d_e$ est la diagonale de l’écran.
+</Concept>
+
+## Le diamètre du trou : deux flous qui s’opposent
+
+<Formule titre="Flou géométrique, flou de diffraction et diamètre optimal">
+$$
+b_g = d\,\frac{s + f}{s} \approx d, \qquad
+b_d = 2{,}44\,\frac{\lambda f}{d}, \qquad
+d_\text{opt} \approx \sqrt{2{,}44\,\lambda f}, \qquad b_\text{min} \approx 2\,d_\text{opt}
+$$
+
+- $b_g$ : un point à la distance $s$ éclaire un disque de la taille du trou (un peu plus si l’objet est proche) ;
+- $b_d$ : un petit trou **diffracte** la lumière, qui forme une tache d’Airy de diamètre $2{,}44\,\lambda f/d$ ;
+- $d_\text{opt}$ : on égalise les deux flous ($b_g = b_d$), ce qui minimise approximativement leur somme.
+</Formule>
+
+<Figure legende="Le simulateur de la boîte. Règle sa longueur, son écran et le diamètre du trou : le graphe log-log montre les deux flous, le total (trait plein) et ta position (point). À droite, ce qu’on doit savoir prédire avant de photographier.">
+  <SimulateurBoite client:visible />
+</Figure>
+
+<Exemple titre="Une boîte de 26 × 19 × 15 cm (axe optique sur la longueur)">
+- $f = 26$ cm, écran 19 × 15 cm : champ de vision $2\arctan(19/52) \approx 40{,}1°$ par $2\arctan(15/52) \approx 32{,}2°$ ;
+- diagonale $\approx 24{,}2$ cm, d’où $f_{35} \approx 260 \times 43{,}27 / 242 \approx 46$ mm : à peu près un « objectif normal » ;
+- $\lambda = 550$ nm : $d_\text{opt} \approx \sqrt{2{,}44 \times 550\cdot10^{-6} \times 260} \approx 0{,}59$ mm, et $b_\text{min} \approx 1{,}2$ mm sur l’écran ;
+- un trou de 5 mm est limité par la **géométrie** ($b_g \approx 5$ mm), un trou de 0,1 mm par la **diffraction** ($b_d \approx 3{,}5$ mm).
+</Exemple>
+
+## Et la luminosité
+
+La lumière qui passe est proportionnelle à l’**aire** du trou, $\propto d^2$. Elle s’étale sur une image d’aire $\propto f^2$. L’éclairement de l’écran varie donc comme $(d/f)^2$, l’inverse du carré du nombre d’ouverture $N = f/d$ (chapitre 02).
+
+<Attention titre="Un trou 50 fois plus petit, c’est 2 500 fois moins de lumière">
+Passer de 5 mm à 0,1 mm divise la lumière par $(5/0{,}1)^2 = 2\,500$. À temps de pose fixé, il faut multiplier le gain d’autant, ce qu’aucun téléphone ne fait proprement : l’image du petit trou est sombre **et** bruitée (bruit de lecture, bruit photonique amplifié). Le meilleur trou en théorie, celui qui minimise le flou, n’est pas toujours la meilleure photo en pratique.
+</Attention>

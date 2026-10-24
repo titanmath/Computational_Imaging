@@ -1,0 +1,72 @@
+---
+titre: "L’égalisation des couleurs et l’espace CIE XYZ"
+resume: "En mélangeant trois lumières primaires, on peut reproduire n’importe quelle couleur, parfois avec un coefficient négatif. Cette expérience définit les fonctions colorimétriques, XYZ et la chromaticité."
+duree: 7
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Chromaticite from '@/components/sims/ch04/Chromaticite.svelte';
+import SolideCouleurs from '@/components/sims/ch04/SolideCouleurs.svelte';
+
+## L’expérience d’égalisation RGB
+
+Un observateur voit un champ coupé en deux. D’un côté, une lumière test $T(\lambda)$ ; de l’autre, un mélange réglable de trois **primaires** $P_R, P_G, P_B$ (CIE : 700 ; 546,1 ; 435,8 nm). Il règle les intensités $r, g, b$ jusqu’à ce que les deux moitiés soient identiques :
+
+$$
+T \sim r\,P_R + g\,P_G + b\,P_B
+$$
+
+($\sim$ : égalité **visuelle**, même si les spectres diffèrent.)
+
+<Concept titre="Le coefficient négatif">
+Certaines couleurs spectrales ne peuvent pas être égalées avec des quantités positives des trois primaires. On **ajoute alors du rouge du côté du test** : $T + a\,P_R \sim g\,P_G + b\,P_B$, ce qui s’écrit $T \sim (-a)\,P_R + g\,P_G + b\,P_B$, donc $r = -a < 0$. Le signe enregistre simplement de quel côté il a fallu ajouter de la lumière.
+</Concept>
+
+En balayant un test de puissance unité sur toutes les longueurs d’onde, on obtient les **fonctions colorimétriques** $\bar r(\lambda), \bar g(\lambda), \bar b(\lambda)$ (CIE 1931 RGB). Pour un spectre quelconque :
+
+$$
+r = \int L_\lambda(\lambda)\,\bar r(\lambda)\,\mathrm d\lambda \quad (\text{idem pour } g \text{ et } b).
+$$
+
+## L’espace CIE XYZ
+
+Pour éviter les valeurs négatives, la CIE a défini en 1931 trois nouvelles fonctions $\bar x, \bar y, \bar z$, **combinaisons linéaires fixes** de $\bar r, \bar g, \bar b$, partout positives.
+
+<Formule titre="Les coordonnées XYZ">
+$$
+X = \int L_\lambda \bar x\,\mathrm d\lambda, \quad Y = \int L_\lambda \bar y\,\mathrm d\lambda, \quad Z = \int L_\lambda \bar z\,\mathrm d\lambda
+$$
+
+- La courbe $\bar y(\lambda)$ **est** $V(\lambda)$ : avec la bonne échelle, $Y$ est la **luminance photopique**.
+- $X$ et $Z$ sont des coordonnées mathématiques, sans interprétation de luminosité séparée.
+</Formule>
+
+<Figure legende="L’espace XYZ en 3D. Le cône contient toutes les couleurs réalisables ; le parallélépipède coloré est le gamut sRGB d’un écran.">
+  <SolideCouleurs client:visible />
+</Figure>
+
+## La chromaticité
+
+<Formule titre="Coordonnées de chromaticité">
+$$
+x = \frac{X}{X+Y+Z}, \qquad y = \frac{Y}{X+Y+Z}
+$$
+
+Elles retirent l’**intensité globale** : doubler $X, Y, Z$ ne change pas $(x, y)$. On garde $Y$ à part pour la luminance.
+</Formule>
+
+<Exemple titre="Même chromaticité">
+$(X, Y, Z) = (2, 3, 5)$ et $(4, 6, 10)$ donnent toutes deux $(x, y) = (0{,}2;\ 0{,}3)$.
+</Exemple>
+
+<Figure legende="Le diagramme de chromaticité, calculé à partir des fonctions colorimétriques. Le bord courbe : les couleurs spectrales, une longueur d’onde par point. La droite du bas joint le rouge et le violet. Le triangle : le gamut sRGB, dont les sommets sont les primaires de l’écran. D65 : le blanc de référence.">
+  <Chromaticite client:visible />
+</Figure>
+
+<Attention titre="Le diagramme n’est pas uniforme">
+Une même distance dans le diagramme $xy$ ne correspond pas à une même différence perçue (les verts y sont « étalés »). Pour mesurer des écarts de couleur, on utilise des espaces plus uniformes comme CIELAB, dont on a utilisé le ΔE pour le métamérisme.
+</Attention>

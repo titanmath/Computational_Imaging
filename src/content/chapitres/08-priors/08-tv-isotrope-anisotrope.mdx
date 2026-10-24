@@ -1,0 +1,53 @@
+---
+titre: "TV isotrope, TV anisotrope et force du prior"
+resume: "La TV isotrope mesure la longueur du gradient, l’anisotrope la somme des valeurs absolues de ses composantes : (3, 4) coûte 5 ou 7. Et λ règle l’équilibre entre bruit et perte de texture."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import IsoAniso from '@/components/sims/ch08/IsoAniso.svelte';
+import DebruitagePriors from '@/components/sims/ch08/DebruitagePriors.svelte';
+
+<Formule titre="Deux variations totales">
+$$
+\text{isotrope : } \Psi(x) = \|g(x)\|_1 = \sum_p \sqrt{(D_\mathrm h x)_p^2 + (D_\mathrm v x)_p^2}
+$$
+$$
+\text{anisotrope : } \Psi(x) = \|D_\mathrm h x\|_1 + \|D_\mathrm v x\|_1 = \sum_p \big(|(D_\mathrm h x)_p| + |(D_\mathrm v x)_p|\big)
+$$
+
+L’isotrope (même a priori qu’à la leçon précédente) prend la **longueur** du gradient. L’anisotrope additionne **séparément** chaque composante (c’est la TV du chapitre 07).
+</Formule>
+
+<Exemple titre="Même longueur, coûts différents">
+Pour $\nabla x(p) = (3, 4)^\top$ : isotrope $\sqrt{3^2 + 4^2} = 5$, anisotrope $|3| + |4| = 7$.
+Pour $\nabla x(p) = (5, 0)^\top$ : $5$ dans les deux cas. Les deux gradients ont la même longueur, mais l’anisotrope fait payer plus cher le gradient oblique.
+</Exemple>
+
+<Figure legende="À gauche, fais glisser le gradient : le cercle et le losange réunissent les gradients de même coût. À droite, la même image bruitée débruitée par les deux TV. Monte λ : la TV anisotrope « équarrit » le disque et crénelle les bords du losange, à 45°. Elle préfère les bords horizontaux et verticaux.">
+  <IsoAniso client:visible />
+</Figure>
+
+<Concept titre="Isotrope ou anisotrope ?">
+La TV **isotrope** ne dépend pas de l’orientation des bords : une rotation de l’image ne change pas son coût (aux effets de grille près). L’**anisotrope** est plus simple à optimiser, car chaque composante se seuille séparément, mais elle introduit un **biais** en faveur des directions de la grille de pixels. Pour des photos, on préfère l’isotrope ; pour des documents, des QR codes ou des plans, l’anisotrope convient bien.
+</Concept>
+
+## La force de l’a priori
+
+<Formule titre="Débruitage TV, force λ">
+$$
+\hat x = \arg\min_x \; \underbrace{\tfrac12 \|b - x\|_2^2}_{\text{attache aux données}} + \lambda \underbrace{\sum_p \|\nabla x(p)\|_2}_{\text{régulariseur TV}}
+$$
+</Formule>
+
+<Figure legende="Les trois forces du cours : faible (λ = 0,015), moyenne (λ = 0,07), forte (λ = 0,22). Regarde le panneau « Retiré » : à λ fort, il contient les textures de la mire et du panneau, que l’a priori a effacées en même temps que le bruit.">
+  <DebruitagePriors client:visible priorInitial="tv" lambdaInitial={0.015} forces choix={['tv', 'tva']} />
+</Figure>
+
+<Attention titre="Plus de prior : moins de bruit, mais aussi moins de texture">
+Un λ faible laisse du bruit. Un λ fort supprime le bruit **et** les détails fins : herbe, briques, texte, que la TV prend pour du bruit puisqu’ils ont beaucoup de petits gradients. Le bon λ dépend du niveau de bruit : plus $\sigma$ est grand, plus il faut un λ grand.
+</Attention>

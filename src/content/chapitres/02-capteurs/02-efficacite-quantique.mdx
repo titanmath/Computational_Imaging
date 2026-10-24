@@ -1,0 +1,30 @@
+---
+titre: "L’efficacité quantique"
+resume: "Tous les photons ne sont pas convertis en électrons. La proportion convertie, l’efficacité quantique, dépend de la longueur d’onde."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import EfficaciteQuantique from '@/components/sims/ch02/EfficaciteQuantique.svelte';
+
+La photodiode en silicium convertit une partie des photons incidents en **électrons** (l’effet photoélectrique). Ce sont ces électrons, et non les photons, que le pixel stocke puis mesure.
+
+<Formule titre="Efficacité quantique (QE)">
+$$
+\alpha(\lambda) = \frac{\mathbb E[N_e]}{N_\gamma}, \qquad \mu_s(\lambda) = \alpha(\lambda)\,N_\gamma(\lambda)
+$$
+
+- $\alpha$ : <Terme en="quantum efficiency" sigle="QE">efficacité quantique</Terme>, entre 0 et 1
+- $N_e$ : électrons collectés (aléatoire), $\mathbb E[N_e]$ son espérance
+- $\mu_s$ : nombre **moyen** d’électrons de signal
+</Formule>
+
+<Figure legende="Courbe d’efficacité quantique typique d’un capteur scientifique (allure de l’ORCA-Quest 2 de Hamamatsu, d’après les slides). Sur 1 000 photons : environ 850 électrons à 460 nm, environ 300 à 900 nm.">
+  <EfficaciteQuantique client:visible />
+</Figure>
+
+<Concept titre="Le même nombre de photons peut donner des signaux différents">
+Le silicium absorbe mal l’ultraviolet (absorbé en surface) et l’infrarouge proche (qui le traverse sans être absorbé). Le capteur a donc sa propre « sensibilité spectrale », différente de celle de l’œil : c’est une des raisons pour lesquelles la couleur doit être **calibrée** (chapitres 03 et 05).
+</Concept>

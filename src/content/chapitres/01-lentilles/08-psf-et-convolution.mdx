@@ -1,0 +1,40 @@
+---
+titre: "PSF : la signature du flou"
+resume: "La réponse d’un système à un point lumineux, la PSF, suffit à décrire tout son flou : l’image mesurée est la convolution de l’image nette par la PSF."
+duree: 5
+assignments: ["a2"]
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import PSFConvolution from '@/components/sims/ch01/PSFConvolution.svelte';
+
+La <Terme en="point spread function" sigle="PSF">fonction d’étalement du point</Terme> est l’image que produit le système pour **un seul point lumineux** : un point parfait (une étoile, une LED très lointaine) devient une petite tache $h$. Elle résume tout ce que l’optique (défocus, diffraction, aberrations) et même le capteur font à l’image.
+
+## Pourquoi la PSF suffit
+
+Une scène est une infinité de points lumineux. Pour une lumière **incohérente** (le cas normal : soleil, lampes), les contributions de points différents s’ajoutent **en intensité**. Chaque point de la scène nette dépose donc sur le capteur une copie de la PSF, décalée à sa position et pondérée par son intensité. La somme de toutes ces copies est une **convolution** :
+
+<Formule titre="Formation d’image par convolution">
+$$
+I = h * I_0, \qquad I(\mathbf x) = \sum_{\mathbf u} h(\mathbf u)\, I_0(\mathbf x - \mathbf u)
+$$
+
+- $I_0$ : image nette idéale, $I$ : image mesurée
+- $h$ : PSF en intensité, normalisée ($\sum h = 1$ : le flou ne crée ni ne détruit de lumière)
+- $*$ : convolution 2D
+</Formule>
+
+<Figure legende="Choisis une PSF : chaque pixel de l’image nette est remplacé par une copie de la PSF. Une PSF compacte préserve les détails fins ; un disque (défocus) étale les bords dans toutes les directions ; une PSF asymétrique (bougé) leur donne une traîne directionnelle.">
+  <PSFConvolution client:visible />
+</Figure>
+
+<Attention titre="L’hypothèse cachée : invariance par translation">
+Écrire $I = h * I_0$ suppose que la **même** PSF s’applique partout dans l’image (système <Terme en="shift-invariant">invariant par translation</Terme>). C’est souvent vrai localement, mais pas sur tout le champ : les bords d’une image sont en général plus flous que le centre. On parle alors de PSF **variable spatialement**, $h_{\mathbf x}$ (dernière leçon de ce chapitre). Autre hypothèse : on travaille sur des **intensités linéaires**, pas sur des valeurs JPEG gamma-encodées. C’est pour cela qu’en A2 on corrige d’abord la courbe de réponse avant de mesurer la PSF.
+</Attention>
+
+<Concept titre="Pourquoi c’est central pour la suite">
+Si l’on connaît $h$, on peut **simuler** le flou d’un système (problème direct), et surtout essayer de le **défaire** (déconvolution, chapitre 07). Mesurer $h$, c’est **calibrer** le système (chapitre 05 et assignment 2).
+</Concept>

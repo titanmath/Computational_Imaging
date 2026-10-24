@@ -1,0 +1,30 @@
+---
+titre: "Les écrans HDR"
+resume: "Un rétroéclairage LED modulé derrière un écran LCD : la luminance émise est le produit des deux. On multiplie ainsi les contrastes."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import DoubleModulation from '@/components/sims/ch06/DoubleModulation.svelte';
+
+Plutôt que de comprimer la radiance, on peut construire un écran qui en restitue davantage (Seetzen et al., *High Dynamic Range Display Systems*, SIGGRAPH 2004).
+
+<Formule titre="Double modulation">
+$$
+L_\text{out}(\mathbf x) = B(\mathbf x)\, T(\mathbf x)
+$$
+
+- $B$ : luminance du rétroéclairage, une **matrice de LED basse résolution** qui contrôle l’éclairement local
+- $T$ : transmission de l’écran LCD, à **pleine résolution**, qui contrôle les détails fins
+- $\mathbf x$ : position sur l’écran
+</Formule>
+
+<Figure legende="Pour une image cible, on choisit le rétroéclairage (chaque LED suit le maximum de sa zone, puis la lumière diffuse), puis la transmission T = cible / B. Avec peu de LED, des halos apparaissent autour des zones lumineuses.">
+  <DoubleModulation client:visible />
+</Figure>
+
+<Concept titre="Pourquoi ça marche">
+Les contrastes se **multiplient** : un LCD de 500:1 devant des LED modulées sur 100:1 donne environ 50 000:1. C’est le principe des téléviseurs « *local dimming* » et des écrans mini-LED. Les écrans OLED, eux, modulent directement chaque pixel.
+</Concept>

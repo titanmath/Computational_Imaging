@@ -1,0 +1,40 @@
+---
+titre: "Bracketing et modèle linéaire"
+resume: "On change seulement le temps de pose. Avec des données linéaires, diviser chaque mesure par son temps de pose ramène toutes les expositions sur une même échelle de radiance."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+Le <Terme en="exposure bracketing">bracketing d’exposition</Terme> consiste à prendre plusieurs photos en **changeant le temps de pose** tout en gardant **fixes** l’ouverture, le gain et le traitement (par exemple 1×, 8×, 64×).
+
+<Formule titre="Modèle de mesure linéaire">
+$$
+q_j = \operatorname{clip}\big(t_j\,E + n_j\big)
+$$
+
+- $q_j$ : signal linéaire corrigé (noir soustrait, gain connu) de l’exposition $j$
+- $E$ : débit de signal de la scène en ce pixel (proportionnel à la radiance)
+- $t_j$ : durée de pose ; $n_j$ : bruit ; *clip* : saturation du capteur et de la lecture
+</Formule>
+
+<Formule titre="Estimations normalisées par l’exposition">
+$$
+\hat E_j = \frac{q_j}{t_j}
+$$
+
+Chaque canal RGB linéaire est divisé par son temps de pose. Là où la mesure est fiable, toutes les expositions donnent **la même** valeur.
+</Formule>
+
+<Concept titre="Où les estimations divergent">
+- Dans la pose **longue**, les hautes lumières sont saturées : $q/t$ y est **sous-estimé**.
+- Dans la pose **courte**, les ombres sont noyées dans le bruit : $q/t$ y est **très bruité**.
+
+D’où l’idée de **pondérer** chaque mesure par sa fiabilité (leçon suivante).
+</Concept>
+
+<Attention titre="Tout repose sur la linéarité">
+Diviser par $t_j$ n’a de sens que si la valeur du pixel est **proportionnelle** à l’exposition. Avec un RAW, c’est le cas après soustraction du noir. Avec un JPEG de téléphone, **non** : il faut d’abord retrouver la courbe de réponse (leçon « Quand l’image n’est pas linéaire »).
+</Attention>

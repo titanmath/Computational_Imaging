@@ -1,0 +1,53 @@
+---
+titre: "Percevoir la profondeur, tromper la profondeur"
+resume: "L’œil combine de nombreux indices de profondeur. Les écrans stéréo en reproduisent certains mais pas d’autres, ce qui crée le conflit vergence-accommodation."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Vergence3D from '@/components/sims/ch04/Vergence3D.svelte';
+
+## Les indices monoculaires
+
+Même avec un seul œil, une image plate donne une impression de profondeur :
+- **perspective** : les bords d’une route convergent ;
+- **taille relative** : des voitures semblables sous-tendent des angles différents ;
+- **occultation et texture** : ce qui cache est devant ; la texture se resserre au loin.
+
+Leur importance varie avec la **distance** (Cutting & Vishton, 1995) : la stéréo et la vergence comptent de près, la perspective et la perspective aérienne au loin. Les structures impossibles d’Escher (*Montée et descente*, *Cascade*) montrent que des indices **locaux** peuvent contredire la géométrie **globale**.
+
+## Stéréo, vergence et accommodation
+
+Deux yeux séparés de ≈ 6,4 cm voient la scène de deux points de vue : les points correspondants sont **décalés** entre les deux images (disparité). C’est le principe des stéréogrammes, dès le XIXᵉ siècle.
+
+- La <Terme en="vergence">vergence</Terme> : les deux yeux **tournent** pour converger sur l’objet fixé.
+- L’<Terme en="accommodation">accommodation</Terme> : le cristallin **met au point** à sa distance.
+
+Dans la vraie vie, les deux sont couplées : on converge et on accommode à la même distance.
+
+<Attention titre="Le conflit vergence-accommodation">
+Dans un casque de réalité virtuelle, l’image est sur un écran à distance optique **fixe**. Les yeux convergent sur l’objet virtuel (grâce à la stéréo), mais doivent accommoder sur l’écran. Ce découplage provoque fatigue visuelle, inconfort et difficulté de mise au point (Hoffman et al., 2008).
+</Attention>
+
+<Formule titre="Ampleur du conflit (en dioptries)">
+$$
+\Delta = \left|\frac{1}{d_\text{vergence}} - \frac{1}{d_\text{accommodation}}\right|
+$$
+</Formule>
+
+<Figure legende="Lignes vertes : la vergence, vers l’objet virtuel. Cônes orange : l’accommodation, vers l’écran. Rapproche l’objet virtuel pour voir le conflit grandir.">
+  <Vergence3D client:visible />
+</Figure>
+
+## Des écrans qui prennent en compte la perception
+
+- **Flou chromatique** : l’œil a une aberration chromatique longitudinale ; en rendant un défocus dépendant de la longueur d’onde, on fournit un indice qui peut déclencher l’accommodation (Cholewiak et al., 2017).
+- **Écrans multifocaux** : deux plans focaux par œil, et un mélange de profondeur entre les deux plans pour approximer les distances intermédiaires (Zhong et al., 2021).
+- **Rendu fovéal** : on calcule plusieurs couches imbriquées, à pleine résolution seulement là où l’on regarde (suivi du regard) et avec moins d’échantillons en périphérie (Guenter et al., 2012).
+
+<Concept titre="L’observateur est un composant du système">
+On ne conçoit pas un écran (ni une caméra destinée à un humain) sans modèle de la perception : ce que l’œil ne voit pas n’a pas besoin d’être calculé ni transmis.
+</Concept>

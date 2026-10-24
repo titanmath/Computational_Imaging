@@ -1,0 +1,28 @@
+---
+titre: "L’essentiel : ISP"
+resume: "La chaîne de traitement en une page."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+L’ISP transforme une mosaïque RAW **linéaire et bruitée** en une image **encodée et compressée** pour l’affichage. Chaque étape change le sens des valeurs : pour mesurer, on garde des données linéaires et calibrées.
+</Retenir>
+
+| Étape | Opération | À retenir |
+| --- | --- | --- |
+| Niveau noir | $I - D$ | $D$ = moyenne d’images noires (même expo, gain, température) |
+| Défauts | moyenne des 4 voisins de même couleur | (1000 + 980 + 1040 + 1020)/4 = 1010 |
+| Vignetage | $I \cdot 1/v$ | mesuré sur un champ plat ; amplifie le bruit des coins |
+| Dématriçage | bilinéaire : $G_5 = \tfrac14\sum G$ | fausses couleurs sur les détails fins |
+| Débruitage | médian $\theta \times \theta$ | moins de bruit, moins de texture |
+| Balance des blancs | $a_c = k/\ell_c$ | (0,2 ; 0,8 ; 0,8) → gains (4, 1, 1) |
+| Couleur | $M^* = \arg\min \sum \|M\mathbf c_i - \mathbf x_i\|^2$ | RGB caméra → XYZ → sRGB linéaire |
+| Encodage | $C' = 1{,}055\,C^{1/2{,}4} - 0{,}055$ | 0,18 → 118/255 |
+| JPEG | $q = \operatorname{round}(D/Q)$ | seule étape avec perte ; −470,09/14 → −34 |
+| Qualité | $\mathrm{PSNR} = 10\log_{10}(P^2/\mathrm{MSE})$ | MSE 0,01 → 20 dB |
+
+- **Données quantitatives** : noir soustrait, gain et expo connus, pas de saturation, pas de sRGB ni de JPEG. Modèle $y = A(p) + \varepsilon$.
+- **ISP neuronal** : $\hat y = F_w(x, c)$, entraîné sur des paires (SID, ParamISP).
+- **Réglage d’ISP** : optimiser $\theta$ pour la tâche, par proxy différentiable ou matériel dans la boucle (CMA-ES).

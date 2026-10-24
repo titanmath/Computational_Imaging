@@ -1,0 +1,43 @@
+---
+// Le modèle direct b = f(x) selon où l'on place x : capteur seul, + ISP, + optique, + scène.
+const etages = ['Scène', 'Optique', 'Capteur', 'ISP'];
+const exemples = [
+  { de: 2, a: 3, t: 'Simulation du capteur : lumière au capteur → sortie du capteur' },
+  { de: 2, a: 4, t: 'Capteur + ISP : lumière au capteur → image ISP' },
+  { de: 1, a: 4, t: 'Optique + capteur + ISP : lumière à la lentille → image ISP' },
+  { de: 0, a: 4, t: 'Scène + optique + capteur + ISP : paramètres du monde → image' },
+];
+---
+<figure class="deborde schema anime">
+  <div class="tete">{etages.map((e) => <span>{e}</span>)}</div>
+  <ol>
+    {
+      exemples.map((ex, i) => (
+        <li style={`--d:${i * 0.12}s`}>
+          <div class="barre">
+            <span class="x" style={`grid-column:${ex.de + 1}`}>x</span>
+            <span class="f" style={`grid-column:${ex.de + 1} / ${ex.a + 1}`} />
+            <span class="b" style={`grid-column:${ex.a}`}>b</span>
+          </div>
+          <p>{ex.t}</p>
+        </li>
+      ))
+    }
+  </ol>
+</figure>
+
+<style>
+  .schema { margin-block: 2rem; }
+  .tete, .barre { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .tete span { text-align: center; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--encre-3); padding-bottom: 0.4rem; border-bottom: 1px solid var(--filet); }
+  ol { list-style: none; margin: 0.6rem 0 0; padding: 0; display: grid; gap: 0.8rem; }
+  li { opacity: 0; transform: translateX(-10px); transition: opacity 0.5s var(--ease) var(--d), transform 0.5s var(--ease) var(--d); }
+  .en-vue li { opacity: 1; transform: none; }
+  .barre { position: relative; align-items: center; height: 1.6rem; }
+  .f { grid-row: 1; height: 6px; border-radius: 3px; background: linear-gradient(90deg, color-mix(in oklab, var(--accent) 30%, transparent), var(--accent)); }
+  .x, .b { grid-row: 1; z-index: 1; font-family: var(--f-titre); font-style: italic; font-size: 1.05rem; }
+  .x { justify-self: start; background: var(--papier); padding: 0 0.35rem; }
+  .b { justify-self: end; background: var(--papier); padding: 0 0.35rem; color: var(--accent); }
+  li p { margin: 0.2rem 0 0; font-size: 0.88rem; color: var(--encre-2); }
+  @media (prefers-reduced-motion: reduce) { li { opacity: 1; transform: none; } }
+</style>

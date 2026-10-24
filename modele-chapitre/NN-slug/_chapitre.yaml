@@ -1,0 +1,13 @@
+numero: 9
+titre: "Titre du chapitre"
+sousTitre: "Sous-titre court"
+resume: "Deux ou trois phrases qui disent de quoi parle le chapitre et pourquoi c’est utile."
+objectifs:
+  - "premier objectif, formulé comme une compétence (expliquer…, calculer…, comparer…)"
+  - "deuxième objectif"
+# glyphe de la station sur la carte (src/components/carte/glyphes.ts) : point, source, lentille, capteur, isp, oeil, mire, hdr, inverse, prior
+icone: point
+# facultatif : longueur d'onde (nm) de la couleur d'accent ; sinon dérivée du numéro
+# nm: 680
+# fichier PDF source, pour mémoire (jamais publié)
+source: 9_exemple_2026.pdf

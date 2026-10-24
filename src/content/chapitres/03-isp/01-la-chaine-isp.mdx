@@ -1,0 +1,56 @@
+---
+titre: "La chaîne ISP en un coup d’œil"
+resume: "Entre le capteur et le fichier JPEG, une dizaine d’étapes transforment la mosaïque RAW. Chacune change la façon dont il faut interpréter les valeurs."
+duree: 6
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import PipelineISP from '@/components/sims/ch03/PipelineISP.svelte';
+import PileISP from '@/components/sims/ch03/PileISP.svelte';
+
+La lentille forme une image floutée par sa PSF. Le capteur la mesure en une **valeur par photosite**, bruitée. Le <Terme en="image signal processor" sigle="ISP">processeur de traitement du signal d’image</Terme> part de ce RAW de Bayer et produit une image couleur prête à afficher.
+
+## Les étapes classiques
+
+1. **Corrections RAW** : niveau noir, pixels défectueux, vignetage
+2. **Dématriçage** : estimer les couleurs manquantes
+3. **Débruitage**
+4. **Balance des blancs** : neutraliser l’illuminant
+5. **Couleur et tonalité** : matrice couleur, courbes, apparence
+6. **Redimensionnement**
+7. **Encodage** : convertir en codes d’affichage (sRGB)
+8. **Compression** (JPEG, HEIF…)
+
+Les implémentations réelles réordonnent parfois ces opérations, ou en résolvent plusieurs **conjointement** (dématriçage + débruitage, par exemple).
+
+<Figure legende="Une vraie chaîne appliquée à un RAW simulé (12 bits, bruit photonique et de lecture, vignetage, trois pixels chauds, éclairage tungstène). Clique sur une étape de la pellicule ; la loupe montre ce qui se passe au niveau des pixels.">
+  <PipelineISP client:visible />
+</Figure>
+
+<Concept titre="Chaque étape change le sens des valeurs">
+Au début, une valeur est un **nombre d’électrons** (à un gain et un décalage près) : elle est proportionnelle à la lumière. À la fin, c’est un **code d’affichage** compressé, choisi pour plaire à l’œil. Entre les deux, on perd la proportionnalité, de l’information (quantification, JPEG) et la possibilité de remonter à la physique. Retiens-le pour l’A2.
+</Concept>
+
+<Figure legende="La même chaîne en 3D : chaque étape est une plaque. Fais avancer l’étape mise en avant et tourne autour.">
+  <PileISP client:visible />
+</Figure>
+
+## RAW ou RGB : combien ça pèse ?
+
+<Exemple titre="Un capteur de 12 Mpx">
+- **RAW de Bayer** : 1 valeur par photosite, 12 bits par valeur → 12 M × 12 / 8 = **18 Mo**.
+- **RGB 8 bits** : 3 valeurs par pixel → 12 M × 3 × 8 / 8 = **36 Mo**.
+
+L’image RGB est plus grosse alors qu’elle contient **moins d’information mesurée** : les deux tiers des couleurs y sont estimées. Les en-têtes et la compression ne sont pas comptés ici.
+</Exemple>
+
+## Précision et stockage
+
+La précision utile est fixée par le **mode de lecture du capteur et de l’ADC** ; le format de fichier fixe seulement le stockage. Un échantillon de 12 bits (4 096 codes, par exemple 1 064 DN) est souvent rangé dans un mot de 16 bits, avec 4 bits de remplissage. Selon les capteurs : 10 ou 12 bits (Sony IMX224), 12 ou 14 bits dans les fichiers Nikon NEF, un vrai ADC 16 bits sur le Sony IMX455.
+
+## ISP matériel ou logiciel
+
+- **Matériel** : des blocs dédiés dans la puce de l’appareil (le SoC). Très rapide et économe en énergie, mais figé.
+- **Logiciel** : sur CPU ou GPU (Adobe Camera Raw, Lightroom, la pile caméra du Raspberry Pi). Programmable, plus lent.

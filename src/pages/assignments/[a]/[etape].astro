@@ -1,0 +1,46 @@
+---
+import { render } from 'astro:content';
+import Lecon from '@/layouts/Lecon.astro';
+import { getCours, sequenceAssignment, voisins, url, type AssignmentNav, type EtapeNav } from '@/lib/navigation';
+
+export async function getStaticPaths() {
+  const cours = await getCours();
+  return cours.assignments.flatMap((assignment) =>
+    assignment.etapes.map((etape) => ({
+      params: { a: assignment.id, etape: etape.url.split('/').filter(Boolean).pop() },
+      props: { assignment, etape },
+    })),
+  );
+}
+interface Props {
+  assignment: AssignmentNav;
+  etape: EtapeNav;
+}
+const { assignment, etape } = Astro.props;
+const { prec, suiv } = voisins(sequenceAssignment(assignment), etape.url);
+const { Content } = await render(etape.entree);
+const a = assignment.entree.data;
+---
+<Lecon
+  titre={etape.entree.data.titre}
+  resume={etape.entree.data.resume}
+  surtitre={`${a.code} · Étape ${etape.index}`}
+  duree={etape.entree.data.duree}
+  accent={assignment.accent}
+  fil={[
+    { label: 'Carte', href: url('/') },
+    { label: a.titre, href: assignment.url, code: a.code },
+    { label: etape.court },
+  ]}
+  segments={assignment.etapes.map((e) => ({
+    url: e.url,
+    titre: e.court,
+    courant: e.url === etape.url,
+    passe: e.index < etape.index,
+  }))}
+  prec={prec}
+  suiv={suiv}
+  finHref={url('/')}
+>
+  <Content />
+</Lecon>

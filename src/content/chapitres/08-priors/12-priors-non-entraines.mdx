@@ -1,0 +1,67 @@
+---
+titre: "Des a priori sans entraînement : DIP et champs neuronaux"
+resume: "Un réseau non entraîné, ajusté à une seule mesure, reproduit les structures de l’image avant son bruit. En l’arrêtant tôt, on obtient un débruitage sans aucune donnée d’entraînement."
+duree: 7
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import BoucleDIP from '@/components/schemas/ch08/BoucleDIP.astro';
+import ChampNeuronal from '@/components/sims/ch08/ChampNeuronal.svelte';
+
+## Deep Image Prior
+
+Ulyanov, Vedaldi et Lempitsky (CVPR 2018) ont observé un phénomène surprenant. On prend un réseau convolutif **non entraîné**, on lui donne en entrée un bruit fixe $z$, et on ajuste ses poids pour que sa sortie reproduise la mesure $b$, **une seule image**.
+
+<Formule titre="Deep Image Prior (DIP)">
+$$
+\hat\theta = \arg\min_\theta \tfrac12 \big\|F_\theta(z) - b\big\|_2^2, \qquad \hat x = F_{\hat\theta}(z)
+$$
+
+$z$ : bruit fixe ; $\theta$ : poids ajustés ; $b$ : l’observation, la seule donnée. Il n’y a **aucune image d’entraînement externe**.
+</Formule>
+
+<BoucleDIP />
+
+Avec assez d’itérations, le réseau finit par reproduire $b$ à l’identique, bruit compris. Mais **l’ordre** dans lequel il apprend est révélateur : les structures naturelles (contours, aplats, formes) apparaissent **bien avant** le bruit. Le réseau oppose une forte « impédance » au bruit et une faible aux images naturelles. L’architecture elle-même est l’a priori.
+
+<Exemple titre="Arrêt précoce (suppression d’artefacts JPEG, article de 2018)">
+- 100 itérations : une silhouette floue, la structure apparaît ;
+- 600 à 2 400 itérations : une image nette, sans les artefacts ;
+- 50 000 itérations : les **artefacts de la mesure reviennent**, le réseau a tout appris.
+
+S’arrêter tôt limite le <Terme en="overfitting">surapprentissage</Terme> de l’observation corrompue.
+</Exemple>
+
+<Concept titre="Au-delà du débruitage">
+Il suffit de mettre le modèle direct dans la perte : $\min_\theta \tfrac12 \|A\,F_\theta(z) - b\|_2^2$.
+- <Terme en="inpainting">Inpainting</Terme> (remplissage) : $A$ ne garde que les pixels observés ; le réseau invente le reste de façon cohérente.
+- <Terme en="super-resolution">Super-résolution</Terme> ×4 : $A$ sous-échantillonne la sortie ; le réseau produit une image haute résolution dont la version réduite colle à $b$.
+</Concept>
+
+## Les champs neuronaux
+
+Un <Terme en="neural field">champ neuronal</Terme> pousse l’idée plus loin. Le réseau est un petit perceptron multicouche ($MLP$) qui prend en entrée une **coordonnée de pixel** $p$, mise à l’échelle dans $[-1, 1]^2$ (par exemple $p = (0{,}225 ; -0{,}030)$ pour la colonne 305, ligne 290), et renvoie une couleur.
+
+<Formule titre="Ajuster un champ neuronal à une image">
+$$
+F_\theta(p) = (\hat R, \hat G, \hat B), \qquad \min_\theta \sum_p \big\|F_\theta(p) - b(p)\big\|_2^2
+$$
+
+On met à jour $\theta$ pour ajuster toutes les positions de pixels. L’image est alors représentée par les poids du réseau, une fonction continue des coordonnées.
+</Formule>
+
+<Figure legende="Un champ neuronal 1D (caractéristiques de Fourier aléatoires, deux couches tanh, Adam) entraîné en direct sur une seule mesure bruitée. Il apprend d’abord les grandes formes (le PSNR par rapport au signal propre monte), puis recopie le bruit (il redescend, alors que l’ajustement à la mesure continue de monter). La ligne pointillée marque le meilleur moment pour s’arrêter. Augmente σ : le réseau peut représenter des fréquences plus hautes et surapprend plus vite.">
+  <ChampNeuronal client:visible />
+</Figure>
+
+<Exemple titre="WIRE (Saragadam et al., CVPR 2023)">
+Avec des activations en ondelettes, un champ neuronal ajusté à une seule photo bruitée de perroquet passe de **17,6 dB / SSIM 0,34** (entrée) à **30,2 dB / SSIM 0,93**, sans aucune donnée d’entraînement.
+</Exemple>
+
+<Attention titre="Quand s’arrêter ?">
+Dans la simulation, on connaît le signal propre et l’on voit le meilleur moment. En vrai, on ne le connaît pas ! Il faut fixer le nombre d’itérations à l’avance, ajouter un a priori explicite, ou choisir une architecture qui résiste au bruit. Les a priori non entraînés échangent le besoin de données contre un réglage délicat.
+</Attention>

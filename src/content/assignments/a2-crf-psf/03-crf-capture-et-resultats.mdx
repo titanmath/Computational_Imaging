@@ -1,0 +1,89 @@
+---
+titre: "Tâche 1 : capturer, échantillonner, tracer"
+resume: "Le protocole photo (une seule variable : le temps de pose), le choix des positions et des patchs, puis le tracé des trois CRF directes avec des axes clairs, comme la figure de l’assistant."
+duree: 8
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Pseudocode from '@/components/contenu/Pseudocode.astro';
+import Checklist from '@/components/contenu/Checklist.svelte';
+
+## Capturer
+
+<Concept titre="Une seule chose change : le temps de pose">
+- **Fixer le téléphone** (trépied, support) : les positions doivent se superposer au pixel près.
+- **Mode Pro** : ISO **bas et fixe**, mise au point manuelle verrouillée, **balance des blancs fixe**. L’ouverture d’un téléphone est déjà fixe. Même scène, même éclairage : pas de lumière du jour qui varie, pas d’objet qui bouge.
+- **Faire varier seulement $t$**, sur une large plage, par paliers d’environ un facteur 2 : du plus court (presque tout noir) au plus long (presque tout saturé).
+- **Une scène contrastée**, avec des zones sombres, moyennes et claires, pour que chaque niveau de gris soit observé non saturé dans plusieurs poses.
+- On suppose **une seule CRF fixe** pendant toute la série : désactive les modes « HDR », « IA », « scène » et l’optimisation automatique.
+</Concept>
+
+<Attention titre="Lire les EXIF, ne pas croire l’interface">
+Le rapport doit contenir un **tableau EXIF** : temps de pose (s), ISO, ouverture, pour chaque image. Lis-les dans les fichiers (exiftool, une bibliothèque de lecture d’EXIF) : le temps réellement appliqué peut différer de celui affiché (arrondi, 1/45 au lieu de 1/50). C’est $\ln t_j$ réel qui entre dans les équations.
+</Attention>
+
+## Échantillonner
+
+<Concept titre="Des patchs lisses, pas des pixels isolés">
+Un pixel isolé est bruité et sensible à un décalage d’un pixel. On choisit des **patchs** lisses (par exemple 9 × 9 pixels) et on utilise leur **moyenne** par canal. Il faut :
+- les positions **marquées** sur une image (le rapport le demande) ;
+- la taille des patchs ;
+- la règle de sélection : patchs uniformes (écart-type faible), répartis du sombre au clair, loin des bords d’objets ;
+- l’**alignement** : trépied, et vérification qu’un patch couvre la même zone dans toutes les poses.
+</Concept>
+
+<Exemple titre="L’exemple de l’assistant (Galaxy A34, ISO 50, f/1.8)">
+Centres de patchs lisses de 9 × 9 pixels : 2 015 pour l’entraînement, 1 019 mis de côté pour la validation, soit 3 034 au total dans l’ajustement final. Moyennes de patchs. La pose saturée de 1 s a été exclue. Plage de valeurs « supportée » : 6 à 249.
+</Exemple>
+
+<Pseudocode titre="Échantillonnage et appel de gsolve (par canal)">
+```text
+images ← photos alignées, triées par temps de pose ; lnT ← ln(temps EXIF)
+centres ← positions de patchs lisses choisies sur une image de pose moyenne
+pour chaque canal c ∈ {R, G, B} :
+    pour chaque centre i, chaque image j :
+        Z[i][j] ← arrondi( moyenne du patch 9×9 autour de centres[i] dans images[j], canal c )
+    écarter les images (ou observations) inutilisables : saturées, trop sombres
+    g_c, lnE_c ← gsolve(Z, lnT, λ, poids chapeau)        # g_c(128) = 0 inclus
+```
+</Pseudocode>
+
+## Tracer les résultats
+
+<Formule titre="La courbe directe, comme dans la figure de l’énoncé">
+$$
+\text{axe horizontal : } \log_2\!\big(\text{exposition relative}\big) = \frac{g(z)}{\ln 2} \ \text{(en diaphragmes)},
+\qquad \text{axe vertical : } z
+$$
+
+Zéro diaphragme ↔ $z = 128$ ; +1 diaphragme = exposition doublée. Trace R, G et B sur le même graphe, dans leur couleur.
+</Formule>
+
+<Pseudocode titre="Tracer les CRF directes">
+```text
+pour c ∈ {R, G, B} :
+    x ← g_c(z) / ln 2   pour z = zmin … zmax (plage bien contrainte)
+    tracer (x, z) en couleur c
+étiqueter : « log2 exposition relative (diaphragmes), 0 ↔ z = 128 » et « valeur du pixel z »
+indiquer la plage supportée (ex. 6–249) et les poses exclues
+```
+</Pseudocode>
+
+<Attention titre="Les extrémités sont mal contraintes">
+Près de 0 et de 255, les poids sont presque nuls et il y a peu de données : la courbe y est surtout déterminée par le lissage. Ne l’interprète pas là, et indique la plage valide.
+</Attention>
+
+<Checklist
+  client:visible
+  id="a2-crf-capture"
+  items={[
+    'Décrire un protocole où SEUL le temps de pose varie (ISO, mise au point, balance des blancs, scène et éclairage fixes)',
+    'Construire le tableau EXIF (temps de pose réel, ISO, ouverture) et utiliser les temps réels',
+    'Choisir et justifier la taille des patchs, la règle de sélection et l’alignement',
+    'Exclure les observations saturées ou trop sombres et énoncer la règle',
+    'Tracer les CRF directes R, G, B en diaphragmes relatifs, 0 ↔ z = 128, axes étiquetés',
+    'Commenter la forme des courbes (épaule, pied, différences entre canaux)',
+  ]}
+/>

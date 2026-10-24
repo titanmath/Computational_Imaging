@@ -1,0 +1,39 @@
+---
+titre: "Exposition, accumulation, saturation"
+resume: "Pendant la pose, les électrons s’accumulent dans le puits du pixel. Au-delà de sa capacité, le pixel sature : la mesure est écrêtée et l’information perdue."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Saturation from '@/components/sims/ch02/Saturation.svelte';
+
+## Une pose, c’est un intervalle de temps
+
+Quand l’obturateur s’ouvre, l’<Terme en="exposure">exposition</Terme> commence : pendant une durée $T$, chaque pixel collecte des photons et accumule les photoélectrons correspondants, comme un seau sous la pluie. À la fin de la pose, la charge accumulée est **lue** puis numérisée.
+
+Le temps de pose se règle sur des valeurs comme 1/250, 1/125, 1/60, 1/30… s : chaque cran double la lumière collectée. Sur les appareils reflex, un <Terme en="mechanical shutter">obturateur mécanique</Terme> (deux rideaux qui défilent) délimite la pose ; sur les téléphones, l’obturation est électronique.
+
+## La capacité du puits
+
+Le seau a une taille finie : la <Terme en="full-well capacity">capacité du puits</Terme> $Q_{FW}$ est le nombre maximal d’électrons qu’un pixel peut stocker.
+
+<Formule titre="Signal moyen avec saturation">
+$$
+\mathbb E[N_e] \approx \min\!\big(\alpha\,N_\gamma,\; Q_{FW}\big)
+$$
+</Formule>
+
+<Figure legende="Exemple des slides : α = 50 %, Q_FW = 10 000 électrons. Le signal est proportionnel à la lumière jusqu’à 20 000 photons, puis plafonne.">
+  <Saturation client:visible />
+</Figure>
+
+<Attention titre="Saturation = information perdue">
+Un pixel saturé dit seulement « au moins $Q_{FW}$ électrons ». Deux zones de luminosités très différentes, toutes deux saturées, donnent la même valeur. Aucun traitement ne peut retrouver ce qui a été écrêté. C’est le problème central de l’imagerie **HDR** (chapitre 06), et la raison pour laquelle, en calibration (A2), on **exclut** les pixels saturés.
+</Attention>
+
+<Concept titre="Ce qui fixe la quantité de lumière">
+Le nombre de photons qu’un pixel reçoit dépend de la luminosité de la scène, de l’**ouverture** (∝ aire de la pupille) et du **temps de pose** (∝ T). On les combine à la leçon « ouverture, temps et gain ».
+</Concept>

@@ -1,0 +1,24 @@
+---
+titre: "Ombres et hautes lumières"
+resume: "Une pose courte garde les hautes lumières mais noie les ombres dans le bruit ; une pose longue l’inverse. La scène réelle dépasse souvent la dynamique d’un capteur."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import PieceHDR from '@/components/sims/ch06/PieceHDR.svelte';
+
+Une pièce éclairée par une fenêtre ensoleillée : le ciel est des milliers de fois plus lumineux que le coin sombre sous la table. Avec une seule exposition, on doit choisir :
+- **pose courte** : la fenêtre est lisible, l’intérieur est noir et bruité ;
+- **pose longue** : l’intérieur est détaillé, la fenêtre est un aplat blanc saturé.
+
+<Figure legende="Une vraie scène à grande dynamique, path-tracée en radiance flottante. Fais varier l’exposition virtuelle en mode « capteur » : aucune valeur ne montre toute la scène à la fois. Passe ensuite en Reinhard ou ACES : la dynamique est compressée pour l’affichage.">
+  <PieceHDR client:visible />
+</Figure>
+
+<Concept titre="Le plan du chapitre">
+L’<Terme en="high dynamic range" sigle="HDR">imagerie à grande dynamique</Terme> se fait en trois temps :
+1. **Capturer** : préserver la lumière mesurable, éviter bruit et écrêtage (expositions multiples, capteurs spéciaux).
+2. **Reconstruire** : linéariser, aligner, et combiner les mesures fiables en une **carte de radiance**.
+3. **Afficher** : ramener cette radiance à la dynamique d’un écran (tone mapping), ou utiliser un écran HDR.
+</Concept>

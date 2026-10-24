@@ -1,0 +1,33 @@
+---
+titre: "Optimisation : la calibration couleur"
+resume: "Avec une charte de couleurs connues, on ajuste une matrice 3 × 3 qui transforme le RGB linéaire de la caméra en XYZ de référence, puis on la valide sur des patchs mis de côté."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import CharteCouleur from '@/components/sims/ch05/CharteCouleur.svelte';
+
+Les sensibilités spectrales R, G, B d’une caméra ne sont pas une combinaison linéaire exacte des fonctions colorimétriques $\bar x, \bar y, \bar z$ de la CIE (chapitre 04). Une matrice 3 × 3 donne donc une **correspondance approchée**, valable pour un ensemble de spectres et un illuminant donnés.
+
+## Capturer des paires de référence
+
+Pour chaque patch d’une charte (par exemple une ColorChecker de 24 patchs), deux mesures, **sous un illuminant connu** :
+- le **RGB caméra** : la moyenne des pixels du patch, après corrections (noir, champ plat), en **linéaire** ;
+- la **référence XYZ** : mesurée au spectromètre, ou donnée par le fabricant de la charte.
+
+<Formule titre="Ajustement de la matrice couleur">
+$$
+\hat y = F_\text{color}(P;\, \theta) = M\,P, \qquad M^* = \arg\min_M \sum_i \|M\,\mathbf c_i - \mathbf x_i\|_2^2
+$$
+
+$P$ : RGB caméra linéaire ; $\theta$ : les 9 coefficients de $M$ ; $y$ : XYZ de référence. Solution en forme fermée : $M^* = X C^\top (C C^\top)^{-1}$.
+</Formule>
+
+<Figure legende="Chaque case : en haut la couleur de référence, en bas la couleur prédite. Sans correction, le RGB caméra est désaturé (diaphonie entre canaux) ; la matrice ajustée sur 18 patchs le corrige, y compris sur les 6 patchs de validation (cadre pointillé).">
+  <CharteCouleur client:visible />
+</Figure>
+
+<Concept titre="Au-delà du 3 × 3">
+Pour plus de précision, on peut utiliser des régressions **polynomiales** ou par **racines polynomiales** (Finlayson et al., TIP 2015), qui gardent l’invariance à l’exposition. Le principe reste le même : un modèle direct, des paires mesurées, des moindres carrés, et une validation sur des patchs indépendants.
+</Concept>

@@ -1,0 +1,23 @@
+---
+titre: "L’essentiel de l’introduction"
+resume: "Les idées à garder en tête pour la suite du cours."
+duree: 2
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+L’imagerie computationnelle conçoit **ensemble** la mesure (optique, éclairage, capteur) et le calcul (modèles, optimisation, apprentissage).
+</Retenir>
+
+- **Une image est une mesure.** Elle dépend de la scène *et* de la manière dont la caméra la mesure.
+- **Quatre étapes** : la scène modifie la lumière → l’optique la transforme → le capteur la mesure → le calcul en extrait l’information.
+- **Couche physique / couche numérique** : la première *encode* l’information, la seconde la *décode*. On les conçoit l’une pour l’autre.
+- **Vision classique** : matériel figé, seul le logiciel s’adapte. **Conception conjointe** : la tâche rétroagit aussi sur le matériel. Plus de liberté, mais pas de garantie d’optimum global.
+- **Le compromis lumière ↔ netteté** (petite ouverture : net mais sombre ; grande ouverture : lumineux mais flou), que la lentille permet de dépasser. C’est le point de départ du chapitre suivant.
+
+## Trois réflexes pour tout le semestre
+
+1. **Concevoir la mesure** : l’optique et le capteur déterminent quelle information est capturée. Ce qui n’a pas été mesuré ne pourra pas être inventé (sauf par un *a priori*).
+2. **Calculer la reconstruction** : utiliser des modèles physiques, de l’optimisation et de l’apprentissage pour retrouver l’information.
+3. **Comprendre le résultat** : vérifier ses hypothèses, interpréter ses résultats, savoir expliquer sa méthode. C’est aussi ce qu’on te demandera en démo.

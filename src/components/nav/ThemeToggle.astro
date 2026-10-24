@@ -1,0 +1,83 @@
+---
+// Interrupteur clair / sombre. L'état initial suit le système (script inline dans Base).
+---
+<button class="theme" type="button" aria-label="Basculer le thème clair / sombre" data-theme-toggle>
+  <svg class="soleil" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.2" />
+    <g stroke-linecap="round">
+      <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6" />
+    </g>
+  </svg>
+  <svg class="lune" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20 14.6A8.2 8.2 0 0 1 9.4 4a8.2 8.2 0 1 0 10.6 10.6Z" />
+  </svg>
+</button>
+
+<script>
+  const racine = document.documentElement;
+  function effectif(): 'light' | 'dark' {
+    const force = racine.dataset.theme;
+    if (force === 'light' || force === 'dark') return force;
+    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  for (const b of document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]')) {
+    b.addEventListener('click', () => {
+      const suivant = effectif() === 'dark' ? 'light' : 'dark';
+      racine.dataset.theme = suivant;
+      try {
+        localStorage.setItem('theme', suivant);
+      } catch {}
+      window.dispatchEvent(new CustomEvent('theme-change', { detail: suivant }));
+    });
+  }
+</script>
+
+<style>
+  .theme {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: none;
+    cursor: pointer;
+    color: var(--encre-2);
+    transition: background 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .theme:hover {
+    background: var(--papier-2);
+    color: var(--encre);
+  }
+  svg {
+    grid-area: 1 / 1;
+    width: 1.15rem;
+    height: 1.15rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    transition: opacity 0.3s var(--ease), transform 0.4s var(--ease);
+  }
+  .lune {
+    opacity: 0;
+    transform: rotate(-40deg) scale(0.7);
+  }
+  :global(:root[data-theme='dark']) .soleil {
+    opacity: 0;
+    transform: rotate(40deg) scale(0.7);
+  }
+  :global(:root[data-theme='dark']) .lune {
+    opacity: 1;
+    transform: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not([data-theme='light'])) .soleil {
+      opacity: 0;
+      transform: rotate(40deg) scale(0.7);
+    }
+    :global(:root:not([data-theme='light'])) .lune {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

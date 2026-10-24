@@ -1,0 +1,94 @@
+/* Design « banc optique » — tokens. Le thème suit le système ; [data-theme] force un choix. */
+:root {
+  color-scheme: light;
+  --papier: #f6f3ec;
+  --papier-2: #efebe2;
+  --papier-3: #e6e1d5;
+  --encre: #1b1a17;
+  --encre-2: #4a4740;
+  --encre-3: #78746a;
+  --filet: #dbd5c8;
+  --filet-fort: #c4bdad;
+  --ombre: 0 1px 2px rgb(40 34 20 / 0.06), 0 8px 24px -12px rgb(40 34 20 / 0.18);
+
+  /* Table optique : fond des scènes 3D, sombre dans les deux thèmes. */
+  --table: #0f1114;
+  --table-2: #171a1f;
+  --table-encre: #e7e3d8;
+  --table-encre-2: #9d998e;
+  --table-filet: #2a2e35;
+
+  --ambre: #a3600e;
+  --ambre-fond: #f3e6cf;
+
+  --accent-clair: oklch(0.5 0.15 280);
+  --accent-sombre: oklch(0.8 0.13 280);
+
+  --f-titre: 'Fraunces Variable', 'Iowan Old Style', Georgia, serif;
+  --f-texte: 'Source Sans 3 Variable', 'Source Sans Pro', system-ui, sans-serif;
+  --f-mono: 'JetBrains Mono Variable', ui-monospace, 'SFMono-Regular', monospace;
+
+  --colonne: 42rem;
+  --large: 60rem;
+  --gouttiere: 16px;
+  --barre-h: 3.25rem;
+  --rayon: 10px;
+
+  --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --papier: #14161a;
+    --papier-2: #1a1d22;
+    --papier-3: #22262c;
+    --encre: #e7e3d8;
+    --encre-2: #b5b0a4;
+    --encre-3: #858175;
+    --filet: #2b2f36;
+    --filet-fort: #3b4049;
+    --ombre: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px -14px rgb(0 0 0 / 0.6);
+    --table: #0b0c0f;
+    --table-2: #121418;
+    --ambre: #e0a250;
+    --ambre-fond: #2a2216;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --papier: #14161a;
+  --papier-2: #1a1d22;
+  --papier-3: #22262c;
+  --encre: #e7e3d8;
+  --encre-2: #b5b0a4;
+  --encre-3: #858175;
+  --filet: #2b2f36;
+  --filet-fort: #3b4049;
+  --ombre: 0 1px 2px rgb(0 0 0 / 0.3), 0 10px 30px -14px rgb(0 0 0 / 0.6);
+  --table: #0b0c0f;
+  --table-2: #121418;
+  --ambre: #e0a250;
+  --ambre-fond: #2a2216;
+}
+
+@media (min-width: 720px) {
+  :root {
+    --gouttiere: 32px;
+  }
+}
+
+/* --accent est re-résolu sur chaque élément : poser --accent-clair / --accent-sombre
+   sur un conteneur suffit à recolorer tout son contenu. */
+* {
+  --accent: var(--accent-clair);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) * {
+    --accent: var(--accent-sombre);
+  }
+}
+:root[data-theme='dark'] * {
+  --accent: var(--accent-sombre);
+}

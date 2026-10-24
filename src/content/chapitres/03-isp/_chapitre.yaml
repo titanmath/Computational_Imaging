@@ -1,0 +1,13 @@
+numero: 3
+titre: "Traitement du signal d’image (ISP)"
+sousTitre: "Du RAW à la photo"
+resume: "La chaîne qui transforme la mosaïque RAW bruitée en image couleur : corrections, dématriçage, débruitage, balance des blancs, couleur, encodage et compression. Puis comment évaluer une image, garder des données mesurables, et ce que change l’apprentissage."
+objectifs:
+  - "citer et ordonner les étapes d’une chaîne ISP classique"
+  - "expliquer niveau noir, pixels défectueux, vignetage et leur correction"
+  - "calculer un dématriçage bilinéaire, des gains de balance des blancs, un encodage sRGB"
+  - "comprendre la DCT et la quantification JPEG, et calculer MSE et PSNR"
+  - "savoir pourquoi une mesure quantitative exige des données linéaires (essentiel pour A2)"
+  - "situer les ISP neuronaux et l’optimisation des paramètres d’ISP"
+icone: isp
+source: 3_isp_2026.pdf

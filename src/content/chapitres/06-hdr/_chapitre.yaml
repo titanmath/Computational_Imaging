@@ -1,0 +1,12 @@
+numero: 6
+titre: "Imagerie HDR"
+sousTitre: "Capturer, reconstruire, afficher"
+resume: "Une seule photo ne peut pas enregistrer à la fois les ombres et les hautes lumières. On combine plusieurs mesures (expositions, rafales, doubles gains), on estime la radiance, puis on la rend affichable. Avec, en complément, la courbe de réponse et la méthode de Debevec-Malik de l’A2."
+objectifs:
+  - "exprimer une dynamique en diaphragmes et dire ce qui la limite (bruit, saturation)"
+  - "fusionner des expositions avec un modèle linéaire et des poids de fiabilité"
+  - "expliquer et mettre en œuvre la calibration de la courbe de réponse (Debevec-Malik)"
+  - "décrire les solutions pour les scènes en mouvement (rafales, fusion robuste) et les capteurs HDR"
+  - "distinguer radiance et rendu affiché : tone mapping et écrans à double modulation"
+icone: hdr
+source: 6_hdr_2026.pdf

@@ -1,0 +1,46 @@
+---
+titre: "Attache aux données et a priori"
+resume: "Un problème inverse mal posé a une infinité de solutions compatibles avec la mesure. L’a priori Ψ(x) note chaque image candidate : plus bas, c’est plus plausible. λ règle l’équilibre."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import ScorePrior from '@/components/sims/ch08/ScorePrior.svelte';
+
+Au chapitre 07, les problèmes inverses ont abouti à une forme générale, où l’on cherche l’image $x$ qui explique la mesure $b$ sans être absurde.
+
+<Formule titre="Problème inverse régularisé">
+$$
+\hat x = \arg\min_x \; \underbrace{\tfrac12 \|b - f(x)\|_2^2}_{\text{attache aux données}} \; + \; \lambda\, \underbrace{\Psi(x)}_{\text{a priori}}
+$$
+
+- $x$ : la grandeur inconnue (l’image) ; $b$ : la mesure ;
+- $f(x)$ : la mesure prédite par le modèle direct ;
+- $\Psi(x)$ : le <Terme en="regularizer / prior">régulariseur ou a priori</Terme> ; plus sa valeur est basse, plus l’image a la structure qu’on attend ;
+- $\lambda \ge 0$ : la <Terme en="prior strength">force de l’a priori</Terme>.
+</Formule>
+
+Le premier terme demande de **coller aux mesures**, le second d’**avoir l’air d’une image naturelle**. Aucun des deux ne suffit seul. Le simulateur ci-dessous note quatre images candidates avec cet objectif, pour une mesure bruitée $b$.
+
+<Figure legende="Fais glisser λ de gauche à droite. À λ ≈ 0, c’est la mesure bruitée qui gagne : elle colle parfaitement à elle-même. Pour un λ intermédiaire, l’image propre gagne. Pour un λ énorme, c’est l’image uniforme : son a priori vaut zéro, mais elle n’explique plus rien.">
+  <ScorePrior client:visible />
+</Figure>
+
+<Concept titre="L’a priori est un score, pas une recette">
+$\Psi$ ne dit pas comment reconstruire. Il dit seulement quelles images préférer : des zones lisses, peu de bords, des couleurs cohérentes… Un **algorithme d’optimisation** cherche ensuite le meilleur compromis avec les données. Tout le chapitre porte sur le choix de $\Psi$ : formules écrites à la main, puis a priori appris sur des données, puis a priori portés par l’architecture d’un réseau.
+</Concept>
+
+<Attention titre="Un bruit aléatoire est une « image » très improbable">
+Tirer des pixels au hasard ne donne jamais rien qui ressemble à une photo. Les images naturelles occupent une toute petite partie de l’espace de toutes les images possibles. Un bon a priori décrit cette partie, et seulement elle.
+</Attention>
+
+## Rappel : la variation totale
+
+Le chapitre 07 a déjà utilisé un a priori, la <Terme en="total variation" sigle="TV">variation totale</Terme> anisotrope : la somme des valeurs absolues des différences horizontales et verticales,
+$$
+\Psi(I) = \mathrm{TV}(I) = \|K_x * I\|_1 + \|K_y * I\|_1,
+$$
+où $*$ désigne ici un filtrage local sans retournement du noyau. Les leçons suivantes expliquent **pourquoi** une norme 1 sur les gradients décrit si bien les images, et ce qu’on obtient avec d’autres normes.

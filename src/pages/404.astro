@@ -1,0 +1,13 @@
+---
+import Base from '@/layouts/Base.astro';
+import { url } from '@/lib/navigation';
+---
+<Base titre="Page introuvable">
+  <main class="colonne" style="padding-top: 18vh">
+    <p class="etiquette">Erreur 404</p>
+    <h1 style="font-size: clamp(2.2rem, 6vw, 3.4rem); margin-top: .6rem">Ce rayon n’a atteint aucun capteur.</h1>
+    <p style="color: var(--encre-2)">La page demandée n’existe pas (ou plus).</p>
+    <div class="rayon" aria-hidden="true"></div>
+    <p><a href={url('/')}>← Retour à la carte du cours</a></p>
+  </main>
+</Base>

@@ -1,0 +1,13 @@
+numero: 2
+titre: "Capteurs"
+sousTitre: "Des photons aux nombres"
+resume: "Comment un capteur d’image transforme la lumière en valeurs numériques : comptage de photons, efficacité quantique, saturation, structure du pixel, filtres couleur, obturateurs, gain et bruits."
+objectifs:
+  - "relier photons, électrons et valeur numérique (DN) par le modèle I = Q(g(Nₑ + n_read) + b)"
+  - "expliquer l’efficacité quantique, la capacité du puits et la saturation"
+  - "décrire un pixel (microlentille, filtre, photodiode) et la mosaïque de Bayer"
+  - "distinguer obturateur global et roulant, et leurs artefacts"
+  - "choisir ouverture, temps de pose et ISO en connaissant leurs effets secondaires"
+  - "identifier les sources de bruit et dire laquelle domine selon le niveau de signal"
+icone: capteur
+source: 2_sensor_2026.pdf

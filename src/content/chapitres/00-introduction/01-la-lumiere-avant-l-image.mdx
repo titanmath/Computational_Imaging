@@ -1,0 +1,39 @@
+---
+titre: "Avant l’image, il y a la lumière"
+resume: "Une photographie n’est pas la scène : c’est une mesure. Elle dépend autant de la scène que de la façon dont la caméra la mesure."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Analogie from '@/components/contenu/Analogie.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import CoupeCamera from '@/components/sims/ch00/CoupeCamera.svelte';
+
+Quand on prend une photo, on a l’impression d’« enregistrer la scène ». En réalité, une longue chaîne physique et numérique s’interpose entre le monde et l’image qu’on regarde. Ce cours étudie cette chaîne, maillon par maillon, et surtout comment la **concevoir** pour qu’elle capture l’information dont on a besoin.
+
+## Quatre étapes
+
+1. **La scène modifie la lumière.** Une source (le soleil, une lampe) émet de la lumière ; les objets en absorbent une partie et renvoient le reste dans toutes les directions. C’est cette lumière renvoyée qui porte l’information sur la scène : sa forme, ses couleurs, ses matériaux.
+2. **L’optique transforme la lumière.** Une lentille (ou un simple trou) collecte une partie de ces rayons et les redirige pour former une image sur un plan.
+3. **Le capteur la mesure.** Une grille de pixels compte la lumière reçue pendant un temps donné et la convertit en nombres.
+4. **Le calcul transforme les mesures en information.** Des algorithmes corrigent, reconstruisent et interprètent ces nombres : une image agréable à regarder, une carte de profondeur, une détection d’objet…
+
+<Figure legende="Le trajet de l’information. Les rayons issus du haut de l’arbre (magenta) et de son pied (bleu) traversent la lentille et se croisent : l’image sur le capteur est <strong>renversée</strong>. Le capteur ne produit que des nombres ; c’est le calcul qui reconstruit l’image finale. Fais tourner la scène pour voir les cônes de lumière en 3D.">
+  <CoupeCamera client:visible />
+</Figure>
+
+<Concept titre="Une image est une mesure">
+L’image dépend **à la fois** de la scène et de la manière dont la caméra la mesure. Changer l’optique, le capteur ou le calcul change ce qu’on « voit », même si la scène reste identique.
+</Concept>
+
+Remarque au passage les rayons qui partent dans toutes les directions et ratent la lentille : seule une petite fraction de la lumière renvoyée par la scène est collectée. Une grande partie du travail d’un concepteur consiste à choisir **quelle** lumière collecter, et comment.
+
+## La question centrale du cours
+
+L’<Terme en="computational imaging">imagerie computationnelle</Terme> pose une question simple :
+
+<Analogie>
+Et si la caméra faisait partie de l’algorithme ?
+</Analogie>
+
+Plutôt que de considérer la caméra comme une boîte figée dont on traite la sortie, on conçoit **ensemble** la mesure physique (optique, éclairage, capteur) et le calcul qui l’exploite. C’est l’objet de la leçon suivante.

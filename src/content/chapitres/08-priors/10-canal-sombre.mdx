@@ -1,0 +1,71 @@
+---
+titre: "Le canal sombre et le débrumage"
+resume: "Dans une image claire et sans brume, presque toute fenêtre contient un pixel très sombre dans au moins un canal. La brume l’éclaircit : le canal sombre mesure la brume, donc la profondeur, et permet de l’enlever."
+duree: 7
+complement: "Le modèle de brume et l’estimation de la transmission sont détaillés d’après l’article de He, Sun et Tang (2009)"
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Debrumage from '@/components/sims/ch08/Debrumage.svelte';
+import Brume3D from '@/components/sims/ch08/Brume3D.svelte';
+
+## L’observation
+
+Regarde une photo de paysage par beau temps et prends n’importe quel carré de 15 × 15 pixels hors du ciel. Il y a presque toujours un pixel très sombre dans au moins un canal : une ombre, une feuille d’un vert profond (peu de rouge, peu de bleu), un objet rouge vif (peu de vert et de bleu).
+
+<Formule titre="Canal sombre (He, Sun & Tang, CVPR 2009, éq. 5)">
+$$
+d_x(p) = \min_{q \in \Omega(p)} \; \min_{c \in \{\mathrm R, \mathrm G, \mathrm B\}} x_c(q)
+$$
+
+$p$ : centre de la fenêtre ; $\Omega(p)$ : fenêtre de 15 × 15 pixels ; $q$ : pixel de la fenêtre ; $c$ : canal. L’<Terme en="dark channel prior">a priori du canal sombre</Terme> dit que, pour une image claire, $d_x(p) \approx 0$ hors du ciel.
+</Formule>
+
+<Exemple titre="Dans l’exemple du cours">
+Sur un paysage de rivière, une fenêtre 15 × 15 contient des pixels clairs (galets) et sombres (végétation). Après le minimum sur RGB, puis sur la fenêtre, on obtient $d_x(p) = 0{,}013$ : presque noir.
+</Exemple>
+
+## Le modèle de la brume
+
+La brume mélange la lumière de l’objet avec la lumière diffusée par l’air, d’autant plus que l’objet est loin.
+
+<Formule titre="Modèle de formation d’une image brumeuse">
+$$
+I(p) = J(p)\, t(p) + A\,\big(1 - t(p)\big), \qquad t(p) = e^{-\beta\, d(p)}
+$$
+
+$I$ : image observée ; $J$ : image sans brume (inconnue) ; $A$ : <Terme en="atmospheric light">lumière atmosphérique</Terme> (la couleur de la brume) ; $t$ : <Terme en="transmission">transmission</Terme> ; $\beta$ : densité de la brume ; $d$ : distance de l’objet.
+</Formule>
+
+Prenons le canal sombre des deux côtés, après division par $A$. Comme $d_J \approx 0$ :
+$$
+\min_\Omega \min_c \frac{I_c}{A_c} \approx t \cdot \underbrace{\min_\Omega \min_c \frac{J_c}{A_c}}_{\approx\, 0} + (1 - t)
+\quad\Longrightarrow\quad
+\tilde t(p) = 1 - \omega \min_{q\in\Omega(p)} \min_c \frac{I_c(q)}{A_c}.
+$$
+On garde un peu de brume ($\omega = 0{,}95$) pour l’impression de profondeur. $A$ est estimée parmi les 0,1 % de pixels dont le canal sombre est le plus clair, c’est-à-dire dans la zone la plus brumeuse. Enfin on inverse le modèle :
+$$
+\hat J(p) = \frac{I(p) - A}{\max(\tilde t(p), t_0)} + A, \qquad t_0 = 0{,}1.
+$$
+
+<Figure legende="Un paysage synthétique dont on connaît la profondeur, plongé dans une brume simulée. Le canal sombre de l’image brumeuse s’éclaircit avec la distance ; la transmission estimée ressemble beaucoup à la vraie (bascule « Vraie »), au détail près des blocs dus à la fenêtre. Agrandis la fenêtre : l’estimation devient plus robuste mais plus grossière aux bords.">
+  <Debrumage client:visible />
+</Figure>
+
+<Concept titre="Un a priori qui donne la profondeur">
+Le canal sombre ne débrume pas seulement. Comme $t = e^{-\beta d}$, la transmission estimée donne une **carte de profondeur relative**, à partir d’une seule image. C’est l’intérêt d’un bon a priori : une hypothèse simple sur les images naturelles rend observable ce que la mesure ne montrait pas directement.
+</Concept>
+
+## En 3D, avec une vraie brume
+
+<Figure legende="Une rue path-tracée : chaque rayon est atténué par la brume selon la distance parcourue et reçoit la lumière diffusée A. Passe en vue « Canal sombre » (calculé dans le shader sur chaque image), puis en « Débrumée ». Monte β : au loin, le signal J·t devient si faible que le débrumage amplifie surtout le bruit du rendu.">
+  <Brume3D client:visible />
+</Figure>
+
+<Attention titre="Quand l’a priori se trompe">
+Un objet **blanc ou gris clair** (mur blanc, neige, voiture argentée) a un canal sombre élevé même sans brume. L’algorithme le prend pour de la brume et en exagère la correction. Le ciel n’a pas non plus de canal sombre faible, d’où le seuil $t_0$. Tout a priori a un domaine de validité.
+</Attention>

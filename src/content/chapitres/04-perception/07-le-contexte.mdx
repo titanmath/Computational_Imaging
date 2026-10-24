@@ -1,0 +1,23 @@
+---
+titre: "Le contexte change tout"
+resume: "Un même gris paraît différent selon son entourage. La perception compare plus qu’elle ne mesure : induction de couleur, bandes de Mach, illusion de Cornsweet."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Illusions from '@/components/sims/ch04/Illusions.svelte';
+
+La <Terme en="hue">teinte</Terme> décrit le caractère rouge, jaune, vert ou bleu d’une apparence. Des patchs de luminosités et d’intensités différentes peuvent tous paraître « rougeâtres ». Mais l’apparence d’une couleur ne dépend pas que de son propre stimulus : elle dépend de ce qui l’entoure.
+
+<Figure legende="Trois illusions classiques. Pour chacune, « Révéler » supprime ou neutralise le contexte : les deux zones comparées ont exactement les mêmes valeurs.">
+  <Illusions client:visible />
+</Figure>
+
+1. **Induction de couleur** : deux carrés de même RGB (165, 165, 165) paraissent teintés en sens inverse de leur fond (bleuté sur jaune, jaunâtre sur bleu).
+2. **Bandes de Mach** : chaque bande est parfaitement uniforme, mais près de chaque frontière, le bord paraît plus clair du côté clair et plus sombre du côté sombre. Le système visuel **renforce les bords**.
+3. **Illusion de Cornsweet** : un simple bord avec une petite rampe (sombre à gauche, claire à droite) suffit à faire paraître **tout** le côté gauche plus sombre, alors que loin du bord les deux côtés valent RGB (148, 148, 148).
+
+<Concept titre="Ce que cela implique pour l’imagerie">
+Les valeurs RGB **encodent** l’image ; la luminance se **mesure** en cd/m² ; l’apparence se **perçoit**. Les trois sont distinctes. Un algorithme qui optimise une erreur pixel à pixel ignore ces effets de contexte : c’est une des raisons d’utiliser des métriques perceptuelles (dernière leçon) et, en sens inverse, ce que le tone mapping HDR (chapitre 06) peut exploiter.
+</Concept>

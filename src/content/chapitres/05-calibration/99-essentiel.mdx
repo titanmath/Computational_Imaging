@@ -1,0 +1,26 @@
+---
+titre: "L’essentiel : calibration"
+resume: "La calibration en une page."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+Calibrer, c’est rendre le modèle direct **fidèle à ce système-là**. Mesure directe (isoler, moyenner, normaliser) ou optimisation (ajuster θ dans ŷ = F(P ; θ)), puis **validation** sur des mesures indépendantes.
+</Retenir>
+
+| Calibration | Méthode | Formule / protocole |
+| --- | --- | --- |
+| Noir | directe | $I_k = D + \varepsilon_k$ ; moyenner N images bouchées (même expo, gain) ; bruit ÷ √N |
+| Bruit, gain | directe | moyenne et écart-type d’un pixel ; variance = g² (μₑ + σ²_read) |
+| Champ plat | directe | $I = D + S P$ ; $\hat P = (I - D)/\hat S$ |
+| PSF | directe | $I = P * h$ ; source ≪ flou du système |
+| Spectre | directe | monochromateur + photodiode de référence |
+| Écran | directe ou ajustement | $L = F(d)$ ; table ou $L_\text{noir} + L_\max (d/255)^\gamma$ |
+| Géométrie | optimisation | erreur de reprojection ; Zhang : intrinsèques partagés + une pose par vue |
+| Couleur | optimisation | $M^* = \arg\min \sum \lVert M\mathbf c_i - \mathbf x_i\rVert^2$ |
+| Systèmes | optimisation | JWST (poses de segments), VR (déformation par canal), modèles appris |
+| Non calibré | conjoint | scène et système inconnus + a priori (déconvolution aveugle, SfM) |
+
+**Validation** : figer θ, prédire de nouvelles données (autres positions, patchs, réglages) ; recalibrer si l’optique change.

@@ -1,0 +1,53 @@
+---
+// Deep Image Prior (Ulyanov, Vedaldi & Lempitsky 2018) : bruit fixe z → réseau F_θ non entraîné → image,
+// comparée à la mesure b ; le gradient ∂E/∂θ met à jour les poids. On répète, et on s'arrête tôt.
+---
+<figure class="deborde schema anime">
+  <svg viewBox="0 0 640 210" role="img" aria-label="Boucle d'optimisation du Deep Image Prior">
+    <defs>
+      <marker id="fl-dip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="pointe" /></marker>
+      <pattern id="bruit-dip" width="6" height="6" patternUnits="userSpaceOnUse">
+        <rect width="6" height="6" class="fond" /><rect width="3" height="3" class="grain" /><rect x="3" y="3" width="3" height="3" class="grain2" />
+      </pattern>
+    </defs>
+    <rect x="20" y="60" width="80" height="70" rx="5" fill="url(#bruit-dip)" class="cadre" />
+    <text x="60" y="150" class="t m">z (bruit fixe)</text>
+    <path d="M104,95 L170,95" class="fl" marker-end="url(#fl-dip)" />
+    <path d="M175,60 L245,75 L245,115 L175,130 Z" class="reseau" />
+    <text x="210" y="100" class="t m">F<tspan baseline-shift="sub" font-size="9">θ</tspan></text>
+    <text x="210" y="150" class="t m petit">CNN non entraîné</text>
+    <path d="M250,95 L315,95" class="fl" marker-end="url(#fl-dip)" />
+    <rect x="320" y="60" width="80" height="70" rx="5" class="sortie" />
+    <text x="360" y="100" class="t m">F<tspan baseline-shift="sub" font-size="9">θ</tspan>(z)</text>
+    <path d="M404,95 L470,95" class="fl" marker-end="url(#fl-dip)" />
+    <rect x="475" y="66" width="120" height="58" rx="5" class="perte" />
+    <text x="535" y="92" class="t m">E = ½‖A F<tspan baseline-shift="sub" font-size="9">θ</tspan>(z) − b‖²</text>
+    <text x="535" y="110" class="t m petit">comparée à la mesure b</text>
+    <path d="M535,128 C535,190 210,190 210,134" class="retour" marker-end="url(#fl-dip)" />
+    <text x="372" y="202" class="t m acc">∂E/∂θ : mise à jour des poids, itération après itération</text>
+  </svg>
+  <figcaption>Aucune image d’entraînement : seule la mesure sert. La structure du réseau favorise les images naturelles, qu’il produit avant de savoir reproduire le bruit.</figcaption>
+</figure>
+
+<style>
+  .schema { margin-block: 2rem; }
+  svg { width: 100%; height: auto; display: block; font-family: var(--f-texte); }
+  .fond { fill: #8a8f99; }
+  .grain { fill: #5b616c; }
+  .grain2 { fill: #b5bac3; }
+  .cadre { stroke: var(--encre-3); }
+  .reseau { fill: color-mix(in oklab, var(--accent) 16%, var(--papier)); stroke: var(--accent); stroke-width: 1.6; }
+  .sortie { fill: var(--papier-3); stroke: var(--encre-3); }
+  .perte { fill: var(--papier); stroke: var(--encre-3); }
+  .fl { stroke: var(--encre-3); stroke-width: 1.5; }
+  .retour { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-dasharray: 6 4; stroke-dashoffset: 60; transition: stroke-dashoffset 1.6s var(--ease); }
+  .en-vue .retour { animation: flux 1.4s linear infinite; }
+  @keyframes flux { to { stroke-dashoffset: -20; } }
+  .pointe { fill: var(--accent); }
+  .t { font-size: 12px; fill: var(--encre-2); }
+  .t.m { text-anchor: middle; }
+  .petit { font-size: 10.5px; fill: var(--encre-3); }
+  .acc { fill: var(--accent); }
+  figcaption { font-size: 0.85rem; color: var(--encre-3); text-align: center; margin-top: 0.4rem; }
+  @media (prefers-reduced-motion: reduce) { .en-vue .retour { animation: none; } }
+</style>

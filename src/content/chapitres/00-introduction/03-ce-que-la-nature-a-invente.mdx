@@ -1,0 +1,37 @@
+---
+titre: "Ce que la nature a inventé"
+resume: "L’évolution a « conçu » des yeux très différents. Leurs étapes montrent exactement les compromis que l’on retrouvera dans les caméras."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import EvolutionOeil from '@/components/sims/ch00/EvolutionOeil.svelte';
+
+Les systèmes visuels naturels sont un bon point de départ : chacun combine une **optique**, des **capteurs** (les photorécepteurs) et un **traitement** (le système nerveux). Différentes structures optiques échantillonnent la lumière de façons différentes.
+
+## Du simple capteur de lumière à l’œil à lentille
+
+<Figure legende="Une même scène, mesurée par quatre « architectures » d’œil. Passe d’un stade à l’autre : la netteté et la luminosité ne s’améliorent pas en même temps.">
+  <EvolutionOeil client:visible />
+</Figure>
+
+Ce que montre cette progression :
+
+1. **Une surface photosensible** mesure seulement la quantité totale de lumière. Toute l’information de direction est perdue : il n’y a pas d’image.
+2. **Une cupule** apporte une *sensibilité directionnelle* : les cellules d’un côté ne voient que la lumière venant de l’autre côté. L’image existe, mais elle est extrêmement floue.
+3. **Une petite ouverture** (comme l’œil du nautile) ne laisse entrer, pour chaque direction, qu’un mince faisceau. L’image devient nette, mais elle reçoit très peu de lumière : elle est sombre et bruitée.
+4. **Une lentille** résout le dilemme : elle collecte un large faisceau *et* le refocalise en un point. L’image est à la fois nette et lumineuse.
+
+<Concept titre="Le compromis lumière ↔ netteté">
+Une grande ouverture collecte beaucoup de lumière mais mélange les directions (flou) ; une petite ouverture sépare bien les directions mais collecte peu de lumière (bruit). La lentille est l’invention qui permet de sortir de ce compromis. C’est exactement le cœur du chapitre 01, et de ton **assignment 1** (le sténopé).
+</Concept>
+
+## Une diversité de solutions
+
+La nature offre de nombreuses combinaisons d’optique, de capteurs et de traitement :
+
+- la **crevette-mante** possède une douzaine de types de photorécepteurs et perçoit la polarisation de la lumière, bien au-delà de nos trois types de cônes ;
+- l’**araignée sauteuse** combine plusieurs paires d’yeux spécialisées (vision fine vers l’avant, détection du mouvement sur les côtés) ;
+- les **reptiles** et les **mammifères** ont des yeux à lentille, mais avec des rétines et des sensibilités adaptées à leur mode de vie (nocturne, diurne…).
+
+Chaque espèce a, en quelque sorte, optimisé conjointement son « matériel » et son « logiciel » pour ses tâches. C’est précisément la démarche de l’imagerie computationnelle.

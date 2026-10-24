@@ -1,0 +1,65 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/source-sans-3';
+import '@fontsource-variable/jetbrains-mono';
+import 'katex/dist/katex.min.css';
+import '@/styles/base.css';
+import '@/styles/prose.css';
+import type { Accent } from '@/lib/spectre';
+import { url } from '@/lib/navigation';
+
+interface Props {
+  titre: string;
+  description?: string;
+  accent?: Accent;
+  classe?: string;
+}
+const { titre, description = 'Cours de Computational Imaging en français, illustré et interactif.', accent, classe } =
+  Astro.props;
+const titreComplet = titre === 'Carte' ? 'Imagerie computationnelle' : `${titre} · Imagerie computationnelle`;
+const style = accent ? `--accent-clair:${accent.clair};--accent-sombre:${accent.sombre};--accent-brut:${accent.brut}` : undefined;
+---
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{titreComplet}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg').replace(/\/$/, '')} />
+    <script is:inline>
+      try {
+        const t = localStorage.getItem('theme');
+        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body style={style} class={classe}>
+    <slot name="barre" />
+    <slot />
+    <script>
+      // Navigation clavier ← → (ignorée dans les champs et les curseurs).
+      document.addEventListener('keydown', (e) => {
+        if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+        const cible = e.target as HTMLElement | null;
+        if (cible?.closest('input, textarea, select, [contenteditable], [role="slider"], canvas, .sim')) return;
+        const sens = e.key === 'ArrowLeft' ? 'prec' : e.key === 'ArrowRight' ? 'suiv' : null;
+        if (!sens) return;
+        const lien = document.querySelector<HTMLAnchorElement>(`[data-nav="${sens}"]`);
+        if (lien) {
+          e.preventDefault();
+          lien.click();
+        }
+      });
+
+      // Les schémas animés (.anime) ne jouent que lorsqu'ils sont visibles.
+      const io = new IntersectionObserver(
+        (entrees) => {
+          for (const en of entrees) en.target.classList.toggle('en-vue', en.isIntersecting);
+        },
+        { rootMargin: '0px 0px -10% 0px', threshold: 0.15 },
+      );
+      for (const el of document.querySelectorAll('.anime')) io.observe(el);
+    </script>
+  </body>
+</html>

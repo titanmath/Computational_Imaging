@@ -1,0 +1,305 @@
+---
+// Carte du cours : chaque chapitre est une station sur le trajet de la lumière.
+// Les stations se placent en grille (1 à 5 colonnes selon la largeur) ; le rayon qui les relie
+// est recalculé côté client et serpente d'une rangée à l'autre. Aucune position n'est codée en dur.
+import type { AssignmentNav, ChapitreNav } from '@/lib/navigation';
+import { glyphe } from './glyphes';
+
+interface Props {
+  chapitres: ChapitreNav[];
+  assignments: AssignmentNav[];
+}
+const { chapitres, assignments } = Astro.props;
+const assignmentsDe = (id: string) => assignments.filter((a) => a.entree.data.chapitresLies.includes(id));
+---
+<div class="carte" data-carte>
+  <svg class="trace" aria-hidden="true" data-trace></svg>
+  <ol class="stations" data-stations>
+    {
+      chapitres.map((c) => (
+        <li
+          class="station"
+          style={`--accent-clair:${c.accent.clair};--accent-sombre:${c.accent.sombre};--lumiere:${c.accent.brut}`}
+          data-station
+        >
+          <a class="lien" href={c.url}>
+            <span class="noeud" data-noeud set:html={`<svg viewBox="0 0 40 40">${glyphe(c.entree.data.icone)}</svg>`} />
+            <span class="code">{c.code}</span>
+            <span class="titre">{c.entree.data.titre}</span>
+            <span class="bascule">
+              <span class="sous">{c.entree.data.sousTitre}</span>
+              <span class="detail">
+                {c.entree.data.resume}
+                <span class="meta">
+                  {c.lecons.length} leçons · ≈ {c.duree} min
+                </span>
+              </span>
+            </span>
+          </a>
+          {assignmentsDe(c.id).length > 0 && (
+            <span class="branches">
+              {assignmentsDe(c.id).map((a) => (
+                <a
+                  class="branche"
+                  href={a.url}
+                  title={`${a.entree.data.code} · ${a.entree.data.titre}`}
+                  style={`--accent-clair:${a.accent.clair};--accent-sombre:${a.accent.sombre}`}
+                >
+                  {a.entree.data.code}
+                </a>
+              ))}
+            </span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<script>
+  // Serpentin : on numérote les rangées, on inverse visuellement les rangées impaires
+  // (CSS order), puis on trace le rayon à travers les nœuds dans l'ordre du cours.
+  function disposer(carte: HTMLElement) {
+    const liste = carte.querySelector<HTMLElement>('[data-stations]')!;
+    const stations = [...liste.querySelectorAll<HTMLElement>('[data-station]')];
+    const cols = getComputedStyle(liste).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+    stations.forEach((s, i) => {
+      const rang = Math.floor(i / cols);
+      const col = i % cols;
+      const colVisuelle = rang % 2 === 1 ? cols - 1 - col : col;
+      s.style.order = String(rang * cols + colVisuelle);
+      s.dataset.sens = rang % 2 === 1 ? 'gauche' : 'droite';
+    });
+
+    const svg = carte.querySelector<SVGSVGElement>('[data-trace]')!;
+    const boite = carte.getBoundingClientRect();
+    svg.setAttribute('viewBox', `0 0 ${boite.width} ${boite.height}`);
+    const pts = stations.map((s) => {
+      const r = s.querySelector('[data-noeud]')!.getBoundingClientRect();
+      return { x: r.left + r.width / 2 - boite.left, y: r.top + r.height / 2 - boite.top, c: s.style.getPropertyValue('--lumiere') };
+    });
+    if (pts.length === 0) return;
+    const debut = { x: pts[0].x - Math.min(80, boite.width * 0.08), y: pts[0].y };
+    const morceaux: string[] = [];
+    let prev = debut;
+    pts.forEach((p, i) => {
+      let d: string;
+      if (Math.abs(p.y - prev.y) < 4) d = `M${prev.x},${prev.y} L${p.x},${p.y}`;
+      else {
+        // changement de rangée : demi-boucle côté extérieur
+        const cote = prev.x > boite.width / 2 ? 1 : -1;
+        const ext = (cols > 1 ? 70 : 0) * cote;
+        d = `M${prev.x},${prev.y} C${prev.x + ext},${prev.y} ${p.x + ext},${p.y} ${p.x},${p.y}`;
+      }
+      morceaux.push(
+        `<path class="seg-fond" d="${d}"/><path class="seg-lum" d="${d}" pathLength="100" style="stroke:${p.c};animation-delay:${(i * 0.45).toFixed(2)}s"/>`,
+      );
+      prev = p;
+    });
+    svg.innerHTML = morceaux.join('');
+  }
+
+  for (const carte of document.querySelectorAll<HTMLElement>('[data-carte]')) {
+    const ro = new ResizeObserver(() => disposer(carte));
+    ro.observe(carte);
+    document.fonts?.ready.then(() => disposer(carte));
+  }
+</script>
+
+<style>
+  .carte {
+    position: relative;
+  }
+  .trace {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+  .trace :global(.seg-fond) {
+    fill: none;
+    stroke: var(--filet-fort);
+    stroke-width: 1.2;
+  }
+  .trace :global(.seg-lum) {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-dasharray: 14 86;
+    stroke-dashoffset: 100;
+    opacity: 0.9;
+    animation: impulsion 3.6s linear infinite;
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+  @keyframes impulsion {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trace :global(.seg-lum) {
+      animation: none;
+      stroke-dasharray: none;
+      opacity: 0.35;
+    }
+  }
+
+  .stations {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem 1.5rem;
+  }
+  @media (min-width: 560px) {
+    .stations {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 860px) {
+    .stations {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  @media (min-width: 1180px) {
+    .stations {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  .station {
+    position: relative;
+  }
+  .lien {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      'noeud code'
+      'noeud titre'
+      'bascule bascule';
+    column-gap: 0.85rem;
+    align-items: center;
+    padding: 0.9rem 1rem 1rem;
+    border-radius: 14px;
+    text-decoration: none;
+    background: var(--papier);
+    border: 1px solid var(--filet);
+    transition: border-color 0.25s var(--ease), box-shadow 0.3s var(--ease), transform 0.3s var(--ease);
+    height: 100%;
+  }
+  .lien:hover,
+  .lien:focus-visible {
+    border-color: var(--accent);
+    box-shadow: var(--ombre), 0 0 0 4px color-mix(in oklab, var(--accent) 10%, transparent);
+    transform: translateY(-3px);
+    color: inherit;
+  }
+  .noeud {
+    grid-area: noeud;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+    background: var(--papier);
+    border: 1.5px solid color-mix(in oklab, var(--accent) 60%, var(--filet));
+    box-shadow: 0 0 0 5px var(--papier);
+    transition: box-shadow 0.3s var(--ease), background 0.3s var(--ease);
+  }
+  .noeud :global(svg) {
+    width: 1.8rem;
+    height: 1.8rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .lien:hover .noeud,
+  .lien:focus-visible .noeud {
+    background: color-mix(in oklab, var(--accent) 12%, var(--papier));
+    box-shadow:
+      0 0 0 5px var(--papier),
+      0 0 24px color-mix(in oklab, var(--lumiere) 60%, transparent);
+  }
+  .code {
+    grid-area: code;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    align-self: end;
+  }
+  .titre {
+    grid-area: titre;
+    font-family: var(--f-titre);
+    font-size: 1.22rem;
+    line-height: 1.15;
+    align-self: start;
+  }
+  .bascule {
+    grid-area: bascule;
+    display: grid;
+    margin-top: 0.7rem;
+    font-size: 0.92rem;
+    line-height: 1.4;
+  }
+  .sous,
+  .detail {
+    grid-area: 1 / 1;
+    transition: opacity 0.25s var(--ease), transform 0.3s var(--ease);
+  }
+  .sous {
+    color: var(--encre-2);
+  }
+  .detail {
+    opacity: 0;
+    transform: translateY(6px);
+    color: var(--encre-2);
+  }
+  .meta {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .lien:hover .sous,
+  .lien:focus-visible .sous {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  .lien:hover .detail,
+  .lien:focus-visible .detail {
+    opacity: 1;
+    transform: none;
+  }
+  /* Le résumé doit tenir : on réserve la hauteur du plus long des deux. */
+  .branches {
+    position: absolute;
+    right: 0.8rem;
+    top: -0.75rem;
+    display: flex;
+    gap: 0.3rem;
+  }
+  .branche {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.12rem 0.5rem;
+    border-radius: 999px;
+    background: var(--papier);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .branche:hover {
+    background: var(--accent);
+    color: var(--papier);
+  }
+</style>

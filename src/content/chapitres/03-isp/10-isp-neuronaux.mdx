@@ -1,0 +1,40 @@
+---
+titre: "ISP neuronaux et optimisation de l’ISP"
+resume: "On peut apprendre toute la chaîne RAW → RGB avec un réseau, ou garder l’ISP réel et optimiser ses réglages pour une tâche, éventuellement grâce à un proxy différentiable."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import OptimISP from '@/components/schemas/ch03/OptimISP.astro';
+
+## Remplacer la chaîne par un réseau
+
+Les étapes classiques (corrections, débruitage, dématriçage, tonalité et couleur) ne sont qu’une organisation possible. Un <Terme en="neural ISP">ISP neuronal</Terme> les remplace par un traitement **appris conjointement** :
+
+<Formule titre="ISP neuronal">
+$$
+\hat y = F_w(x, c)
+$$
+
+$x$ : RAW calibré ; $c$ : métadonnées de prise de vue (exposition, ISO…), si on les utilise ; $F_w$ : réseau de poids $w$ ; $\hat y$ : RGB de sortie.
+</Formule>
+
+**Entraînement supervisé** : des paires (RAW, RGB de référence). On compare la prédiction à la référence et on met à jour les poids. À l’usage, le réseau est **figé** : un nouveau RAW entre, une image sort.
+
+- **Learning to See in the Dark** (SID, Chen et al., CVPR 2018) : à partir d’un RAW très sombre, une chaîne traditionnelle avec simple amplification donne une image bruitée et terne ; un U-Net appliqué au RAW « empaqueté » (les quatre canaux de Bayer séparés, ce qui préserve les mesures) produit une image propre. Le facteur d’amplification demandé $\gamma$ est une entrée du réseau ; ce n’est pas l’exposant sRGB.
+- **ParamISP** : combine des opérations connues de calibration (CanoNet), des corrections apprises locales et globales (LocalNet, GlobalNet), et un réseau qui **conditionne** ces opérations par les réglages de prise de vue (ParamNet). On obtient un modèle direct (RAW → RGB) et inverse (RGB → RAW).
+
+## Optimiser les réglages d’un ISP réel
+
+Un ISP a des paramètres $\theta$ (taille du médian, force du débruitage, netteté…) : $y = f(x;\, \theta)$. Le meilleur $\theta$ dépend de l’**objectif** : qualité perçue, détection d’objets, mesure.
+
+<OptimISP />
+
+<Concept titre="Proxy différentiable (Tseng et al., SIGGRAPH 2019)">
+1. **Entraîner** un réseau $\varphi$ à **reproduire** les sorties de l’ISP réel pour des réglages variés.
+2. **Geler** $\varphi$ et optimiser les réglages $\theta$ par descente de gradient à travers le proxy.
+3. **Valider** les réglages trouvés sur l’ISP réel.
+</Concept>
+
+**Optimisation matériel dans la boucle** : on évalue directement l’ISP réel sur une pile de RAW, pour des réglages candidats, en mesurant la perte de la tâche ; une stratégie évolutionnaire (CMA-ES) met à jour sa distribution de recherche. Aucun gradient ne traverse le matériel (méthode d’ordre zéro). Résultat typique : les réglages optimisés **pour la tâche** (par exemple la détection) diffèrent de ceux optimisés pour la qualité d’image.

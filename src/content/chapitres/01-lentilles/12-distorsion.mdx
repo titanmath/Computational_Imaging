@@ -1,0 +1,53 @@
+---
+titre: "La distorsion : des droites qui se courbent"
+resume: "La distorsion déplace les points de l’image selon leur distance au centre : les droites se bombent (barillet) ou se pincent (coussinet). On la modélise par quelques coefficients et on la corrige par rééchantillonnage."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Distorsion from '@/components/sims/ch01/Distorsion.svelte';
+
+La <Terme en="lens distortion">distorsion</Terme> est un **grandissement qui varie avec la position** dans l’image. La grille des pixels du capteur ne bouge pas : c’est la position où se forme l’image d’un point de la scène qui est décalée.
+
+- **Barillet** ($k_1 < 0$) : les points se rapprochent du centre, les bords de l’image se bombent vers l’extérieur (typique des grands-angles).
+- **Coussinet** ($k_1 > 0$) : les points s’éloignent du centre, les bords se pincent vers l’intérieur (typique des téléobjectifs).
+
+## Le modèle (celui d’OpenCV)
+
+<Formule titre="Distorsion radiale et tangentielle">
+$$
+x = \frac{u - c_x}{f_x},\quad y = \frac{v - c_y}{f_y},\quad r^2 = x^2 + y^2
+$$
+$$
+g(r) = 1 + k_1 r^2 + k_2 r^4 + k_3 r^6
+$$
+$$
+x_d = x\,g(r) + 2p_1 xy + p_2(r^2 + 2x^2), \qquad y_d = y\,g(r) + p_1(r^2 + 2y^2) + 2p_2 xy
+$$
+$$
+u_d = f_x x_d + c_x, \qquad v_d = f_y y_d + c_y
+$$
+
+- $(u, v)$ : pixel idéal, $(u_d, v_d)$ : pixel distordu, $\mathbf c = (c_x, c_y)$ : <Terme en="principal point">point principal</Terme>
+- $f_x, f_y$ : focales **en pixels** ; $(x, y)$ sans dimension
+- $k_i$ : coefficients radiaux, $p_1, p_2$ : tangentiels (lentille légèrement décentrée)
+</Formule>
+
+<Figure legende="Fais varier k₁ : un damier idéal est déformé par le modèle. Le point B suit l’exemple chiffré des slides. « Après correction » montre l’image rééchantillonnée, où les droites redeviennent droites.">
+  <Distorsion client:visible />
+</Figure>
+
+<Exemple titre="Le point B des slides">
+$f_x = f_y = 1000$ px, $\mathbf c = (800, 600)$, $k_1 = -0{,}2$ (autres termes nuls), $B = (1400, 1000)$ px.
+1. Normalisation : $(x, y) = (0{,}6;\ 0{,}4)$, $r^2 = 0{,}52$.
+2. $g = 1 - 0{,}2 \times 0{,}52 = 0{,}896$.
+3. $(x_d, y_d) = (0{,}5376;\ 0{,}3584)$.
+4. Retour aux pixels : $B' = (1337{,}6;\ 958{,}4)$ px. En barillet, l’image se rapproche du point principal.
+</Exemple>
+
+<Concept titre="Corriger : rééchantillonner à l’envers">
+Pour **redresser** une image, on parcourt chaque pixel de l’image **corrigée** $(u, v)$, on calcule où il tombe dans l’image distordue $(u_d, v_d)$ avec le modèle direct, et on y lit la valeur (avec interpolation). On n’inverse jamais la formule : on l’applique dans le bon sens. Les coefficients $k_i, p_i$ s’obtiennent par **calibration** avec un damier (chapitre 05).
+</Concept>

@@ -1,0 +1,24 @@
+---
+titre: "L’HDR côté capteur et côté optique"
+resume: "Lire deux fois la même intégration avec deux gains, ou étaler optiquement l’énergie d’une source trop brillante : deux façons d’étendre la dynamique en une seule pose."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import DoubleGain from '@/components/sims/ch06/DoubleGain.svelte';
+
+## Le double gain
+
+<Concept titre="Une intégration, deux gains de conversion, une fusion">
+Le pixel collecte ses électrons **une seule fois**, puis la charge est **lue deux fois** : avec un gain fort (détails des ombres, peu de bruit de lecture relatif, saturation précoce) et un gain faible (hautes lumières). On fusionne les deux lectures. Avantage décisif sur le bracketing : les deux mesures partagent **le même intervalle de temps**, donc **pas de fantômes** sur les objets en mouvement (exemple industriel : Smart-ISO Pro de Samsung, présenté à Hot Chips 2021).
+</Concept>
+
+<Figure legende="Les deux courbes de réponse d’un même pixel : le gain fort détaille les ombres mais sature à environ 1 000 électrons ; le gain faible continue jusqu’au puits plein.">
+  <DoubleGain client:visible />
+</Figure>
+
+## Encoder optiquement les sources très brillantes
+
+<Concept titre="Encodage de l’éblouissement (Rouf et al., CVPR 2011)">
+Avant que le capteur n’écrête, un **filtre optique connu** étale une partie de l’énergie des points très lumineux sur les pixels voisins, sous forme d’un motif d’éblouissement (de « glare ») contrôlé. Ces pixels voisins, eux, ne sont pas saturés : ils **contraignent** l’intensité de la source. Un **décodage numérique** retrouve la radiance de la source et retire le motif. C’est un exemple direct de conception conjointe optique + calcul (chapitre 00).
+</Concept>

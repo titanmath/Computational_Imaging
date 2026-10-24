@@ -1,0 +1,12 @@
+numero: 5
+titre: "Calibration"
+sousTitre: "Rendre le modèle direct utilisable"
+resume: "Mesurer les paramètres d’un système d’imagerie : noir, gain, champ plat, PSF, sensibilité spectrale, réponse d’écran, géométrie, couleur. Deux familles de méthodes (mesure directe, optimisation), les méthodes non calibrées, et la validation."
+objectifs:
+  - "distinguer calibration par mesure directe et par optimisation d’un modèle direct"
+  - "calibrer un noir, un champ plat et une PSF, et savoir combien d’images moyenner"
+  - "ajuster un modèle (réponse d’écran, distorsion, matrice couleur) par moindres carrés"
+  - "décrire la calibration de Zhang (damier, intrinsèques partagés, une pose par vue)"
+  - "valider une calibration sur des données indépendantes et dans les bonnes conditions"
+icone: mire
+source: 5_calibration_2026.pdf

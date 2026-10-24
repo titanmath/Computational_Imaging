@@ -1,0 +1,48 @@
+---
+titre: "Spectre, radiance, luminance"
+resume: "Une lumière est décrite par son spectre. La radiance la mesure physiquement, la luminance la pondère par la sensibilité de l’œil, et la luminosité est ce qu’on perçoit."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Stimulus from '@/components/sims/ch04/Stimulus.svelte';
+
+## Le spectre
+
+La lumière visible couvre environ **380 à 780 nm**. Longueur d’onde et fréquence sont liées par $c = \lambda\nu$. Une <Terme en="spectral distribution">distribution spectrale</Terme> décrit comment la puissance lumineuse se répartit en longueur d’onde. Un **spectromètre** la mesure : il disperse la lumière (prisme, réseau) puis mesure chaque bande ; sa calibration fixe la grandeur rapportée.
+
+## Trois grandeurs à ne pas confondre
+
+<Concept titre="Radiance, luminance, luminosité">
+- <Terme en="radiance">Radiance</Terme> : grandeur **physique**, la puissance lumineuse par unité de surface et d’angle solide, en W/(m²·sr).
+- <Terme en="luminance">Luminance</Terme> : la radiance **pondérée par la sensibilité de l’œil** $V(\lambda)$, en cd/m² (appelées « nits »).
+- <Terme en="brightness">Luminosité</Terme> : ce qu’une personne **perçoit**. Deux zones de même luminance peuvent paraître de luminosités différentes (leçon « Le contexte change tout »).
+</Concept>
+
+## La luminance photopique
+
+$V(\lambda)$ a été mesurée par **photométrie hétérochromatique par papillotement** : on fait alterner rapidement, au même endroit de la rétine, une lumière de référence et une lumière test, et on règle la puissance du test jusqu’à **minimiser le scintillement**. Les couleurs n’ont pas besoin de se ressembler. Moins il faut de puissance au point d’annulation, plus l’œil est sensible à cette longueur d’onde. On répète à d’autres longueurs d’onde.
+
+<Formule titre="Luminance photopique">
+$$
+L_v = K_m \int L_\lambda(\lambda)\, V(\lambda)\, \mathrm d\lambda, \qquad K_m = 683\ \text{lm/W}
+$$
+
+$V(\lambda)$ culmine à **555 nm** (vert) : le vert reçoit plus de poids que le rouge profond ou le bleu.
+</Formule>
+
+## L’éclairage et la surface façonnent le stimulus
+
+<Formule titre="Radiance réfléchie par une surface mate (lambertienne)">
+$$
+L_\lambda(\lambda) = \frac{E_\lambda(\lambda)\,\rho(\lambda)}{\pi}
+$$
+
+$E_\lambda$ : éclairement spectral incident ; $\rho$ : réflectance de la surface.
+</Formule>
+
+<Figure legende="Choisis un éclairage et une surface : le stimulus qui entre dans l’œil est leur produit. La pastille montre la couleur perçue par un œil adapté à l’éclairage.">
+  <Stimulus client:visible />
+</Figure>

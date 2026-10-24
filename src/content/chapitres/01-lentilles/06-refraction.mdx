@@ -1,0 +1,50 @@
+---
+titre: "Réfraction : courber la lumière"
+resume: "À la traversée d’une interface, la lumière change de direction selon la loi de Snell-Descartes. C’est le principe de toute lentille, et la dispersion en est la face cachée."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Snell from '@/components/sims/ch01/Snell.svelte';
+
+## L’indice de réfraction
+
+La lumière va moins vite dans la matière que dans le vide. On le mesure par l’<Terme en="refractive index">indice de réfraction</Terme> :
+
+<Formule titre="Indice de réfraction">
+$$
+n = \frac{c_0}{v_p}
+$$
+
+- $c_0$ : vitesse de la lumière dans le vide, $v_p$ : vitesse (de phase) dans le milieu
+- valeurs typiques : vide 1 exactement, air ≈ 1,0003, eau ≈ 1,33, verre ≈ 1,5
+</Formule>
+
+## La loi de Snell-Descartes
+
+À une interface entre deux milieux, une partie de la lumière est **réfléchie** (avec un angle égal à l’angle d’incidence) et le reste est **réfracté** : il change de direction.
+
+<Formule titre="Réflexion et réfraction">
+$$
+\theta_r = \theta_1, \qquad n_1 \sin\theta_1 = n_2 \sin\theta_2
+$$
+
+Les angles sont mesurés depuis la **normale** à la surface.
+</Formule>
+
+<Figure legende="Fais varier l’angle d’incidence. En entrant dans un milieu plus réfringent (air → verre), le rayon se rapproche de la normale. En sortant du verre, au-delà d’un angle critique, plus rien ne sort : réflexion totale interne. Active la dispersion : le bleu est plus dévié que le rouge.">
+  <Snell client:visible />
+</Figure>
+
+Points à retenir :
+
+- en incidence normale ($\theta_1 = 0$), la direction ne change pas ;
+- dans une lentille, on applique Snell **à chaque surface**, avec la normale locale, qui change le long d’une surface courbe. C’est cette variation de la normale qui fait converger un faisceau parallèle en un point.
+
+## La dispersion
+
+<Concept titre="L’indice dépend de la longueur d’onde">
+Pour un verre ordinaire, $n$ est un peu plus grand pour le bleu que pour le rouge ($n_\text{bleu} > n_\text{rouge}$) : le bleu est plus dévié. C’est la <Terme en="dispersion">dispersion</Terme> (l’arc-en-ciel, le prisme de Newton). Dans une lentille, elle provoque l’**aberration chromatique** : chaque couleur focalise à une distance différente. On la retrouvera dans la leçon sur les aberrations, et elle est exploitée en imagerie spectrale.
+</Concept>

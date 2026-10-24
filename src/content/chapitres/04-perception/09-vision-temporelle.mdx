@@ -1,0 +1,30 @@
+---
+titre: "Vision temporelle"
+resume: "L’œil perçoit aussi les variations dans le temps, jusqu’à une certaine fréquence. La sensibilité dépend du rythme, de la luminance, de la position dans le champ et de la taille du stimulus."
+duree: 3
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Temporelle from '@/components/sims/ch04/Temporelle.svelte';
+
+<Formule titre="Modulation temporelle">
+$$
+L(t) = L_0\left[1 + m\,\sin(2\pi f t)\right]
+$$
+
+Deux réglages indépendants : la fréquence $f$ (Hz) et la profondeur de modulation $m$. Exemple des slides : $L_0 = 50$ cd/m², $m = 0{,}6$, à 5 Hz ou 15 Hz.
+</Formule>
+
+<Figure legende="Tracé de la luminance d’une source modulée (une lampe qui papillote, un écran à rétroéclairage modulé).">
+  <Temporelle client:visible />
+</Figure>
+
+<Concept titre="Quatre facteurs qui changent la sensibilité au contraste">
+1. **Fréquence temporelle** : à quel rythme la luminance se répète (Hz).
+2. **Luminance moyenne** : on détecte mieux le papillotement quand c’est plus lumineux.
+3. **Excentricité** : distance angulaire au point de fixation. La périphérie est sensible au mouvement et au scintillement.
+4. **Taille du stimulus** : un grand motif se détecte plus facilement.
+
+Le modèle stelaCSF (Mantiuk et al., 2022) combine tous ces facteurs. On s’en sert pour concevoir des écrans (fréquence de rafraîchissement, modulation PWM) et des codecs vidéo.
+</Concept>

@@ -1,0 +1,46 @@
+---
+titre: "Deux calibrations, dans cet ordre"
+resume: "La tâche 1 retrouve comment le téléphone transforme la lumière en valeurs de pixel. La tâche 2 en a besoin : on ne peut mesurer une PSF que sur des valeurs proportionnelles à la lumière."
+duree: 5
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Attention from '@/components/contenu/Attention.astro';
+
+## Le problème concret
+
+Tu disposes d’un téléphone et de la caméra sténopé de l’A1. Tu veux répondre à deux questions de **mesure**.
+
+1. **Quelle lumière a produit tel pixel ?** Un JPEG de téléphone n’est pas linéaire : l’ISP applique gamma, courbes de tonalité et « look » maison (chapitre 03). Doubler la lumière ne double pas la valeur du pixel.
+2. **Quelle est la netteté réelle de la caméra sténopé ?** C’est sa réponse impulsionnelle, la <abbr title="point spread function">PSF</abbr> : l’image d’un point. Le chapitre 01 en a prédit l’ordre de grandeur ($b_g + b_d$) ; l’A2 la **mesure**.
+
+<Formule titre="Le fil conducteur">
+$$
+\underbrace{z = f(E\,t)}_{\text{tâche 1 : trouver } f}
+\qquad\Longrightarrow\qquad
+\underbrace{E\,t = f^{-1}(z) = e^{g(z)}}_{\text{linéariser}}
+\qquad\Longrightarrow\qquad
+\underbrace{I = O * h}_{\text{tâche 2 : trouver } h}
+$$
+
+Le modèle de convolution $I = O * h$ (image = objet ∗ PSF) n’est valable que pour des grandeurs **proportionnelles à la lumière**. L’énoncé le précise : la PSF est estimée « en supposant linéarité et invariance par translation locales **après correction de la CRF** ».
+</Formule>
+
+<Attention titre="Mesurer une PSF sur un JPEG brut, c’est mesurer autre chose">
+La CRF compresse les hautes lumières et relève les ombres. Appliquée à un bord flou, elle déforme le profil, qui devient asymétrique, et change sa largeur à mi-hauteur. Le simulateur de la tâche 2 permet de le voir (bascule « JPEG brut »).
+</Attention>
+
+## Le parcours
+
+<Concept titre="Tâche 1 : courbe de réponse (CRF)">
+- **Théorie** : l’équation $g(z) = \ln E + \ln t$ et la méthode de Debevec et Malik.
+- **Capture et résultats** : le protocole photo, l’échantillonnage, le tracé des trois CRF.
+- **Validation** (facultative) : prédire des poses mises de côté et mesurer l’erreur.
+</Concept>
+
+<Concept titre="Tâche 2 : PSF de la caméra sténopé">
+- **Théorie** : PSF, LSF, ESF, et pourquoi un bord **incliné** donne un profil suréchantillonné.
+- **Mesure** : source ponctuelle, bord incliné avec SFRMAT5, dérivation, normalisation, FWHM, comparaison.
+</Concept>
+
+Chaque étape se termine par une liste « à maîtriser absolument ». La dernière rassemble les pièges et les questions probables de la démo du 29 octobre. Le code est donné en **pseudo-code** : à toi de l’écrire dans ton langage.

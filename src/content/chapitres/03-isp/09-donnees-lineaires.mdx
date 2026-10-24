@@ -1,0 +1,48 @@
+---
+titre: "Mesurer exige des données linéaires"
+resume: "Pour estimer une grandeur physique, il faut des valeurs proportionnelles à la lumière. Une chaîne ISP « photo » détruit cette propriété ; une chaîne minimale la préserve."
+duree: 5
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Retenir from '@/components/contenu/Retenir.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Linearite from '@/components/sims/ch03/Linearite.svelte';
+
+Une chaîne ISP est conçue pour une **sortie** et une **tâche**. Pour une photo agréable, on applique tonalité, couleurs vives, compression. Pour une **mesure** (radiance, réflectance, profondeur, polarisation, PSF…), il faut au contraire des valeurs dont on connaît la **signification physique**.
+
+<Figure legende="Doubler l’exposition double le signal linéaire (avant saturation), mais pas le code sRGB. Les valeurs JPEG d’un téléphone se comportent comme la courbe colorée, ou pire, à cause de ses propres courbes de tonalité.">
+  <Linearite client:visible />
+</Figure>
+
+## Les conditions d’une donnée linéaire
+
+- **niveau noir soustrait** ;
+- **gain et exposition connus** ;
+- **pas de saturation**.
+
+Alors, deux fois plus de lumière donne deux fois plus de signal.
+
+<Concept titre="Une chaîne minimale pour l’imagerie quantitative">
+1. Soustraction du noir.
+2. Masque de défauts + champ plat (vignetage).
+3. Garder les échantillons de la mosaïque, ou un dématriçage simple et **explicite**.
+4. Calibration du gain et de l’exposition.
+
+On **contourne** tout le reste : couleurs et tonalité d’affichage, encodage sRGB, JPEG, rendus appris. Les mesures alimentent ensuite un **modèle direct** calibré :
+$$
+y = A(p) + \varepsilon,
+$$
+où $p$ est la grandeur physique recherchée (radiance, réflectance, profondeur, polarisation…), $A$ le modèle de formation de la mesure et $\varepsilon$ le bruit. C’est l’objet des chapitres 05 à 08.
+</Concept>
+
+<Attention titre="Le cas de l’assignment 2">
+Ton téléphone ne te donne qu’un **JPEG**, avec une courbe de réponse inconnue $f$ : $z = f(E\,t)$. Impossible de mesurer une PSF (tâche 2) ou de fusionner des expositions sans connaître $f$. La **tâche 1 de l’A2** consiste justement à estimer $f$ (méthode de Debevec et Malik) pour pouvoir **linéariser** les images ensuite. On la détaille au chapitre 06 et dans la page de l’A2.
+</Attention>
+
+<Retenir>
+Choisis les opérations de l’ISP en fonction de la représentation de sortie **et** de la tâche d’inférence. Pour mesurer : linéaire, calibré, non compressé.
+</Retenir>

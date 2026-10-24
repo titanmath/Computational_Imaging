@@ -1,0 +1,40 @@
+---
+titre: "Des a priori appris sur des données"
+resume: "Au lieu d’écrire Ψ à la main, on entraîne un réseau F_θ sur des paires (bruitée, propre). L’a priori n’est plus une formule : il est dans les données et dans les poids."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import EncodeurDecodeur from '@/components/schemas/ch08/EncodeurDecodeur.astro';
+import DebruiteurAppris from '@/components/sims/ch08/DebruiteurAppris.svelte';
+
+Jusqu’ici, on optimisait les **pixels** d’une image, avec un a priori explicite. Le <Terme en="supervised denoising">débruitage supervisé</Terme> change d’inconnue : on optimise les **poids d’un réseau**, une fois pour toutes, sur une base d’exemples.
+
+<Formule titre="Deux problèmes d’optimisation différents">
+$$
+\text{optimiser les pixels : } \min_x \tfrac12 \|x - b\|_2^2 + \lambda \Psi(x)
+\qquad
+\text{entraîner les poids : } \min_\theta \frac1M \sum_{i=1}^{M} \big\|F_\theta(b_i) - x_i\big\|_2^2
+$$
+
+$M$ : nombre de paires d’entraînement (observation bruitée $b_i$, cible propre $x_i$) ; $\theta$ : poids du réseau. Le second objectif ne contient **aucun terme d’a priori explicite**. Une fois $\theta$ fixé, l’<Terme en="inference">inférence</Terme> est une simple évaluation : $\hat x = F_\theta(b)$.
+</Formule>
+
+<EncodeurDecodeur />
+
+Le réseau RED-Net de Mao, Shen et Yang (NeurIPS 2016) en est un exemple. Il enchaîne 30 couches de convolution puis de déconvolution, avec des connexions de saut qui transmettent les détails, et apprend la restauration à partir de paires bruitées et propres. Sur une photo de mandrill, il retire le bruit en gardant le pelage et le regard.
+
+<Figure legende="Le plus petit débruiteur appris possible : un seul filtre linéaire θ (de 1 × 1 à 9 × 9 poids), entraîné par moindres carrés sur des paires bruitées et propres, puis testé sur une image qu’il n’a jamais vue. Compare les trois bases d’entraînement : une seule image trop différente donne un filtre qui floute trop ; une base variée fait mieux ; « triche » (entraîner sur l’image test) montre le meilleur filtre linéaire possible. Même celui-ci reste loin de la TV : pour faire mieux, il faut de la non-linéarité, celle des couches d’un réseau profond.">
+  <DebruiteurAppris client:visible />
+</Figure>
+
+<Concept titre="Où est passé l’a priori ?">
+L’a priori est **implicite** : il est dans la base d’entraînement (les $x_i$ sont des images naturelles), dans l’architecture (convolutions locales, connexions de saut) et dans la fonction de perte. Un réseau entraîné sur des visages débruite très bien les visages, et beaucoup moins bien les images astronomiques.
+</Concept>
+
+<Attention titre="Le prix des a priori appris">
+Il faut **beaucoup de paires** (bruitée, propre) représentatives. Il faut aussi un **modèle de bruit** cohérent entre l’entraînement et l’usage : un réseau entraîné sur du bruit gaussien σ = 0,1 peut mal se comporter sur du bruit de Poisson en basse lumière (chapitre 02). Enfin, il est difficile de garantir qu’il n’**invente** pas de détails : il peut produire une texture plausible mais fausse.
+</Attention>

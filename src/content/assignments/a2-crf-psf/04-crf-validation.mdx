@@ -1,0 +1,53 @@
+---
+titre: "Tâche 1 : valider la courbe (facultatif)"
+resume: "Une bonne CRF doit expliquer des photos qu’elle n’a pas vues. On met de côté des positions et des poses, on prédit leurs valeurs et on mesure l’erreur RMS par canal."
+duree: 7
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Pseudocode from '@/components/contenu/Pseudocode.astro';
+
+Cette partie est **facultative** : elle n’affecte pas la note. Mais c’est l’idée de la validation sur données réservées du chapitre 05, et une excellente matière pour la démo.
+
+<Concept titre="1. Séparer les données avant tout ajustement">
+On partage les **positions** (entraînement / validation) et les **images** (de référence / de test). On ajuste $g$ uniquement sur les positions d’entraînement et les poses de référence. Aux positions réservées, la luminosité n’est estimée qu’à partir des poses de référence. Les images de test n’entrent **ni** dans l’ajustement de $g$, **ni** dans l’estimation de la luminosité.
+</Concept>
+
+<Formule titre="2. Cohérence de l’exposition">
+$$
+\hat E_{ij} = \frac{\exp\big(g(z_{ij})\big)}{t_j}
+$$
+
+$i$ : position ; $j$ : image ; un calcul par canal. C’est la luminosité relative de la scène, une fois le temps de pose retiré. Pour une scène et un éclairage fixes, elle doit être **constante** pour une position donnée. Trace-la en fonction du temps de pose ; pour superposer plusieurs positions, divise par la luminosité de référence de chacune : les courbes doivent rester près de 1.
+</Formule>
+
+<Formule titre="3. Prédire et mesurer l’erreur">
+$$
+\hat E_i = \operatorname{médiane}_j \frac{e^{g(z_{ij})}}{t_j}\ \text{(poses de référence)}, \qquad
+\hat z_{ij} = f\big(\hat E_i\, t_j\big), \qquad e_{ij} = \hat z_{ij} - z_{ij}, \qquad
+\mathrm{RMSE}_c = \sqrt{\frac{\sum e_{ij,c}^2}{N_c}}
+$$
+
+Une RMSE par canal, en **unités de valeur de pixel** (échelle 0–255, pas des pixels spatiaux). $N_c$ compte les observations de test valides. Une prédiction de 120 contre une observation de 123 donne un résidu de −3. On peut aussi faire la moyenne pondérée de $g(z) - \ln t$, puis l’exponentielle : il faut dire quel estimateur on utilise.
+</Formule>
+
+<Pseudocode titre="Validation (un canal)">
+```text
+f ← inverse de g : pour une exposition X, f(X) = la valeur z telle que g(z) ≈ ln X (interpolation)
+pour chaque position réservée i :
+    Ê_i ← médiane sur les poses de référence j de exp(g(z_ij)) / t_j
+    pour chaque pose de test j (non saturée, pas trop sombre) :
+        ẑ_ij ← f(Ê_i · t_j) ; e_ij ← ẑ_ij − z_ij
+RMSE ← racine( moyenne des e_ij² ) ; tracer e_ij en fonction de t_j ou de z_ij
+```
+</Pseudocode>
+
+<Exemple titre="Ordre de grandeur (assistant)">
+RMSE de prédiction R/G/B : **2,98 / 2,57 / 2,32** unités de valeur de pixel, sur 22 poses utilisables. Ce sont des RMSE de moyennes de patchs, pas d’images entières ni d’éclairement absolu.
+</Exemple>
+
+<Attention titre="Interpréter, pas seulement chiffrer">
+Une petite RMSE signifie une bonne prédiction **sur les données choisies**. Elle mélange le bruit, les erreurs d’alignement, d’éclairage et de temps de pose, un ISP qui change de comportement, et l’erreur de la CRF elle-même. Trace les résidus en fonction de l’exposition ou de la luminosité : une **tendance** (résidus positifs aux fortes poses, par exemple) révèle un défaut du modèle ou de la capture. Explique-la et propose une amélioration. Énonce aussi tes règles d’exclusion (saturation, données sombres peu fiables).
+</Attention>

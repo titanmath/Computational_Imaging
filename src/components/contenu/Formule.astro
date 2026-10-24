@@ -1,0 +1,48 @@
+---
+// Équation clé mise en valeur. Le contenu MDX contient la formule ($$…$$) puis,
+// facultativement, une liste des symboles (rendue en deux colonnes).
+interface Props {
+  titre?: string;
+}
+const { titre } = Astro.props;
+---
+<figure class="formule">
+  {titre && <figcaption class="etiquette">{titre}</figcaption>}
+  <div class="corps"><slot /></div>
+</figure>
+
+<style>
+  .formule {
+    margin: 2rem 0;
+    padding: 1.1rem 1.25rem 1rem;
+    border-top: 1px solid var(--filet-fort);
+    border-bottom: 1px solid var(--filet-fort);
+    background: linear-gradient(180deg, color-mix(in oklab, var(--accent) 5%, transparent), transparent 70%);
+  }
+  figcaption {
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+  }
+  .corps :global(.katex-display) {
+    margin: 0.6rem 0;
+  }
+  .corps :global(.katex-display > .katex) {
+    font-size: 1.3em;
+  }
+  .corps :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin: 0.6rem 0 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 0.25rem 1.5rem;
+    font-size: 0.95rem;
+    color: var(--encre-2);
+  }
+  .corps :global(li + li) {
+    margin-top: 0;
+  }
+  .corps :global(p) {
+    margin: 0.4rem 0 0;
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+titre: "Diffraction : la limite des ondes"
+resume: "Même une lentille parfaite, parfaitement mise au point, ne donne pas un point mais une tache d’Airy. Fermer le diaphragme réduit le défocus mais élargit cette tache."
+duree: 6
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Diffraction from '@/components/sims/ch01/Diffraction.svelte';
+
+## Deux modèles de la lumière
+
+- **Optique géométrique (rayons)** : chemins et énergie transportée. Elle explique la réfraction, le focus, le défocus et les aberrations. Elle est valable quand les échelles en jeu sont grandes devant la longueur d’onde.
+- **Optique ondulatoire** : la lumière est un champ complexe $U$ (amplitude **et** phase), d’intensité $|U|^2$. Elle explique en plus la **diffraction** et les **interférences**.
+
+Au foyer d’une lentille idéale, le modèle des rayons prédit un point mathématique : tous les rayons tombent dans la même case. Le modèle ondulatoire prédit une **tache finie entourée d’anneaux**, la <Terme en="Airy disk">tache d’Airy</Terme>.
+
+<Formule titre="Tache d’Airy (pupille circulaire, au foyer)">
+$$
+r_0 = 1{,}22\,\lambda\,N
+$$
+
+$r_0$ : rayon du premier anneau noir. Il ne dépend que de la longueur d’onde et du nombre d’ouverture.
+</Formule>
+
+<Exemple titre="f/4, 550 nm">
+$r_0 = 1{,}22 \times 0{,}55\ \mu\text{m} \times 4 = 2{,}68\ \mu$m. Pour un pixel de téléphone de 1 µm, la tache couvre déjà plusieurs pixels : beaucoup de petits capteurs sont **limités par la diffraction**.
+</Exemple>
+
+## Le compromis défocus ↔ diffraction
+
+<Figure legende="PSF calculée par transformée de Fourier de la pupille (avec un terme de phase de défocus) et comparée au disque géométrique. À f/2, le défocus domine ; vers f/5,6, la tache est la plus petite ; à f/16, la diffraction domine. Remets Δz à 0 : la PSF « rayons » devient un point, la PSF « ondes » reste une tache d’Airy.">
+  <Diffraction client:visible />
+</Figure>
+
+Pour un défocus $\Delta z$ du capteur, le rayon géométrique du flou vaut $\Delta z/(2N)$ et diminue quand on ferme ; le rayon d’Airy $1{,}22\lambda N$ augmente. On retrouve exactement le compromis du sténopé, qui n’est qu’une lentille sans réfraction. Au passage, la lumière reçue chute comme $1/N^2$ : 1 à f/2, 0,13 à f/5,6, 0,016 à f/16.
+
+<Concept titre="À retenir">
+**Fermer le diaphragme** rend l’image moins sensible au défocus (plus de profondeur de champ) mais **élargit la PSF au meilleur foyer**. Un objectif bien corrigé approche la *limite de diffraction* : il ne peut pas faire mieux que la tache d’Airy.
+</Concept>
+
+La simulation calcule la PSF dans l’approximation de Fraunhofer : l’amplitude au plan image est la transformée de Fourier de la pupille, multipliée par une phase quadratique $\exp\!\big(i\,\tfrac{2\pi}{\lambda}\,\tfrac{\Delta z\,\rho^2}{8N^2}\big)$ qui représente le défocus. On reverra ces outils en optique ondulatoire, en fin de semestre.

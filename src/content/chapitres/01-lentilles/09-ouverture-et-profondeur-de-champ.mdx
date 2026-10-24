@@ -1,0 +1,53 @@
+---
+titre: "Ouverture et profondeur de champ"
+resume: "Le diaphragme choisit la taille du cône de rayons : plus il est ouvert, plus l’image est lumineuse, mais plus la zone nette autour de la mise au point est mince."
+duree: 6
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import LentilleBokeh from '@/components/sims/ch01/LentilleBokeh.svelte';
+
+## Le diaphragme
+
+Un <Terme en="aperture">diaphragme</Terme> réglable limite le cône de rayons admis par la lentille. Une grande ouverture collecte plus de lumière, mais un point défocalisé y dessine un disque plus large : le diamètre du disque de flou est **proportionnel** au diamètre d’ouverture $D$.
+
+<Formule titre="Nombre d’ouverture et ouverture numérique">
+$$
+N = \frac{f}{D}, \qquad \mathrm{NA} = n \sin\theta \approx \frac{1}{2N}
+$$
+
+- $N$ : <Terme en="f-number">nombre d’ouverture</Terme> (« f/2,8 », « f/11 »…), $D$ : diamètre de la pupille d’entrée
+- NA : <Terme en="numerical aperture">ouverture numérique</Terme> (microscopie), $\theta$ : demi-angle du cône au point image, $n$ : indice du milieu image
+- la lumière reçue par pixel varie comme $1/N^2$ : passer de f/2 à f/2,8 la divise par 2 (un « diaphragme »)
+</Formule>
+
+## La profondeur de champ
+
+Avec un capteur fixe, une seule profondeur $Z_0$ est rigoureusement nette. Mais un capteur a des pixels de taille finie : un petit disque de flou, de diamètre inférieur à une **tolérance** $c$, est indiscernable d’un point. La <Terme en="depth of field" sigle="DoF">profondeur de champ</Terme> est l’intervalle de profondeurs dont le flou reste sous $c$.
+
+<Formule titre="Profondeur de champ (lentille mince, approximation)">
+$$
+\mathrm{DoF} \approx \frac{2\,c\,Z_0^2}{f\,D} = \frac{2\,c\,N\,Z_0^2}{f^2}
+$$
+
+Valable pour $Z_0 \gg f$ et $cZ_0/(fD) \ll 1$, diffraction négligée.
+</Formule>
+
+<Concept titre="Ce que la formule dit">
+- **Fermer** le diaphragme ($D \downarrow$, $N \uparrow$) **augmente** la profondeur de champ… mais assombrit l’image.
+- La profondeur de champ croît comme le **carré** de la distance de mise au point : un portrait à 1 m a une zone nette beaucoup plus mince qu’un paysage.
+- Une **longue focale** réduit la profondeur de champ (terme $1/f^2$).
+</Concept>
+
+<Figure legende="Image path-tracée à travers une vraie lentille mince de 50 mm : les rayons partent de points aléatoires de la pupille vers le plan de mise au point. Ouvre à f/1,4 : l’arrière-plan se dissout et les petites lampes deviennent des disques (le « bokeh », image de la pupille). Ferme à f/16 : tout devient net. Déplace la mise au point d’une sphère à l’autre.">
+  <LentilleBokeh client:visible />
+</Figure>
+
+<Exemple titre="Pourquoi les lampes deviennent des disques">
+Une lampe lointaine est presque un point. Hors de la mise au point, tous les rayons qui la relient à la pupille atteignent le capteur sur un disque : c’est littéralement **l’image de la pupille**. Avec un diaphragme hexagonal, les disques deviendraient des hexagones.
+</Exemple>
+
+**Lien avec le chapitre suivant.** Ouverture et temps de pose règlent ensemble la quantité de lumière (le « budget photons »). Un capteur de téléphone a une ouverture fixe : il ne joue que sur le temps de pose et le gain (ISO). On le verra au chapitre 02.

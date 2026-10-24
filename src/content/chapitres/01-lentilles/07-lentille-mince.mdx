@@ -1,0 +1,57 @@
+---
+titre: "La lentille mince et la mise au point"
+resume: "Une lentille fait converger les rayons d’un point en un point. Où ? L’équation 1/Z + 1/S = 1/f le dit. Hors de ce plan, le point devient une tache."
+duree: 6
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import LentilleMince from '@/components/sims/ch01/LentilleMince.svelte';
+
+## Focale et plan focal
+
+Pour un objet **très lointain**, les rayons issus d’un même point arrivent quasiment parallèles sur la lentille (leur écart angulaire est d’environ $D/Z$, négligeable quand $Z \gg D$). Une lentille convergente les fait se croiser en un point, le <Terme en="focal point">foyer</Terme> $F'$. La distance lentille → foyer est la <Terme en="focal length">focale</Terme> $f$ ; le plan qui contient les foyers des faisceaux parallèles est le **plan focal**.
+
+<Attention titre="Plan focal ≠ plan du capteur">
+La lentille définit le plan focal ; le capteur est un plan physique séparé, à la distance $S$ de la lentille. Si $S \ne f$, un point lointain n’est pas net : ses rayons se croisent avant (ou après) le capteur et y dessinent un <Terme en="blur disk / circle of confusion">disque de flou</Terme>.
+</Attention>
+
+## L’équation de la lentille mince
+
+Un objet à distance finie $Z$ n’est pas net dans le plan focal mais un peu plus loin. La relation entre la distance objet $Z$, la distance image $S$ et la focale $f$ est :
+
+<Formule titre="Équation de la lentille mince (conjugaison)">
+$$
+\frac{1}{Z} + \frac{1}{S} = \frac{1}{f}
+$$
+
+- $Z$ : distance objet → lentille
+- $S$ : distance lentille → plan où l’image est nette
+- quand $Z \to \infty$, $S \to f$
+</Formule>
+
+<Figure legende="Fais glisser l’objet (flèche magenta) et le capteur. Quand le capteur coïncide avec le plan image, il devient vert et la tache disparaît. Agrandis l’ouverture D : la tache grossit plus vite dès qu’on s’écarte de la mise au point.">
+  <LentilleMince client:visible />
+</Figure>
+
+La même équation répond à deux questions :
+
+<Exemple titre="Les deux exemples des slides (f = 50 mm)">
+1. **On fixe $f$ et $S$ : quel objet est net ?** Avec $S = 60$ mm : $1/Z = 1/50 - 1/60 = 1/300$, donc l’objet net est à **$Z = 300$ mm** ($Z = fS/(S-f)$).
+2. **On fixe $f$ et la cible $Z$ : où placer le capteur ?** Pour $Z = 500$ mm : $1/S = 1/50 - 1/500 = 9/500$, donc **$S \approx 55{,}56$ mm** ($S = fZ/(Z-f)$). Il faut rapprocher le capteur de 4,44 mm.
+</Exemple>
+
+<Concept titre="La mise au point, c’est déplacer S">
+Faire la mise au point, c’est choisir **quelle profondeur** est nette. Idéalement on déplace toute la lentille : avec $f = 50$ mm, $S = 50{,}00$ mm pour l’infini, $52{,}63$ mm pour 1 m, $55{,}56$ mm pour 0,5 m. Les vrais objectifs déplacent plutôt des groupes de lentilles internes, pilotés par un moteur.
+</Concept>
+
+## Défocus
+
+Avec un capteur fixe, **une seule profondeur** $Z_0$ est parfaitement nette :
+- un objet **plus loin** ($Z > Z_0$) focalise **devant** le capteur ;
+- un objet **plus près** ($Z < Z_0$) focalise **derrière** le capteur.
+
+Dans les deux cas, il apparaît comme un disque. Le diamètre de ce disque, qui dépend de l’ouverture, est le sujet de la leçon sur la profondeur de champ. D’abord, un outil pour décrire n’importe quel flou : la PSF.

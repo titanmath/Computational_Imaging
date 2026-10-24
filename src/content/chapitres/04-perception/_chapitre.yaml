@@ -1,0 +1,13 @@
+numero: 4
+titre: "Perception visuelle"
+sousTitre: "L’observateur fait partie du système"
+resume: "Ce que l’œil humain peut réellement voir : l’œil comme système optique, la rétine, la couleur (cônes, métamérisme, CIE XYZ), les effets de contexte, la sensibilité au contraste et au temps, la profondeur, et les métriques de qualité perceptuelle."
+objectifs:
+  - "décrire l’œil comme un système optique et expliquer accommodation, myopie, hypermétropie"
+  - "distinguer radiance, luminance et luminosité perçue"
+  - "calculer une réponse de cône et expliquer le métamérisme"
+  - "lire un diagramme de chromaticité CIE et définir XYZ et xy"
+  - "définir contraste de Michelson, cycles par degré et sensibilité au contraste"
+  - "expliquer le conflit vergence-accommodation et pourquoi MSE ≠ qualité perçue"
+icone: oeil
+source: 4_visual_perception_2026.pdf

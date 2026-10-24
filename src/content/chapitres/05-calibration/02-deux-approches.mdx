@@ -1,0 +1,26 @@
+---
+titre: "Deux approches de la calibration"
+resume: "Soit on isole une réponse et on la mesure directement, soit on ajuste les paramètres d’un modèle direct pour que ses prédictions collent aux mesures."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import DeuxApproches from '@/components/schemas/ch05/DeuxApproches.astro';
+
+<DeuxApproches />
+
+<Formule titre="Le schéma général de l’estimation par optimisation">
+$$
+\hat y = F(P;\, \theta), \qquad r = \hat y - y, \qquad \theta^* = \arg\min_\theta \|r\|^2
+$$
+
+- $P$ : entrée connue (mire, stimulus), **fixe**
+- $\theta$ : paramètres du système, **mis à jour** pendant l’ajustement
+- $\hat y$ : sortie prédite ; $y$ : sortie mesurée ; $r$ : erreur de prédiction
+</Formule>
+
+<Concept titre="Comment choisir">
+- **Mesure directe** : quand on peut **isoler** la réponse cherchée (couvrir l’objectif pour le noir, éclairer uniformément pour le champ plat). Simple : on moyenne, on normalise, et on obtient parfois directement une table de correspondance.
+- **Optimisation** : quand le paramètre n’est pas directement observable (une focale, une distorsion, une pose). Il faut un **modèle** analytique ou appris, une entrée **connue** et un algorithme d’ajustement.
+- Dans les deux cas, on **valide** sur des mesures indépendantes (dernière leçon).
+</Concept>

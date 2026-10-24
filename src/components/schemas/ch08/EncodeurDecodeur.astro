@@ -1,0 +1,47 @@
+---
+// Réseau encodeur–décodeur convolutif à connexions de saut (type RED30, Mao et al. 2016), schématisé :
+// couches de convolution (qui compressent) puis de déconvolution (qui reconstruisent), sauts symétriques.
+const n = 5;
+const conv = Array.from({ length: n }, (_, i) => ({ x: 70 + i * 34, h: 120 - i * 12 }));
+const deconv = Array.from({ length: n }, (_, i) => ({ x: 380 + i * 34, h: 72 + i * 12 }));
+---
+<figure class="deborde schema anime">
+  <svg viewBox="0 0 640 220" role="img" aria-label="Réseau encodeur-décodeur avec connexions de saut">
+    <defs>
+      <marker id="fl-ed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="pointe" /></marker>
+    </defs>
+    <rect x="12" y="50" width="40" height="120" rx="4" class="img" />
+    <text x="32" y="190" class="t m">b</text>
+    <text x="32" y="205" class="t m petit">bruitée</text>
+    {conv.map((c, i) => <rect x={c.x} y={110 - c.h / 2} width="22" height={c.h} rx="3" class="conv" style={`--d:${i * 0.08}s`} />)}
+    <text x="146" y="30" class="t m">convolutions</text>
+    <text x="320" y="114" class="t m petit">⋯</text>
+    {deconv.map((c, i) => <rect x={c.x} y={110 - c.h / 2} width="22" height={c.h} rx="3" class="deconv" style={`--d:${0.5 + i * 0.08}s`} />)}
+    <text x="460" y="30" class="t m">déconvolutions</text>
+    <rect x="588" y="50" width="40" height="120" rx="4" class="img sortie" />
+    <text x="608" y="190" class="t m">x̂ = F<tspan baseline-shift="sub" font-size="9">θ</tspan>(b)</text>
+    {[0, 2, 4].map((k) => (
+      <path d={`M${conv[k].x + 11},${110 + conv[k].h / 2} C${conv[k].x + 11},${200 - k * 4} ${deconv[n - 1 - k].x + 11},${200 - k * 4} ${deconv[n - 1 - k].x + 11},${110 + deconv[n - 1 - k].h / 2}`} class="saut" marker-end="url(#fl-ed)" />
+    ))}
+    <text x="320" y="214" class="t m petit">connexions de saut : les détails court-circuitent le goulot</text>
+  </svg>
+  <figcaption>Schéma d’un débruiteur appris : 30 couches dans RED30, entraînées sur des milliers de paires (bruitée, propre).</figcaption>
+</figure>
+
+<style>
+  .schema { margin-block: 2rem; }
+  svg { width: 100%; height: auto; display: block; font-family: var(--f-texte); }
+  .img { fill: var(--papier-3); stroke: var(--encre-3); }
+  .sortie { stroke: var(--accent); }
+  .conv, .deconv { opacity: 0; transform: translateY(8px); transition: opacity 0.5s var(--ease) var(--d), transform 0.5s var(--ease) var(--d); }
+  .conv { fill: color-mix(in oklab, #2fa35a 45%, var(--papier)); stroke: #2fa35a; }
+  .deconv { fill: color-mix(in oklab, #3a78b5 40%, var(--papier)); stroke: #3a78b5; }
+  .en-vue .conv, .en-vue .deconv { opacity: 1; transform: none; }
+  .saut { fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-dasharray: 4 3; }
+  .pointe { fill: var(--accent); }
+  .t { font-size: 12px; fill: var(--encre-2); }
+  .t.m { text-anchor: middle; }
+  .petit { font-size: 10.5px; fill: var(--encre-3); }
+  figcaption { font-size: 0.85rem; color: var(--encre-3); text-align: center; margin-top: 0.4rem; }
+  @media (prefers-reduced-motion: reduce) { .conv, .deconv { opacity: 1; transform: none; } }
+</style>

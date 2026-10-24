@@ -1,0 +1,36 @@
+---
+titre: "La qualité perçue : SSIM, LPIPS"
+resume: "Des distorsions de même erreur quadratique peuvent paraître insignifiantes ou catastrophiques. SSIM et LPIPS mesurent mieux ce que voit un humain."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import MemeMSE from '@/components/sims/ch04/MemeMSE.svelte';
+
+Wang et al. (2004) montrent qu’un **décalage de luminosité** et un **flou** de même MSE (210 dans leur exemple) n’ont rien à voir pour l’œil : le premier est presque invisible, le second détruit les détails.
+
+<Figure legende="Quatre dégradations calibrées pour avoir la même MSE (donc le même PSNR). Leur SSIM, lui, les distingue nettement.">
+  <MemeMSE client:visible />
+</Figure>
+
+## SSIM : comparer des structures
+
+Le <Terme en="structural similarity" sigle="SSIM">SSIM</Terme> compare localement (dans une petite fenêtre gaussienne) trois choses : la **luminance** moyenne, le **contraste** (écart-type) et la **structure** (corrélation).
+
+<Formule titre="Indice SSIM local">
+$$
+\mathrm{SSIM}(x, y) = \frac{(2\mu_x\mu_y + C_1)(2\sigma_{xy} + C_2)}{(\mu_x^2 + \mu_y^2 + C_1)(\sigma_x^2 + \sigma_y^2 + C_2)}
+$$
+
+$\mu$ : moyennes locales ; $\sigma^2$ : variances ; $\sigma_{xy}$ : covariance ; $C_1, C_2$ : petites constantes de stabilité. On moyenne ensuite sur l’image. 1 = identique.
+</Formule>
+
+## LPIPS : des caractéristiques apprises
+
+<Concept titre="Learned Perceptual Image Patch Similarity (Zhang et al., 2018)">
+On passe les deux images dans un réseau de neurones pré-entraîné, on **normalise** les caractéristiques de chaque couche, on **pondère** les différences canal par canal (poids calibrés sur des jugements humains), puis on **agrège**. Sur des triplets où MSE et SSIM préfèrent une version floue, LPIPS rejoint le choix humain, qui préfère une légère déformation géométrique.
+</Concept>
+
+**Le bon choix dépend de l’usage** : un PSNR suffit pour comparer deux débruiteurs sur une mesure scientifique ; pour une image destinée à un humain, on choisit un modèle du spectateur, de l’écran et de la tâche.

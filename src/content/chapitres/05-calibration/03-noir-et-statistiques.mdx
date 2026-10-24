@@ -1,0 +1,46 @@
+---
+titre: "Mesure directe : noir, moyenne, écart-type"
+resume: "Moyenner des images noires donne la carte de noir ; répéter la même mesure révèle le bruit. Deux statistiques suffisent à décrire un pixel : moyenne et écart-type."
+duree: 5
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import ImageNoire from '@/components/sims/ch05/ImageNoire.svelte';
+import Repetition from '@/components/sims/ch05/Repetition.svelte';
+
+## La carte de noir
+
+<Formule titre="Modèle d’une image noire">
+$$
+I_k(\mathbf x) = D(\mathbf x) + \varepsilon_k(\mathbf x)
+$$
+
+- $\mathbf x$ : position du pixel ; $k$ : numéro de l’image
+- $D$ : carte de noir moyenne (fixe) ; $\varepsilon_k$ : fluctuation aléatoire de l’image $k$
+</Formule>
+
+Protocole : **même exposition et même gain** que les images à corriger, **objectif bouché**, $N$ images, puis on **moyenne chaque pixel**. Le bruit de l’estimation baisse comme $\sigma/\sqrt N$.
+
+<Figure legende="Une seule image noire est dominée par le bruit ; la moyenne de plusieurs images révèle le motif fixe (dégradé de l’amplificateur, colonnes, pixels chauds). L’affichage est rehaussé : sur la pleine échelle 0–4 095 DN, tout paraîtrait noir.">
+  <ImageNoire client:visible />
+</Figure>
+
+## Moyenne et écart-type d’un pixel
+
+Sous un éclairage **uniforme et constant**, on mesure le même pixel des milliers de fois. L’histogramme de ses valeurs donne directement le niveau de signal (moyenne) et le bruit temporel (écart-type).
+
+<Figure legende="20 000 mesures simulées d’un même pixel. Avec 2 000 e⁻, un gain de 0,5 DN/e⁻, 3 e⁻ de bruit de lecture et un noir de 64 DN, on obtient une moyenne d’environ 1 064 DN et un écart-type d’environ 22,4 DN (slides : 1 063,60 et 22,44 DN).">
+  <Repetition client:visible />
+</Figure>
+
+<Exemple titre="Vérifier avec le modèle du chapitre 02">
+Moyenne : $0{,}5 \times 2000 + 64 = 1064$ DN. Variance : $g^2(\mu_e + \sigma_\text{read}^2) = 0{,}25 \times (2000 + 9) \approx 502$ DN², donc $\sigma \approx 22{,}4$ DN.
+</Exemple>
+
+<Concept titre="La courbe de transfert photonique (pour aller plus loin)">
+Avec des éclairages croissants, on trace la **variance** en fonction de la **moyenne** (noir soustrait). Le bruit photonique donne une droite $\sigma_I^2 = g\,\mu_I + \text{cste}$ : **la pente donne le gain** $g$, et l’ordonnée à l’origine le bruit de lecture. C’est la méthode standard de la norme <Terme en="EMVA 1288">EMVA 1288</Terme>.
+</Concept>

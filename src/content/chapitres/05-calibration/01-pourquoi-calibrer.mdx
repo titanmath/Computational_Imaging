@@ -1,0 +1,35 @@
+---
+titre: "Pourquoi calibrer ?"
+resume: "Tout modèle d’imagerie a des paramètres propres à l’appareil : focale, distorsion, niveau noir, gain, matrice couleur… Calibrer, c’est les mesurer pour que le modèle colle à la réalité."
+duree: 4
+assignments: ["a2"]
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+Chaque partie de la chaîne d’imagerie a des paramètres qui varient d’un appareil à l’autre :
+
+| Lentille | Capteur | ISP |
+| --- | --- | --- |
+| **focale** : l’échelle de l’image | **niveau noir** : signal sans lumière | **gains RGB** : échelle relative des canaux |
+| **distorsion** : courbure des droites | **gain de conversion** : DN par électron | **matrice couleur** : RGB caméra → RGB de sortie |
+
+Un exemple parlant : la distorsion courbe les droites. Pour faire une mesure géométrique (une distance, une position), il faut **calibrer puis corriger** l’image, ou intégrer la distorsion au modèle.
+
+<Concept titre="Ce que veut dire « calibrer »">
+La <Terme en="calibration">calibration</Terme> consiste à estimer les paramètres d’un **modèle direct** (le modèle qui prédit la mesure à partir de la scène) pour qu’il décrive fidèlement **ce** système-là. Sans calibration, toute la chaîne de reconstruction (déconvolution, HDR, profondeur…) repose sur des valeurs fausses.
+</Concept>
+
+## Partout où il y a de la mesure
+
+- **Une balance** : zéro et sensibilité, réglés avec des masses étalons.
+- **Une sonde de température** : décalage et courbe de réponse, comparés à un thermomètre étalon.
+- **Un robot avec une caméra** : la pose caméra → pince, estimée avec une mire et des mouvements du robot.
+- **Le télescope JWST** : la pose de chacun de ses 18 segments de miroir, réglée à partir d’images d’étoiles.
+- **Un téléphone** : sa PSF variable dans le champ, mesurée avec des motifs connus et des balayages de mise au point.
+- **LiDAR + caméra** : leur pose relative, à partir de coins de damier appariés.
+- **Un écran** : sa réponse en luminance et son point blanc, mesurés au colorimètre sur des patchs RGB.
+
+Chaque appareil a besoin d’une **référence adaptée**.
+
+**Pour l’A2**, tu fais exactement de la calibration : estimer la courbe de réponse de ton téléphone (tâche 1) et la PSF de ton sténopé (tâche 2).

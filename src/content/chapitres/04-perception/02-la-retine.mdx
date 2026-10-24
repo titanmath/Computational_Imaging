@@ -1,0 +1,34 @@
+---
+titre: "La rétine : un capteur inégal"
+resume: "La rétine échantillonne finement au centre et grossièrement en périphérie, avec deux types de récepteurs : des cônes pour le jour et la couleur, des bâtonnets pour la nuit."
+duree: 5
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import NiveauxLumiere from '@/components/sims/ch04/NiveauxLumiere.svelte';
+
+La rétine n’est pas un simple capteur : des **circuits de neurones** y transforment déjà les signaux des photorécepteurs avant de les envoyer au cerveau. Curiosité anatomique : la lumière traverse ces couches de neurones avant d’atteindre les photorécepteurs, au fond.
+
+## Un échantillonnage non uniforme
+
+- Au centre, la <Terme en="fovea">fovéa</Terme> est tapissée de **cônes très serrés** : c’est là qu’on voit les détails fins (on y place ce qu’on regarde).
+- En **périphérie**, l’échantillonnage est plus grossier et le mélange de récepteurs différent.
+
+Contrairement à un capteur d’appareil photo, la résolution de l’œil varie donc énormément dans le champ. On l’exploitera en *rendu fovéal* (leçon « Profondeur et écrans »).
+
+## Cônes et bâtonnets
+
+<Concept titre="Trois régimes de vision">
+- **Scotopique** (très faible lumière) : les <Terme en="rods">bâtonnets</Terme> dominent. Grande sensibilité, mais presque pas de couleurs et peu d’acuité.
+- **Mésopique** (crépuscule) : bâtonnets et cônes contribuent tous les deux, et l’adaptation modifie la sensibilité.
+- **Photopique** (jour) : les <Terme en="cones">cônes</Terme> dominent. Vision des couleurs et forte acuité centrale.
+</Concept>
+
+<Figure legende="Fais baisser la lumière : les couleurs disparaissent, le bleu-vert paraît relativement plus clair (effet Purkinje), le bruit et le flou augmentent, et le centre devient aveugle, car la fovéa n’a presque pas de bâtonnets (de nuit, on voit mieux une étoile faible en regardant légèrement à côté).">
+  <NiveauxLumiere client:visible />
+</Figure>
+
+## Une mosaïque de trois cônes
+
+Il existe trois classes de cônes, **L**, **M** et **S** (sensibles aux longueurs d’onde longues, moyennes et courtes). Elles forment une **mosaïque** irrégulière, différente d’une personne à l’autre (Roorda & Williams, *Nature* 1999, ont pu l’imager in vivo). C’est l’équivalent biologique du filtre de Bayer : chaque cône ne mesure qu’une « couleur ».

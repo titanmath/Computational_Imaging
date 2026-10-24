@@ -1,0 +1,39 @@
+---
+titre: "Débruiter un seul coefficient : rétrécir ou seuiller"
+resume: "Pour un seul nombre, le débruitage régularisé a une solution explicite. L2² rétrécit, L1 rétrécit et annule (seuillage doux), L0 garde ou annule (seuillage dur)."
+duree: 4
+complement: "Complément au cours : solutions scalaires exactes, utiles pour comprendre les résultats des leçons suivantes"
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Seuillages from '@/components/sims/ch08/Seuillages.svelte';
+
+Avant les images, un seul coefficient. On observe un nombre $b$, qui peut être un gradient bruité, et l’on cherche
+$$
+\hat x = \arg\min_x \; \tfrac12 (x - b)^2 + \lambda\, \psi(x).
+$$
+Pour chacune des trois pénalités, on peut résoudre à la main en annulant la dérivée, ou en comparant les cas pour L1 et L0.
+
+<Formule titre="Les trois solutions">
+$$
+\psi = x^2 :\; \hat x = \frac{b}{1 + 2\lambda}
+\qquad
+\psi = |x| :\; \hat x = \operatorname{sign}(b)\max(|b| - \lambda, 0)
+\qquad
+\psi = \mathbf 1[x \ne 0] :\; \hat x = \begin{cases} b & \text{si } b^2 > 2\lambda \\ 0 & \text{sinon}\end{cases}
+$$
+
+- L2² : un **rétrécissement** proportionnel, jamais exactement nul ;
+- L1 : le <Terme en="soft thresholding">seuillage doux</Terme> retire $\lambda$ à tout coefficient et annule ceux qui sont sous $\lambda$ ;
+- L0 : le <Terme en="hard thresholding">seuillage dur</Terme> garde les coefficients tels quels au-dessus de $\sqrt{2\lambda}$ et annule les autres.
+</Formule>
+
+<Figure legende="À gauche, la solution x̂ en fonction de l’observation b, pour les trois pénalités. À droite, 36 coefficients bruités : la plupart sont du bruit autour de 0, trois sont de « vrais bords ». Choisis l’opérateur : L1 et L0 annulent le bruit et gardent les grands coefficients, L2² les diminue tous.">
+  <Seuillages client:visible />
+</Figure>
+
+<Concept titre="Le lien avec les images">
+Dans une image, les gradients jouent le rôle de ces coefficients : beaucoup de petits gradients dus au bruit, quelques grands sur les bords. Un a priori L1 ou L0 sur les gradients se comporte comme un seuillage : il **annule les petits gradients**, ce qui crée des aplats, et **garde les grands**, ce qui garde les bords. Un a priori L2² rabote tout, bords compris. Le vrai problème d’image couple les pixels voisins : il faut un algorithme itératif, mais l’intuition reste la même.
+</Concept>

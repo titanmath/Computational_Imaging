@@ -1,0 +1,34 @@
+---
+titre: "Mesure directe : sensibilité spectrale et réponse d’écran"
+resume: "En balayant la longueur d’onde, on mesure la sensibilité spectrale d’une caméra. En affichant des niveaux de gris, on mesure la courbe de réponse d’un écran. Deux tables de correspondance."
+duree: 5
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import ReponseEcran from '@/components/sims/ch05/ReponseEcran.svelte';
+
+## Sensibilité spectrale d’une caméra
+
+Une source large bande passe dans un **monochromateur** (ou un filtre accordable), qui sélectionne une bande étroite autour de $\lambda$. On mesure la réponse de la caméra à cette bande, puis on remplace la caméra par une **photodiode de référence**, au même plan de mesure, pour connaître la puissance réellement envoyée. En répétant pour chaque $\lambda$, on obtient les sensibilités R, G, B de la caméra (Baek et al., *Dispersion-based Color Sensors*, ACM TOG 2017).
+
+## Réponse d’un écran
+
+<Formule titre="Réponse d’un écran">
+$$
+L = F_\text{display}(d)
+$$
+
+$d$ : niveau de gris commandé ; $L$ : luminance mesurée (cd/m²), au colorimètre ou avec une caméra calibrée ; $F$ : réponse de l’écran.
+</Formule>
+
+On affiche par exemple 17 niveaux de gris et on mesure $L$ pour chacun. On peut garder les mesures comme **table de correspondance** (interpolation), ou **ajuster un modèle** paramétrique comme $L = L_\text{noir} + L_\max\,(d/255)^\gamma$ : c’est déjà de l’estimation par optimisation.
+
+<Figure legende="Mesures bruitées de la luminance d’un écran et ajustement d’une loi de puissance par moindres carrés (en échelle log).">
+  <ReponseEcran client:visible />
+</Figure>
+
+<Concept titre="La même idée que la tâche 1 de l’A2">
+Mesurer la courbe de réponse d’un écran, c’est mesurer des paires (entrée connue → sortie mesurée), puis ajuster ou tabuler $F$. Pour la courbe de réponse d’un **téléphone** (CRF), l’entrée est l’exposition $E\,t$ et la sortie la valeur du pixel. Mais on ne connaît pas $E$ (la radiance de la scène) : il faut l’estimer **en même temps** que la courbe. C’est la méthode de Debevec et Malik (chapitre 06).
+</Concept>

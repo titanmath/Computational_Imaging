@@ -1,0 +1,13 @@
+numero: 7
+titre: "Problèmes inverses"
+sousTitre: "Modèles, optimisation et a priori"
+resume: "Remonter de la mesure à la scène : modèle direct b = f(x), systèmes linéaires, descente de gradient et différentiation automatique, moindres carrés, déconvolution par Fourier et Wiener, vision bayésienne (ML, MAP), problèmes mal posés et régularisation TV."
+objectifs:
+  - "écrire un modèle direct et, pour une convolution, sa forme matricielle b = Ax"
+  - "dériver la solution des moindres carrés (pseudo-inverse) et dire quand elle est impraticable"
+  - "expliquer la descente de gradient et la différentiation automatique"
+  - "déconvoluer par Fourier, expliquer l’amplification du bruit et la corriger avec Wiener"
+  - "relier moindres carrés et maximum de vraisemblance, a priori et MAP"
+  - "régulariser un problème mal posé (variation totale)"
+icone: inverse
+source: 7_inverse_problems_2026.pdf

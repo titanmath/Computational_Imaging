@@ -1,0 +1,39 @@
+---
+titre: "Débruiter une image avec un a priori de gradient"
+resume: "Les mêmes trois a priori en 2D, avec les valeurs de λ du cours : L0 (λ₀ = 0,02) donne des aplats « peints », la TV (λ₁ = 0,07) un bon compromis, L2² (λ₂ = 0,65) un flou bruité."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import DebruitagePriors from '@/components/sims/ch08/DebruitagePriors.svelte';
+
+<Formule titre="Débruitage avec a priori de gradient">
+$$
+\min_x \; \tfrac12 \|x - b\|_2^2 + \lambda\, \Psi(x), \qquad \Psi \in \big\{\|g(x)\|_0,\; \|g(x)\|_1,\; \|g(x)\|_2^2\big\}
+$$
+
+$b$ : observation bruitée ; $x$ : image inconnue ; $\lambda$ : poids de l’a priori. Valeurs du cours : $\lambda_0 = 0{,}02$, $\lambda_1 = 0{,}07$, $\lambda_2 = 0{,}65$.
+</Formule>
+
+## Comment on résout, en pratique
+
+- **L2²** : le problème est quadratique. Avec des conditions aux bords périodiques, la FFT le diagonalise : $\hat x = \mathcal F^{-1}\big(\mathcal F(b) / (1 + 2\lambda(|\mathcal F D_\mathrm h|^2 + |\mathcal F D_\mathrm v|^2))\big)$. On reconnaît un **filtre passe-bas**, cousin de Wiener.
+- **L1 (TV)** : convexe, non dérivable. On utilise un algorithme <Terme en="primal-dual">primal-dual</Terme> (Chambolle-Pock), qui manipule les gradients via une variable « duale » bornée par $\lambda$. Une approximation lisse avec Adam, comme au chapitre 07, fonctionne aussi.
+- **L0** : non convexe, NP-difficile en 2D. Le <Terme en="L0 gradient minimization">lissage L0</Terme> de Xu et al. (2011) l’**approche** en alternant un seuillage dur des gradients et une résolution par FFT, avec un couplage $\beta$ qu’on augmente progressivement.
+
+<Figure legende="L’image test bruitée (σ = 0,1), débruitée par chaque a priori. On voit les itérations de la TV et les étapes β de L0. Le panneau de droite montre ce qui a été retiré (b − x̂) : du bruit pur si λ est bien choisi, des contours fantômes s’il est trop fort.">
+  <DebruitagePriors client:visible priorInitial="l0" choix={['aucun', 'l2', 'tv', 'l0']} />
+</Figure>
+
+<Concept titre="Lire les trois résultats">
+- **L0** ($\lambda_0 = 0{,}02$) : de grands **aplats** aux contours nets, comme une peinture par numéros. Les textures fines disparaissent. C’est une reconstruction **approchée** : le problème exact est hors de portée.
+- **TV isotrope** ($\lambda_1 = 0{,}07$) : le bruit disparaît des zones plates, les bords restent nets, les dégradés deviennent des aplats légers. Le meilleur compromis des trois pour une photo.
+- **L2²** ($\lambda_2 = 0{,}65$) : le bruit est atténué mais pas supprimé, et les bords sont **flous**. Pour retirer plus de bruit, il faudrait encore plus de flou.
+</Concept>
+
+<Attention titre="Le PSNR ne dit pas tout">
+Compare les PSNR, puis regarde les images. La TV peut avoir un PSNR proche de L2² et une apparence bien meilleure (bords nets), ou l’inverse. Le chapitre 04 l’a montré avec le SSIM : l’erreur quadratique mesure mal ce que voit l’œil.
+</Attention>

@@ -1,0 +1,218 @@
+---
+import Base from '@/layouts/Base.astro';
+import TopBar from '@/components/nav/TopBar.astro';
+import PrecSuiv from '@/components/nav/PrecSuiv.astro';
+import { getCours, leconsLiees, sequenceAssignment, voisins, url, type AssignmentNav } from '@/lib/navigation';
+
+export async function getStaticPaths() {
+  const cours = await getCours();
+  return cours.assignments.map((assignment) => ({ params: { a: assignment.id }, props: { assignment } }));
+}
+interface Props {
+  assignment: AssignmentNav;
+}
+const { assignment } = Astro.props;
+const cours = await getCours();
+const a = assignment.entree.data;
+const { suiv } = voisins(sequenceAssignment(assignment), assignment.url);
+const lecons = leconsLiees(cours, a.code);
+const chapitres = cours.chapitres.filter((c) => a.chapitresLies.includes(c.id));
+---
+<Base titre={`${a.code} · ${a.titre}`} description={a.resume} accent={assignment.accent}>
+  <TopBar
+    slot="barre"
+    fil={[{ label: 'Carte', href: url('/') }, { label: `${a.code} · ${a.titre}` }]}
+    segments={assignment.etapes.map((e) => ({ url: e.url, titre: e.court, courant: false, passe: false }))}
+  />
+  <main class="apercu">
+    <header class="colonne">
+      <p class="code" aria-hidden="true">{a.code}</p>
+      <p class="etiquette">Assignment</p>
+      <h1>{a.titre}</h1>
+      <p class="resume">{a.resume}</p>
+      <dl class="dates">
+        <div><dt>Sortie</dt><dd>{a.sortie}</dd></div>
+        <div><dt>À rendre</dt><dd>{a.rendu}</dd></div>
+        {a.demo && <div><dt>Démo</dt><dd>{a.demo}</dd></div>}
+      </dl>
+      <div class="rayon" aria-hidden="true"></div>
+    </header>
+
+    {
+      a.livrables.length > 0 && (
+        <section class="colonne">
+          <h2 class="etiquette">Ce qui est demandé</h2>
+          <ul class="livrables">
+            {a.livrables.map((l) => (
+              <li>{l}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    <section class="colonne">
+      <h2 class="etiquette">Parcours</h2>
+      <ol class="etapes">
+        {
+          assignment.etapes.map((e) => (
+            <li>
+              <a href={e.url}>
+                <span class="n">{String(e.index).padStart(2, '0')}</span>
+                <span class="corps">
+                  <span class="t">{e.entree.data.titre}</span>
+                  <span class="r">{e.entree.data.resume}</span>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </section>
+
+    {
+      (chapitres.length > 0 || lecons.length > 0) && (
+        <section class="colonne">
+          <h2 class="etiquette">Les leçons sur lesquelles il s'appuie</h2>
+          <ul class="lecons">
+            {lecons.map(({ chapitre, lecon }) => (
+              <li style={`--accent-clair:${chapitre.accent.clair};--accent-sombre:${chapitre.accent.sombre}`}>
+                <a href={lecon.url}>
+                  <span class="cc">{chapitre.code}</span> {lecon.entree.data.titre}
+                </a>
+              </li>
+            ))}
+          </ul>
+          {lecons.length === 0 && (
+            <p class="vide">
+              {chapitres.map((c) => (
+                <a href={c.url}>
+                  {c.code} · {c.entree.data.titre}
+                </a>
+              ))}
+            </p>
+          )}
+        </section>
+      )
+    }
+
+    <PrecSuiv suiv={suiv} />
+  </main>
+</Base>
+
+<style>
+  .apercu {
+    padding-top: clamp(2.5rem, 8vw, 5rem);
+  }
+  .code {
+    font-family: var(--f-titre);
+    font-size: clamp(4.5rem, 16vw, 8rem);
+    line-height: 0.8;
+    font-weight: 300;
+    color: var(--accent);
+    margin: 0 0 1rem;
+    letter-spacing: -0.03em;
+  }
+  h1 {
+    font-size: clamp(2.2rem, 5.5vw, 3.3rem);
+    font-weight: 450;
+    margin-top: 0.4rem;
+  }
+  .resume {
+    font-size: 1.2rem;
+    color: var(--encre-2);
+  }
+  .dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin: 1.5rem 0 0;
+  }
+  .dates dt {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--encre-3);
+  }
+  .dates dd {
+    margin: 0.1rem 0 0;
+    font-family: var(--f-titre);
+    font-size: 1.2rem;
+  }
+  section {
+    margin-top: 2.5rem;
+  }
+  section h2 {
+    margin-bottom: 0.9rem;
+  }
+  .livrables {
+    margin: 0;
+    padding-left: 1.2em;
+  }
+  .livrables li + li {
+    margin-top: 0.35em;
+  }
+  .livrables li::marker {
+    color: var(--accent);
+  }
+  .etapes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--filet);
+  }
+  .etapes a {
+    display: grid;
+    grid-template-columns: 2.4rem 1fr;
+    gap: 0.75rem;
+    padding: 0.9rem 0.25rem;
+    border-bottom: 1px solid var(--filet);
+    text-decoration: none;
+    transition: background 0.2s var(--ease), padding 0.25s var(--ease);
+  }
+  .etapes a:hover {
+    background: var(--papier-2);
+    padding-left: 0.6rem;
+    color: inherit;
+  }
+  .n {
+    color: var(--accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .corps {
+    display: flex;
+    flex-direction: column;
+  }
+  .t {
+    font-family: var(--f-titre);
+    font-size: 1.15rem;
+  }
+  .r {
+    font-size: 0.95rem;
+    color: var(--encre-3);
+    line-height: 1.4;
+  }
+  .lecons {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0.4rem;
+  }
+  .lecons a {
+    text-decoration: none;
+  }
+  .cc {
+    color: var(--accent);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    margin-right: 0.35rem;
+  }
+  .vide {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+</style>

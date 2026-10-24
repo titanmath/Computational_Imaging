@@ -1,0 +1,37 @@
+---
+titre: "Trois a priori sur un signal 1D"
+resume: "Sur une ligne d’image bruitée, L2² lisse tout, L1 garde les sauts mais change les pentes en marches, L0 ne garde que quelques marches franches."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Priors1D from '@/components/sims/ch08/Priors1D.svelte';
+
+En une dimension, le gradient est la simple différence $x_{i+1} - x_i$, et l’on peut résoudre les trois problèmes exactement. Le signal test enchaîne un créneau, une rampe et une sinusoïde.
+
+<Formule titre="Débruitage 1D">
+$$
+\hat x = \arg\min_x \tfrac12 \|x - b\|_2^2 + \lambda\, \|Dx\|_q, \qquad (Dx)_i = x_{i+1} - x_i
+$$
+
+- $q = 2$, au carré : **forme fermée**. Les équations normales $(I + 2\lambda D^\top D)\,\hat x = b$ forment un système tridiagonal, résolu en $O(n)$ ;
+- $q = 1$ : convexe mais non dérivable, résolu **itérativement** (ici par gradient projeté sur le problème dual) ;
+- $q = 0$ : non convexe ; en 1D, la solution exacte s’obtient par <Terme en="dynamic programming">programmation dynamique</Terme>, car le signal optimal est constant par morceaux.
+</Formule>
+
+<Figure legende="Les trois reconstructions, séparées ou superposées. Joue avec chaque λ : un λ₂ grand arrondit le créneau, un λ₁ grand transforme la rampe en escalier, un λ₀ grand réduit tout à deux ou trois marches. L’erreur RMS est affichée sous la figure.">
+  <Priors1D client:visible />
+</Figure>
+
+<Concept titre="Ce qu’il faut savoir reconnaître">
+- **L2²** : des transitions **douces** partout. Le créneau devient une bosse arrondie et le bruit résiduel ondule.
+- **L1 (TV)** : les sauts restent **nets**, les zones plates deviennent parfaitement plates, mais la rampe devient un **escalier** (<Terme en="staircasing">effet escalier</Terme>) et les sommets s’abaissent un peu (perte de contraste).
+- **L0** : des marches **franches** et peu nombreuses, sans biais de hauteur, mais la rampe et la sinusoïde sont remplacées par quelques paliers.
+</Concept>
+
+<Attention titre="Il n’existe pas de meilleur a priori absolu">
+Chaque a priori décrit un type de signal. L0 est parfait pour un signal vraiment constant par morceaux (un code-barres, un QR code), L1 est un bon compromis pour des photos, L2² convient à un signal lisse. Choisir $\Psi$, c’est faire une hypothèse sur le monde.
+</Attention>

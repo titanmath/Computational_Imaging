@@ -1,0 +1,44 @@
+---
+titre: "La dynamique, en diaphragmes"
+resume: "La dynamique est le rapport entre le plus grand et le plus petit signal utilisable. Le bruit la limite en bas, la saturation en haut, et l’exposition la fait glisser."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import PlageMesurable from '@/components/sims/ch06/PlageMesurable.svelte';
+
+<Formule titre="Dynamique">
+$$
+\mathrm{DR} = \frac{S_\max}{S_\min}, \qquad \text{diaphragmes (stops)} = \log_2(\mathrm{DR})
+$$
+
+- $S_\max$ : plus grand signal utilisable (capacité du puits, ou saturation de l’ADC)
+- $S_\min$ : plus petit signal utilisable (le plancher de bruit, ou un rapport signal sur bruit choisi)
+</Formule>
+
+<Exemple titre="Quelques ordres de grandeur">
+16:1 = 4 diaphragmes ; 256:1 = 8 ; 4 096:1 = 12. Un capteur illustratif avec un puits de 12 000 e⁻ et 3 e⁻ de bruit de lecture : $\log_2(12\,000/3) \approx 12$ diaphragmes. Une scène extérieure avec soleil et ombres dépasse facilement 16 à 20 diaphragmes.
+</Exemple>
+
+## Plancher de bruit et saturation
+
+- Dans les **ombres**, le bruit de lecture noie les signaux faibles.
+- Dans les **hautes lumières**, le puits plein ou l’ADC écrête les signaux forts.
+
+<Attention titre="12 bits ≠ 12 diaphragmes utiles">
+Avec le même ADC 12 bits (4 096 codes) et le même puits de 12 000 e⁻, un capteur à 3 e⁻ de bruit de lecture a environ 12 diaphragmes de dynamique, un capteur à 30 e⁻ seulement environ 8,6. La dynamique **utile** dépend du bruit, de la saturation et du SNR exigé, pas seulement du nombre de bits.
+</Attention>
+
+## L’exposition déplace la fenêtre
+
+<Figure legende="Chaque exposition mesure une fenêtre de luminances de la scène. Une pose plus longue mesure des signaux plus faibles mais sature plus tôt. Des expositions décalées couvrent ensemble toute la scène.">
+  <PlageMesurable client:visible />
+</Figure>
+
+<Concept titre="L’idée de l’HDR par expositions multiples">
+Un capteur à dynamique limitée, plusieurs expositions décalées (par exemple de 3 diaphragmes) dont les fenêtres **se chevauchent** : ensemble, elles couvrent la scène. Il reste à **combiner** correctement les mesures, ce qui suppose de connaître la relation entre valeur du pixel et lumière.
+</Concept>

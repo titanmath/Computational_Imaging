@@ -1,0 +1,37 @@
+---
+titre: "Le débruitage, banc d’essai des a priori"
+resume: "Le problème inverse le plus simple : b = x + n. Sans a priori, la meilleure solution est la mesure elle-même. C’est le terrain idéal pour comparer des a priori."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Analogie from '@/components/contenu/Analogie.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Relief3D from '@/components/sims/ch08/Relief3D.svelte';
+
+Le <Terme en="denoising">débruitage</Terme> part d’une image propre $x$, inconnue, et d’une observation $b = x + n$ où $n$ est du bruit (gaussien ici). On veut une estimation $\hat x$ proche de $x$. Le modèle direct est l’identité, $f(x) = x$.
+
+<Formule titre="Objectif du débruitage">
+$$
+\hat x = \arg\min_x \; \tfrac12 \|b - x\|_2^2 + \lambda\, \Psi(x)
+$$
+</Formule>
+
+<Concept titre="Sans a priori, la mesure est la solution">
+Si $\lambda = 0$, il reste $\min_x \tfrac12\|b - x\|_2^2$, dont le minimum vaut 0, atteint en $x = b$ :
+$$
+\lambda = 0 \;\Rightarrow\; \hat x = b.
+$$
+Les mesures seules ne permettent pas de distinguer le signal du bruit. Tout ce que le débruitage retire vient de l’a priori.
+</Concept>
+
+Comme le modèle direct est trivial, toute différence entre deux résultats vient de $\Psi$. C’est pour cela que le cours compare les a priori sur ce problème, avant de les réutiliser en déconvolution, en dématriçage ou en super-résolution.
+
+<Analogie titre="L’image comme un paysage">
+Lis une image en niveaux de gris comme une carte d’altitude : chaque pixel est un point dont la hauteur est son intensité. Une image propre est faite de plateaux (aplats), de pentes douces (dégradés) et de falaises (bords). Le bruit rend tout le terrain rugueux. Débruiter, c’est raboter la rugosité sans abattre les falaises.
+</Analogie>
+
+<Figure legende="L’image test transformée en relief, puis débruitée en direct. Choisis un a priori : L2² arrondit tout, la TV crée des plateaux et garde les falaises, L0 ne garde que quelques terrasses. Avec « Aucun », le relief reste tel que mesuré (λ = 0).">
+  <Relief3D client:visible />
+</Figure>

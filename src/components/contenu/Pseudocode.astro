@@ -1,0 +1,41 @@
+---
+// Bloc de pseudo-code lisible (pas de coloration syntaxique lourde).
+interface Props {
+  titre?: string;
+}
+const { titre } = Astro.props;
+---
+<figure class="pseudo">
+  {titre && <figcaption class="etiquette">{titre}</figcaption>}
+  <div class="code"><slot /></div>
+</figure>
+
+<style>
+  .pseudo {
+    margin: 1.8rem 0;
+    border: 1px solid var(--filet);
+    border-radius: var(--rayon);
+    overflow: hidden;
+    background: var(--papier-2);
+  }
+  figcaption {
+    padding: 0.55rem 1rem;
+    border-bottom: 1px solid var(--filet);
+    color: var(--encre-2);
+  }
+  .code :global(pre) {
+    margin: 0;
+    padding: 1rem 1.1rem;
+    overflow-x: auto;
+    font-family: var(--f-mono);
+    font-size: 0.86rem;
+    line-height: 1.6;
+    background: transparent !important;
+  }
+  .code :global(pre code) {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: inherit;
+  }
+</style>

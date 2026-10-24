@@ -1,0 +1,38 @@
+---
+titre: "À quoi ça sert ?"
+resume: "Téléphones, voitures autonomes, robots, casques de réalité augmentée, télescopes, microscopes, imagerie médicale… Partout, mesure et calcul sont conçus ensemble."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+
+Les systèmes d’imagerie sont partout. Quelques exemples que le cours éclaire, chacun sous l’angle « qu’est-ce qu’on mesure, et comment le calcul l’exploite ».
+
+## La photographie mobile
+
+Un téléphone est un **système d’imagerie complet** : de petits capteurs et de petites optiques (donc peu de lumière et beaucoup de bruit) compensés par énormément de calcul.
+
+- **Capturer** : choisir l’exposition, le gain, parfois plusieurs images d’affilée.
+- **Traiter** : la chaîne de traitement du signal d’image (ISP, chapitre 03) transforme les mesures brutes en une image couleur.
+- **Reconstruire** : combiner plusieurs mesures avec des *a priori* sur ce qu’est une image naturelle (chapitres 06 à 08).
+
+Le **mode nuit** en est l’exemple parfait : une seule image finale, mais plusieurs sources d’information. L’exposition, l’alignement des images, la modélisation du bruit et la reconstruction travaillent ensemble.
+
+## Les véhicules autonomes et les robots
+
+La question de conception n’est plus « faire une belle image » mais : **de quelle information la tâche a-t-elle besoin ?** On choisit alors une modalité (caméra, LiDAR, radar, caméra à événements…), on décide comment échantillonner, puis on reconstruit l’information utile (positions, vitesses, profondeur).
+
+## Les casques de réalité augmentée et virtuelle
+
+Trois problèmes à la fois : **percevoir** le monde, **modéliser** l’utilisateur (où regarde-t-il ? à quelle distance accommode son œil ?) et **délivrer** la bonne lumière à son œil. Optique, perception humaine (chapitre 04) et calcul s’y rencontrent.
+
+## L’astronomie : une image à partir de mesures incomplètes
+
+L’image du trou noir de M87 (Event Horizon Telescope, 2019) a été obtenue avec un réseau de radiotélescopes répartis sur la Terre. Ce réseau ne mesure qu’une **petite partie** des fréquences spatiales du ciel : on ne « photographie » pas directement l’image. Un algorithme de reconstruction a calculé l’image la plus plausible compatible avec ces mesures partielles. C’est un **problème inverse**, exactement le sujet des chapitres 07 et 08.
+
+## Microscopie et imagerie médicale
+
+Scanner (tomographie par rayons X), IRM, microscopie : dans tous ces cas, ce que mesure l’appareil n’est pas directement une image, mais des projections, des fréquences ou des signaux à décoder.
+
+<Concept titre="Ce qu’il faut retenir">
+Dans toutes ces applications, on ne cherche pas seulement à faire une photo : on cherche à **mesurer une information** (une image, une profondeur, un spectre, une structure interne…). La conception de la mesure et du calcul dépend de la tâche.
+</Concept>

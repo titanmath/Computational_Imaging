@@ -1,0 +1,49 @@
+---
+titre: "Les gradients d’une image"
+resume: "Différences horizontales et verticales, vecteur gradient par pixel, et trois façons d’en mesurer la taille : compter les non-nuls (L0), sommer les normes (L1, la TV isotrope), sommer les carrés (L2²)."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import CartesGradients from '@/components/sims/ch08/CartesGradients.svelte';
+
+On range l’image $I$ en un vecteur $x = \operatorname{vec}(I)$. Les filtres $K_x$ et $K_y$ du chapitre 07 deviennent des matrices $D_\mathrm h$ et $D_\mathrm v$ : chacune soustrait à chaque pixel son voisin de droite ou du dessous.
+
+<Formule titre="Gradients discrets">
+$$
+(D_\mathrm h x)_p = x_\text{droite} - x_p, \qquad (D_\mathrm v x)_p = x_\text{dessous} - x_p,
+\qquad
+\nabla x(p) = \big((D_\mathrm h x)_p,\, (D_\mathrm v x)_p\big)^\top
+$$
+
+$p$ : position du pixel ; $D_\mathrm h x = \operatorname{vec}(K_x * I)$, $D_\mathrm v x = \operatorname{vec}(K_y * I)$.
+</Formule>
+
+En chaque pixel, la longueur du gradient $g_p(x) = \|\nabla x(p)\|_2$ dit à quel point l’image varie localement. Les a priori de gradient appliquent une seconde norme au vecteur $g(x) = (g_1, \dots, g_N)^\top$ des $N$ pixels.
+
+<Formule titre="Trois a priori sur les gradients">
+$$
+\Psi_0(x) = \|g(x)\|_0 = \sum_p \mathbf 1[g_p(x) \ne 0]
+\qquad
+\Psi_1(x) = \|g(x)\|_1 = \sum_p \|\nabla x(p)\|_2
+\qquad
+\Psi_2(x) = \|g(x)\|_2^2 = \sum_p g_p(x)^2
+$$
+
+$\Psi_1$ est la <Terme en="isotropic TV">variation totale isotrope</Terme> : la norme extérieure additionne les longueurs locales des gradients.
+</Formule>
+
+<Figure legende="Les cartes de gradients et le coût par pixel de chaque a priori. Dₕx et Dᵥx sont signés (rouge positif, bleu négatif, affichage borné à ±0,2). L0 colorie en blanc chaque gradient non nul ; L1 et L2² montrent g_p et g_p² (affichages bornés à 0,2 et 0,04).">
+  <CartesGradients client:visible />
+</Figure>
+
+<Exemple titre="Ce que montre la carte L0">
+Sur la photo du cours, **99,65 %** des pixels ont un gradient non nul : bruit de capteur, textures et dégradés font qu’une photo n’est presque jamais exactement constante. Notre image de synthèse a de vrais aplats. Ajoute un peu de bruit : la proportion bondit vers 100 %.
+</Exemple>
+
+<Concept titre="Bords et bruit n’ont pas la même signature">
+Sur les cartes L1 et L2², les **bords** forment des lignes fines et lumineuses, rares mais fortes. Le **bruit** forme un semis de petites valeurs partout. Le carré écrase les petites valeurs et grossit les grandes : sur L2², les bords dominent le coût. Un a priori L2² cherchera donc d’abord à les adoucir. C’est la raison de son flou.
+</Concept>

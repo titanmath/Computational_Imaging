@@ -1,0 +1,44 @@
+---
+titre: "Des rayons, et un capteur nu"
+resume: "En optique géométrique, la lumière voyage en ligne droite. Posé seul face à une scène, un capteur ne forme pourtant aucune image : toutes les directions s’y mélangent."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import CapteurNu from '@/components/sims/ch01/CapteurNu.svelte';
+
+## Le modèle des rayons
+
+En <Terme en="geometric (ray) optics">optique géométrique</Terme>, on représente la lumière par des **rayons** : des demi-droites le long desquelles l’énergie se propage. C’est une excellente approximation tant que les objets (lentilles, ouvertures) sont grands devant la longueur d’onde (0,4–0,7 µm pour le visible). On verra plus loin quand elle cesse d’être valable (diffraction).
+
+<Formule titre="Rayon paramétrique">
+$$
+\mathbf r(t) = \mathbf r_0 + t\,\mathbf v, \qquad t \ge 0
+$$
+
+- $\mathbf r_0$ : origine du rayon
+- $\mathbf v$ : direction (si $\|\mathbf v\| = 1$, $t$ est une distance)
+- $\mathbf r(t)$ : position atteinte après le « temps » $t$
+</Formule>
+
+La direction se décrit souvent en coordonnées sphériques : un angle polaire $\theta$ mesuré depuis l’axe $+Z$ et un azimut $\varphi$ mesuré depuis $+X$ :
+
+$$
+\mathbf v = (\sin\theta\cos\varphi,\; \sin\theta\sin\varphi,\; \cos\theta).
+$$
+
+## Que mesure un capteur nu ?
+
+Imaginons qu’on pose un capteur, sans rien devant, face à un arbre. Chaque point de l’arbre renvoie de la lumière **dans toutes les directions** : le haut de l’arbre (magenta) éclaire tout le capteur, son pied (bleu) aussi.
+
+<Figure legende="À gauche, deux points de l’objet. Au milieu, les rayons qui atteignent le capteur. À droite, l’intensité mesurée le long du capteur, séparée par point d’origine. Ajoute un sténopé et réduis son diamètre.">
+  <CapteurNu client:visible />
+</Figure>
+
+Sans élément optique, chaque pixel reçoit un **mélange** de lumière venant de tous les points de la scène : on mesure une sorte de moyenne floue, pas une image. Pour former une image, il faut **sélectionner** ou **rediriger** les rayons pour qu’à chaque point de la scène corresponde un point du capteur.
+
+<Concept titre="Former une image = associer un point de la scène à un point du capteur">
+Deux solutions : **bloquer** presque tous les rayons pour n’en garder qu’un par direction (le sténopé), ou **courber** les rayons pour qu’ils convergent (la lentille). Les deux leçons suivantes sont consacrées au sténopé.
+</Concept>

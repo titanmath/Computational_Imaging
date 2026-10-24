@@ -1,0 +1,56 @@
+---
+titre: "Une vision bayésienne : vraisemblance et a priori"
+resume: "Avec un bruit gaussien, maximiser la vraisemblance des mesures revient aux moindres carrés. Ajouter une croyance sur l’image (l’a priori) donne l’estimateur MAP."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+## Le modèle de formation d’image
+
+<Formule titre="Mesures bruitées">
+$$
+b = Ax + \eta, \qquad \eta_i \sim \mathcal N(0, \sigma^2) \text{ indépendants}
+$$
+
+Pour $x$ fixé, chaque mesure suit $b_i \mid x \sim \mathcal N\big((Ax)_i, \sigma^2\big)$ :
+$$
+p(b_i \mid x, \sigma) = \frac{1}{\sqrt{2\pi}\,\sigma} \exp\!\left(-\frac{(b_i - (Ax)_i)^2}{2\sigma^2}\right),
+\qquad
+p(b \mid x, \sigma) \propto \exp\!\left(-\frac{\|Ax - b\|_2^2}{2\sigma^2}\right).
+$$
+</Formule>
+
+## Maximum de vraisemblance
+
+<Formule titre="Estimateur du maximum de vraisemblance (ML)">
+$$
+x_\text{ML} = \arg\max_x p(b \mid x, \sigma) = \arg\min_x -\log p(b \mid x, \sigma) = \arg\min_x \frac{\|Ax - b\|_2^2}{2\sigma^2}
+$$
+</Formule>
+
+<Concept titre="Moindres carrés = ML gaussien">
+Un bruit gaussien de variance fixe donne exactement l’objectif des **moindres carrés**. Le filtrage inverse (quand il est défini), la pseudo-inverse et la descente de gradient résolvent tous **ce même problème non régularisé**, et héritent donc tous de son instabilité.
+</Concept>
+
+## La règle de Bayes et l’a priori
+
+<Formule titre="Règle de Bayes">
+$$
+p(x \mid b, \sigma) = \frac{p(b \mid x, \sigma)\, p(x)}{p(b \mid \sigma)} \propto \underbrace{p(b \mid x, \sigma)}_{\text{vraisemblance}}\; \underbrace{p(x)}_{\text{a priori}}
+$$
+
+- **Postérieure** : probabilité de $x$ après avoir observé $b$.
+- **Vraisemblance** : accord avec le modèle de mesure.
+- <Terme en="prior">A priori</Terme> : les propriétés attendues de $x$ (à quoi ressemble une image naturelle).
+- Le dénominateur ne dépend pas de $x$ : il normalise seulement.
+</Formule>
+
+<Formule titre="Estimateur du maximum a posteriori (MAP)">
+$$
+x_\text{MAP} = \arg\max_x p(x \mid b, \sigma) = \arg\min_x \frac{\|Ax - b\|_2^2}{2\sigma^2} + \Psi(x), \qquad \Psi(x) = -\log p(x) + \text{cste}
+$$
+
+L’a priori **pénalise les images improbables**.
+</Formule>

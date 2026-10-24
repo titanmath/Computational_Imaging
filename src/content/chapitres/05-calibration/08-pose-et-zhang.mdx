@@ -1,0 +1,42 @@
+---
+titre: "Pose de la caméra et méthode de Zhang"
+resume: "Avec une mire connue, on peut retrouver la pose de la caméra (R, t). Avec plusieurs poses inconnues d’un même damier, on estime à la fois les intrinsèques partagés et une pose par vue."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Zhang3D from '@/components/sims/ch05/Zhang3D.svelte';
+
+## La pose : ce qui bouge
+
+Si les **intrinsèques** $K$ (focales, point principal) sont connus et fixes, on peut estimer la **pose** d’une mire 3D connue : sa rotation $R$ et sa translation $t$ par rapport à la caméra. On projette les points 3D, on compare aux coins 2D détectés et on met à jour la pose pour réduire l’erreur en pixels. C’est le problème <Terme en="Perspective-n-Point" sigle="PnP">Perspective-n-Point</Terme> (fonction `solvePnP` d’OpenCV).
+
+## Des poses de damier « inconnues » : la méthode de Zhang
+
+<Formule titre="Ce qu’on estime en même temps">
+$$
+\hat y = F_\text{projection}(P;\, \theta), \qquad \theta = \big(\underbrace{f_x, f_y, c_x, c_y, k_1, k_2, \ldots}_{\text{partagés par toutes les vues}},\ \underbrace{R_1, t_1, \ldots, R_n, t_n}_{\text{une pose par vue}}\big)
+$$
+
+$P$ : la géométrie du damier (taille des cases connue) ; $y$ : les coins détectés dans chaque vue.
+</Formule>
+
+<Concept titre="Protocole">
+1. Caméra **fixe** : mise au point, zoom et taille d’image **figés**.
+2. **Bouger et incliner** le damier : de nombreuses vues inclinées, au centre **et** vers les bords du champ.
+3. Détecter les coins dans chaque vue.
+4. Ajuster conjointement intrinsèques + distorsion (partagés) et une pose par vue (Zhang, TPAMI 2000 ; boîte à outils de J.-Y. Bouguet).
+</Concept>
+
+<Figure legende="Cinq poses d’un damier devant une caméra. Sur le plan image, les coins détectés (blancs) et les coins prédits avec les paramètres courants (couleur de la pose) sont reliés par les résidus (orange). L’optimisation (ici la focale et k₁, avec des poses supposées connues pour la lisibilité) fait converger les prédictions vers les détections.">
+  <Zhang3D client:visible />
+</Figure>
+
+<Attention titre="Les pièges classiques">
+- Des vues **toutes au centre** : la distorsion (qui grandit vers les bords) est mal contrainte. Voir la leçon sur la validation.
+- Des vues **toutes de face** : la focale se confond avec la distance. Il faut des inclinaisons variées.
+- Changer la **mise au point** ou le **zoom** après calibration change les intrinsèques : il faut recalibrer.
+</Attention>

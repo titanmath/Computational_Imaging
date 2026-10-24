@@ -1,0 +1,41 @@
+---
+titre: "Déconvoluer dans le domaine de Fourier"
+resume: "Une convolution devient une simple multiplication fréquence par fréquence. Diviser semble alors trivial… jusqu’à ce que le bruit, amplifié aux fréquences où le flou a tout effacé, envahisse l’image."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Deconv1D from '@/components/sims/ch07/Deconv1D.svelte';
+
+Problème : on connaît l’image floue $J$ et le noyau $K$, on veut l’image nette $I$ telle que $I * K = J$, autrement dit $Ax = b$ avec $A \in \mathbb R^{R'C' \times RC}$. La matrice est trop grosse pour être inversée.
+
+<Formule titre="Le théorème de convolution">
+$$
+I * K = J \quad\Longleftrightarrow\quad \mathcal F(I) \odot \mathcal F(K) = \mathcal F(J)
+$$
+
+$\mathcal F$ : transformée de Fourier ; $\odot$ : produit élément par élément. La convolution devient une multiplication par fréquence. Une FFT coûte $O(N \log N)$ pour $N$ pixels.
+</Formule>
+
+<Formule titre="Filtrage inverse">
+$$
+I^* = \mathcal F^{-1}\!\left(\frac{\mathcal F(J)}{\mathcal F(K)}\right)
+$$
+
+On divise à chaque fréquence, puis on revient dans le domaine spatial.
+</Formule>
+
+<Figure legende="128 échantillons, flou gaussien σ = 1,1 px. Sans bruit, le filtre inverse est parfait. Avec un bruit de σ = 0,005 (invisible à l’œil sur la mesure), la reconstruction directe est envahie d’oscillations.">
+  <Deconv1D client:visible />
+</Figure>
+
+<Attention titre="Le filtrage inverse amplifie le bruit">
+Le flou atténue fortement les hautes fréquences : $|\mathcal F(K)|$ y est minuscule. Le bruit, lui, est présent à **toutes** les fréquences. Diviser par une très petite valeur **multiplie** le bruit d’autant : un bruit de mesure infime peut dominer la reconstruction. Le problème est **instable**, donc mal posé.
+</Attention>
+
+<Concept titre="Ce qui manque">
+Le flou a réellement détruit l’information aux fréquences où $\mathcal F(K) \approx 0$ : aucune division ne peut la récupérer. Il faut **accepter** de ne pas tout retrouver (Wiener, leçon suivante), ou **ajouter de l’information** sur ce à quoi ressemble une image (un a priori, fin de ce chapitre et chapitre 08).
+</Concept>

@@ -1,0 +1,34 @@
+---
+titre: "L’œil, un système optique adaptatif"
+resume: "La cornée fait l’essentiel de la réfraction, le cristallin ajuste la mise au point, la rétine est le capteur. Une erreur de longueur de l’œil, et l’image tombe à côté."
+duree: 5
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Oeil3D from '@/components/sims/ch04/Oeil3D.svelte';
+
+Du point de vue de ce cours, la chaîne d’imagerie ne s’arrête pas au fichier : l’image est **affichée** (un écran émet de la lumière), puis **perçue**. Quelles différences entre deux images une personne peut-elle réellement voir ? Cela dépend de la distance de vue, du niveau de lumière, de l’adaptation et de la tâche.
+
+## L’optique de l’œil
+
+- La <Terme en="cornea">cornée</Terme> fournit **l’essentiel** du pouvoir réfractif (le plus grand saut d’indice : air → cornée).
+- Le <Terme en="crystalline lens">cristallin</Terme> **change de puissance** pour faire la mise au point à différentes distances.
+- La <Terme en="retina">rétine</Terme> est le **plan image**.
+
+L’<Terme en="accommodation">accommodation</Terme> est la mise au point de l’œil : pour un objet lointain, le cristallin est **plus plat** (moins de puissance) ; pour un objet proche, il est **plus bombé** (plus de puissance). Plutôt que de déplacer le capteur comme un appareil photo, l’œil change la focale.
+
+<Figure legende="Œil schématique tracé rayon par rayon (loi de Snell à la cornée et aux deux faces du cristallin). Rapproche l’objet : sans accommodation, les rayons convergent derrière la rétine. Augmente l’accommodation pour ramener la tache à un point. Essaie un œil myope, puis ajoute la lunette de correction calculée.">
+  <Oeil3D client:visible />
+</Figure>
+
+## Les erreurs de réfraction
+
+<Concept titre="Myopie et hypermétropie">
+- **Myopie** : l’œil est trop long (ou trop puissant). Au repos, l’image d’un objet lointain se forme **devant** la rétine. On voit net de près, flou de loin. La correction est une lentille **divergente**.
+- **Hypermétropie** : l’œil est trop court. L’image se forme **derrière** la rétine. Il faut accommoder même pour voir loin. La correction est une lentille **convergente**.
+
+Les verres correcteurs **déplacent ou remodèlent** la mise au point, exactement comme on déplace un capteur.
+</Concept>
+
+Avec l’âge, le cristallin perd sa souplesse : c’est la **presbytie**, l’amplitude d’accommodation diminue et voir de près devient difficile.

@@ -1,0 +1,32 @@
+---
+titre: "Compter des photons"
+resume: "La lumière arrive par paquets d’énergie, les photons. Un pixel ne mesure rien d’autre qu’un nombre de photons, et chacun porte une énergie hc/λ."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import EnergiePhoton from '@/components/sims/ch02/EnergiePhoton.svelte';
+
+Un capteur d’image est une **grille de pixels**. Chaque pixel est un petit détecteur qui compte la lumière qu’il reçoit pendant la pose.
+
+La lumière transporte son énergie par quantités discrètes, les <Terme en="photons">photons</Terme>. On notera $N_\gamma$ le nombre de photons qui atteignent un pixel pendant une exposition (par exemple $N_\gamma = 6$). C’est un nombre **entier**, et **aléatoire** : on y reviendra avec le bruit.
+
+<Formule titre="Énergie d’un photon">
+$$
+E_\text{photon} = \frac{h\,c}{\lambda}
+$$
+
+- $h = 6{,}626 \times 10^{-34}$ J·s : constante de Planck
+- $c = 3 \times 10^{8}$ m/s : vitesse de la lumière dans le vide
+- $\lambda$ : longueur d’onde
+</Formule>
+
+<Figure legende="Plus la longueur d’onde est courte, plus chaque photon porte d’énergie : 4,41 × 10⁻¹⁹ J à 450 nm (bleu), 3,06 × 10⁻¹⁹ J à 650 nm (rouge).">
+  <EnergiePhoton client:visible />
+</Figure>
+
+<Concept titre="Deux grandeurs à ne pas confondre">
+$N_\gamma$ **compte** les photons ; $E_\text{photon}$ est l’énergie **d’un** photon. Pour une même énergie lumineuse, une lumière rouge contient plus de photons qu’une lumière bleue. Ce qui compte pour un capteur, c’est le **nombre** de photons, car c’est lui qui fixe le signal et le bruit.
+</Concept>

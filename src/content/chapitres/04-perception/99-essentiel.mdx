@@ -1,0 +1,27 @@
+---
+titre: "L’essentiel : perception"
+resume: "L’observateur en une page."
+duree: 3
+essentiel: true
+---
+import Retenir from '@/components/contenu/Retenir.astro';
+
+<Retenir>
+L’observateur fait partie du système d’imagerie. Ce qui compte n’est pas seulement ce qui est mesuré, mais ce qui est **visible**.
+</Retenir>
+
+| Notion | À retenir |
+| --- | --- |
+| Œil | cornée (puissance) + cristallin (accommodation) + rétine (capteur) ; myope : œil trop long |
+| Rétine | fovéa dense en cônes ; bâtonnets la nuit (scotopique), cônes le jour (photopique) |
+| Grandeurs | radiance (W/m²/sr) → luminance $L_v = 683\int L_\lambda V\,d\lambda$ (cd/m²) → luminosité perçue |
+| Surface | $L_\lambda = E_\lambda\rho/\pi$ (lambertienne) |
+| Cônes | $q_c = \int L_\lambda s_c\,d\lambda$, $c \in \{L, M, S\}$ |
+| Métamérisme | même $(q_L, q_M, q_S)$ pour des spectres différents ; fragile (illuminant, observateur) |
+| CIE XYZ | $\bar y = V$ donc $Y$ = luminance ; $x = X/(X+Y+Z)$, $y = Y/(X+Y+Z)$ |
+| Diagramme xy | locus spectral, droite des pourpres, gamut sRGB (triangle), D65 ; non uniforme |
+| Contexte | induction, Mach, Cornsweet : même RGB, apparence différente |
+| Spatial | $f$ en cycles/degré ; $C = (L_\max - L_\min)/(L_\max + L_\min)$ ; CSF = 1/C_seuil, en cloche |
+| Temporel | $L(t) = L_0[1 + m\sin 2\pi f t]$ ; dépend de f, luminance, excentricité, taille |
+| Profondeur | indices monoculaires, stéréo ; conflit vergence-accommodation $\lvert 1/d_v - 1/d_a\rvert$ |
+| Qualité | même MSE ≠ même qualité ; SSIM (luminance, contraste, structure), LPIPS (appris) |

@@ -1,0 +1,94 @@
+---
+// Trois façons d'obtenir un « bon » ISP : réseau direct, réglage de l'ISP réel, proxy différentiable.
+const cols = [
+  { t: 'ISP neuronal direct', l: ['RAW', 'réseau F_w', 'RGB'], b: 'on entraîne les poids w', c: 'Le réseau remplace l’ISP.' },
+  { t: 'Réglage de l’ISP réel', l: ['RAW', 'ISP réel (θ)', 'RGB'], b: 'on optimise les réglages θ', c: 'Pas de gradient : recherche sans dérivée (ex. CMA-ES).' },
+  { t: 'Proxy différentiable', l: ['RAW', 'proxy φ (gelé)', 'RGB'], b: 'on optimise θ par gradient', c: 'On apprend φ pour imiter l’ISP, puis on valide θ sur l’ISP réel.' },
+];
+---
+<figure class="schema deborde anime">
+  <div class="cols">
+    {
+      cols.map((c, i) => (
+        <div class="col" style={`--d:${i * 0.15}s`}>
+          <p class="t">{c.t}</p>
+          <div class="chaine">
+            {c.l.map((x, k) => (
+              <>
+                <span class:list={['bloc', { coeur: k === 1 }]}>{x}</span>
+                {k < 2 && <span class="fl">→</span>}
+              </>
+            ))}
+          </div>
+          <p class="b">{c.b}</p>
+          <p class="c">{c.c}</p>
+        </div>
+      ))
+    }
+  </div>
+</figure>
+
+<style>
+  .schema {
+    margin-block: 2rem;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+  }
+  .col {
+    border: 1px solid var(--filet);
+    border-radius: 12px;
+    padding: 1rem;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s var(--ease) var(--d), transform 0.6s var(--ease) var(--d);
+  }
+  .en-vue .col {
+    opacity: 1;
+    transform: none;
+  }
+  .t {
+    margin: 0 0 0.7rem;
+    font-family: var(--f-titre);
+    font-size: 1.1rem;
+  }
+  .chaine {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+  .bloc {
+    font-size: 0.82rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    background: var(--papier-2);
+    border: 1px solid var(--filet);
+  }
+  .bloc.coeur {
+    border-color: var(--accent);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .fl {
+    color: var(--encre-3);
+  }
+  .b {
+    margin: 0.7rem 0 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .c {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--encre-2);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .col {
+      opacity: 1;
+      transform: none;
+    }
+  }
+</style>

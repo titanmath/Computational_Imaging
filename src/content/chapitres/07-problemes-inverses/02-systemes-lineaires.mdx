@@ -1,0 +1,40 @@
+---
+titre: "Beaucoup de modèles sont linéaires : b = Ax"
+resume: "Une image se range en un vecteur, et un flou devient une multiplication par une énorme matrice creuse. Écrire b = Ax ouvre tous les outils de l’algèbre linéaire."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import MatriceConvolution from '@/components/sims/ch07/MatriceConvolution.svelte';
+
+<Formule titre="Système linéaire">
+$$
+b = f(x) = A x, \qquad b \in \mathbb R^{M\times 1},\; x \in \mathbb R^{N\times 1},\; A \in \mathbb R^{M\times N}
+$$
+
+$b$ : vecteur des mesures ; $x$ : inconnues ; $A$ : <Terme en="measurement matrix">matrice de mesure</Terme>.
+</Formule>
+
+## Vectoriser une image
+
+Une image en niveaux de gris $I \in \mathbb R^{R\times C}$ se range en un vecteur colonne $x = \operatorname{vec}(I) \in \mathbb R^{RC \times 1}$, ligne après ligne (ordre *row-major*). La mesure $J$ (de taille $R'\times C'$) donne $b = \operatorname{vec}(J)$, avec $M = R'C'$ et $N = RC$.
+
+## La convolution est linéaire
+
+<Formule titre="Convolution d’une image par un noyau P × Q">
+$$
+J(x, y) = \sum_{i=1}^{P}\sum_{j=1}^{Q} K(i, j)\, I(x - i,\, y - j)
+$$
+</Formule>
+
+Comment est définie $A$ ? Chaque **ligne** $A_i \in \mathbb R^{1\times N}$ correspond à **un pixel de sortie** : elle contient les poids du noyau aux positions des pixels d’entrée qui y contribuent, et des **zéros partout ailleurs**.
+
+<Figure legende="Une convolution 1D écrite comme un produit matrice × vecteur. Survole une sortie b : sa ligne de A ne contient que les trois poids du noyau, autour de la diagonale.">
+  <MatriceConvolution client:visible />
+</Figure>
+
+<Concept titre="Une matrice creuse et structurée">
+La matrice d’une convolution est **creuse** (quelques valeurs non nulles par ligne) et **à bandes** (chaque ligne est la précédente décalée). On ne la stocke jamais : on calcule $Ax$ directement par convolution, ou dans le domaine de Fourier.
+</Concept>

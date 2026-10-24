@@ -1,0 +1,277 @@
+---
+import { url } from '@/lib/navigation';
+import ThemeToggle from './ThemeToggle.astro';
+
+export interface Miette {
+  label: string;
+  href?: string;
+  code?: string;
+}
+export interface Segment {
+  url: string;
+  titre: string;
+  courant: boolean;
+  passe: boolean;
+}
+interface Props {
+  fil: Miette[];
+  segments?: Segment[];
+}
+const { fil, segments = [] } = Astro.props;
+const dernier = fil[fil.length - 1];
+const avant = fil.slice(0, -1);
+const iCourant = segments.findIndex((s) => s.courant);
+---
+<header class="barre" data-barre>
+  <div class="ligne">
+    <nav class="fil" aria-label="Fil d’Ariane">
+      <a class="carte" href={url('/')} aria-label="Carte du cours">
+        <svg viewBox="0 0 28 16" aria-hidden="true">
+          <path d="M1 8h11" />
+          <path class="prisme" d="M12 2.5 17 8l-5 5.5Z" />
+          <path class="r1" d="M17 8 27 3" />
+          <path class="r2" d="M17 8h10" />
+          <path class="r3" d="M17 8l10 5" />
+        </svg>
+        <span>Carte</span>
+      </a>
+      {
+        avant.slice(1).map((m) => (
+          <>
+            <span class="sep" aria-hidden="true">›</span>
+            <a class="miette" href={m.href}>
+              {m.code && <span class="code">{m.code}</span>}
+              <span class="txt">{m.label}</span>
+            </a>
+          </>
+        ))
+      }
+      {
+        dernier && fil.length > 1 && (
+          <>
+            <span class="sep" aria-hidden="true">›</span>
+            <span class="courant" aria-current="page">
+              <span class="titre-courant" data-titre-courant>{dernier.label}</span>
+              <span class="apercu" data-apercu aria-hidden="true" />
+            </span>
+          </>
+        )
+      }
+    </nav>
+    <div class="actions">
+      {segments.length > 0 && iCourant >= 0 && (
+        <span class="position" aria-hidden="true">{iCourant + 1}/{segments.length}</span>
+      )}
+      <ThemeToggle />
+    </div>
+  </div>
+  {
+    segments.length > 0 && (
+      <nav class="segments" aria-label="Leçons du chapitre">
+        {segments.map((s, i) => (
+          <a
+            href={s.url}
+            class:list={['seg', { courant: s.courant, passe: s.passe }]}
+            aria-current={s.courant ? 'page' : undefined}
+            data-titre={`${i + 1} · ${s.titre}`}
+          >
+            <span class="visuellement-cache">{`Leçon ${i + 1} : ${s.titre}`}</span>
+          </a>
+        ))}
+      </nav>
+    )
+  }
+</header>
+
+<script>
+  // Survol d'un segment : son titre remplace temporairement le titre courant, dans la barre.
+  for (const barre of document.querySelectorAll<HTMLElement>('[data-barre]')) {
+    const titre = barre.querySelector<HTMLElement>('[data-titre-courant]');
+    const apercu = barre.querySelector<HTMLElement>('[data-apercu]');
+    if (!titre || !apercu) continue;
+    const montrer = (t: string | null) => {
+      if (t) {
+        apercu.textContent = t;
+        barre.classList.add('survol');
+      } else barre.classList.remove('survol');
+    };
+    for (const seg of barre.querySelectorAll<HTMLElement>('.seg')) {
+      seg.addEventListener('pointerenter', () => montrer(seg.dataset.titre ?? null));
+      seg.addEventListener('focus', () => montrer(seg.dataset.titre ?? null));
+      seg.addEventListener('pointerleave', () => montrer(null));
+      seg.addEventListener('blur', () => montrer(null));
+    }
+  }
+</script>
+
+<style>
+  .barre {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in oklab, var(--papier) 86%, transparent);
+    backdrop-filter: saturate(1.3) blur(12px);
+    -webkit-backdrop-filter: saturate(1.3) blur(12px);
+    border-bottom: 1px solid var(--filet);
+  }
+  .ligne {
+    height: var(--barre-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-inline: var(--gouttiere);
+    max-width: 80rem;
+    margin-inline: auto;
+  }
+  .fil {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 0;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+  .carte {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-family: var(--f-titre);
+    font-size: 1.05rem;
+    font-weight: 600;
+    flex: none;
+  }
+  .carte svg {
+    width: 28px;
+    height: 16px;
+    fill: none;
+    stroke: var(--encre);
+    stroke-width: 1.3;
+    stroke-linecap: round;
+  }
+  .carte .prisme {
+    fill: var(--papier-2);
+    stroke-linejoin: round;
+  }
+  .carte .r1 {
+    stroke: #c0392b;
+  }
+  .carte .r2 {
+    stroke: #3d9a50;
+  }
+  .carte .r3 {
+    stroke: #3a5fc8;
+  }
+  .sep {
+    color: var(--encre-3);
+    flex: none;
+  }
+  .miette {
+    display: inline-flex;
+    gap: 0.4rem;
+    text-decoration: none;
+    color: var(--encre-2);
+    min-width: 0;
+    flex: 0 1 auto;
+    overflow: hidden;
+  }
+  .miette .txt {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .code {
+    font-variant-numeric: tabular-nums;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .courant {
+    position: relative;
+    min-width: 0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    font-weight: 600;
+  }
+  .titre-courant,
+  .apercu {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity 0.18s var(--ease), transform 0.25s var(--ease);
+  }
+  .apercu {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: translateY(40%);
+    color: var(--accent);
+  }
+  .survol .titre-courant {
+    opacity: 0;
+    transform: translateY(-40%);
+  }
+  .survol .apercu {
+    opacity: 1;
+    transform: none;
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: none;
+  }
+  .position {
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--encre-3);
+  }
+
+  .segments {
+    display: flex;
+    gap: 3px;
+    padding: 0 var(--gouttiere) 6px;
+    max-width: 80rem;
+    margin-inline: auto;
+  }
+  .seg {
+    flex: 1 1 0;
+    height: 14px;
+    display: flex;
+    align-items: center;
+  }
+  .seg::before {
+    content: '';
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--filet);
+    transition: height 0.2s var(--ease), background 0.2s var(--ease);
+  }
+  .seg.passe::before {
+    background: color-mix(in oklab, var(--accent) 45%, var(--filet));
+  }
+  .seg.courant::before {
+    background: var(--accent);
+    height: 5px;
+  }
+  .seg:hover::before,
+  .seg:focus-visible::before {
+    height: 7px;
+    background: var(--accent);
+  }
+  .seg:focus-visible {
+    outline-offset: 0;
+  }
+
+  @media (max-width: 640px) {
+    .miette .txt {
+      display: none;
+    }
+    .carte span {
+      display: none;
+    }
+    .position {
+      display: none;
+    }
+  }
+</style>

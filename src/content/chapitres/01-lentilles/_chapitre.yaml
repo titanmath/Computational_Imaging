@@ -1,0 +1,12 @@
+numero: 1
+titre: "Lentilles"
+sousTitre: "Projection, mise au point et flou"
+resume: "Comment une scène 3D devient une image 2D : du sténopé à la lentille, de la projection perspective à la fonction d’étalement du point (PSF), en passant par la profondeur de champ, la diffraction et les aberrations."
+objectifs:
+  - "écrire la projection perspective d’un sténopé et expliquer pourquoi la profondeur est perdue"
+  - "calculer un champ de vision, une distance de mise au point (lentille mince) et un cercle de flou"
+  - "expliquer le compromis lumière / netteté / diffraction d’une ouverture"
+  - "décrire une image floue comme la convolution de l’image nette par une PSF"
+  - "reconnaître les principales aberrations et la distorsion, et savoir comment on mesure une PSF"
+icone: lentille
+source: 1_lens_2026.pdf

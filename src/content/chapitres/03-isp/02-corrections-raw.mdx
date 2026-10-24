@@ -1,0 +1,64 @@
+---
+titre: "Corrections RAW : noir, défauts, vignetage"
+resume: "Avant toute chose, on retire la ligne de base électronique, on répare les pixels aberrants et on compense l’assombrissement des coins, à l’aide d’images de calibration."
+duree: 6
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Vignetage from '@/components/sims/ch03/Vignetage.svelte';
+
+## Soustraire le niveau noir
+
+Même sans lumière, un capteur renvoie une valeur non nulle : la ligne de base électronique, typiquement ≈ 64 DN (1,6 % de la pleine échelle en 12 bits). Elle varie un peu d’un pixel à l’autre.
+
+<Formule titre="Correction du niveau noir">
+$$
+I_\text{corr}(x, y) = I(x, y) - D(x, y)
+$$
+
+$D$ : carte de noir, obtenue en **moyennant** des images prises objectif bouché ou obturateur fermé (par exemple 64 images), avec **la même exposition, le même gain et la même température**.
+</Formule>
+
+Après soustraction, de petites valeurs **négatives** apparaissent dans les zones sombres : c’est normal, c’est le bruit autour de zéro. On les garde en virgule flottante plutôt que de les écrêter, sinon on biaiserait les moyennes.
+
+## Réparer les pixels défectueux
+
+Certains pixels sont « chauds » (toujours brillants) ou « morts ». On les **détecte** grâce à deux images de calibration : une image noire (objectif bouché), où les pixels chauds ressortent, et une image de **champ plat** (lumière uniforme), dont on a d’abord soustrait le noir. Ensuite on **interpole** seulement les sites signalés, à partir des voisins **de même couleur**, situés à deux photosites dans la mosaïque.
+
+<Exemple titre="Un pixel rouge chaud">
+Le pixel vaut 4 095 (saturé). Ses quatre voisins rouges, à deux sites de distance, valent 1 000, 980, 1 040 et 1 020 :
+$$
+I_\text{nouveau} = \frac{1000 + 980 + 1040 + 1020}{4} = 1010 \text{ DN}.
+$$
+</Exemple>
+
+## Corriger le vignetage
+
+Les coins de l’image reçoivent moins de lumière que le centre (optique, angle d’incidence, cos⁴θ). On mesure ce profil puis on le compense par un **gain spatial** :
+
+<Formule titre="Correction de la non-uniformité (lens shading)">
+$$
+I_{\text{out},c}(x, y) = g_c(x, y)\, I_{\text{in},c}(x, y), \qquad g_c = \frac{1}{v_c}
+$$
+
+$v_c$ : réponse relative du canal $c$ (≈ 1 au centre, < 1 dans les coins).
+</Formule>
+
+<Concept titre="Protocole de mesure du masque">
+1. Photographier un champ **uniforme et sans relief**, sans saturer.
+2. Garder **objectif, ouverture, focale et mise au point fixes**, et moyenner plusieurs RAW.
+3. Soustraire le noir → **lisser** chaque canal de la mosaïque → **normaliser** par la valeur au centre → **inverser**.
+</Concept>
+
+<Figure legende="Le champ uniforme capturé donne le profil v, son inverse donne le gain. Appliquer le gain redresse la luminosité des coins.">
+  <Vignetage client:visible />
+</Figure>
+
+<Attention titre="Corriger, c’est aussi amplifier le bruit">
+Des coins plus clairs, ce sont aussi des coins **plus bruités** : le gain s’applique au signal *et* au bruit. Et ces corrections se font **avant** le dématriçage, sur les sites de la mosaïque.
+</Attention>

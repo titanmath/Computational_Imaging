@@ -1,0 +1,100 @@
+---
+import type { Page } from '@/lib/navigation';
+interface Props {
+  prec?: Page;
+  suiv?: Page;
+  /** Libellé quand il n'y a pas de suite (fin de séquence). */
+  finLabel?: string;
+  finHref?: string;
+}
+const { prec, suiv, finLabel = 'Retour à la carte', finHref } = Astro.props;
+const sur = (p: Page) =>
+  p.type === 'ouverture' ? 'Chapitre suivant' : p.type === 'assignment' ? 'Aperçu' : 'Suivant';
+---
+<nav class="precsuiv large" aria-label="Navigation entre les pages">
+  {
+    prec ? (
+      <a class="carte prec" href={prec.url} rel="prev" data-nav="prec">
+        <span class="sens">← Précédent</span>
+        <span class="t">{prec.titre}</span>
+      </a>
+    ) : (
+      <span />
+    )
+  }
+  {
+    suiv ? (
+      <a class:list={['carte', 'suiv', { chapitre: suiv.type === 'ouverture' }]} href={suiv.url} rel="next" data-nav="suiv">
+        <span class="sens">{sur(suiv)} →</span>
+        <span class="t">{suiv.titre}</span>
+      </a>
+    ) : (
+      finHref && (
+        <a class="carte suiv" href={finHref} data-nav="suiv">
+          <span class="sens">Fin →</span>
+          <span class="t">{finLabel}</span>
+        </a>
+      )
+    )
+  }
+</nav>
+
+<style>
+  .precsuiv {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+  }
+  .carte {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.2rem 1.1rem;
+    border: 1px solid var(--filet);
+    border-radius: var(--rayon);
+    text-decoration: none;
+    background: var(--papier);
+    transition: border-color 0.2s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+  }
+  .carte:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--ombre);
+    color: inherit;
+  }
+  .suiv {
+    text-align: right;
+    grid-column: 2;
+  }
+  .sens {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--encre-3);
+  }
+  .carte:hover .sens {
+    color: var(--accent);
+  }
+  .t {
+    font-family: var(--f-titre);
+    font-size: 1.12rem;
+    line-height: 1.25;
+  }
+  .chapitre {
+    background: var(--papier-2);
+  }
+  @media (max-width: 560px) {
+    .precsuiv {
+      grid-template-columns: 1fr;
+    }
+    .suiv {
+      grid-column: 1;
+    }
+    .prec {
+      order: 2;
+    }
+  }
+</style>

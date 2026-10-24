@@ -1,0 +1,68 @@
+---
+titre: "Profondeur perdue, coordonnées homogènes"
+resume: "Tous les points d’un même rayon tombent sur le même pixel : la projection efface la profondeur. Les coordonnées homogènes écrivent cette projection comme un produit matriciel."
+duree: 5
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+## L’ambiguïté de profondeur
+
+Reprenons $x = fX/Z$. Les points $(X, Y, Z)$ et $(2X, 2Y, 2Z)$ donnent **exactement** la même image : ils sont sur le même rayon issu du centre optique. Une image seule ne dit donc pas à quelle distance se trouve un objet. C’est la perte fondamentale de la projection 3D → 2D.
+
+<Concept titre="Un pixel = une direction">
+Une coordonnée image centrée $(x, y)$ fixe une **direction** dans l’espace, pas un point. Il faut une information supplémentaire, la profondeur $Z$, pour retrouver le point 3D.
+</Concept>
+
+Si l’on connaît $Z$ (grâce à un capteur de profondeur, à la stéréo…), on peut **rétroprojeter** :
+
+<Formule titre="Rétroprojection avec la profondeur">
+$$
+\begin{pmatrix} X \\ Y \\ Z \end{pmatrix} = Z \begin{pmatrix} x/f \\ y/f \\ 1 \end{pmatrix}
+$$
+</Formule>
+
+<Exemple titre="Retrouver un point 3D">
+$f = 50$ mm, pixel en $(x, y) = (5, -2{,}5)$ mm, profondeur $Z = 2000$ mm : $X = 2000 \times 5/50 = 200$ mm, $Y = 2000 \times (-2{,}5)/50 = -100$ mm. Le point est en $(200, -100, 2000)$ mm.
+
+Et pour un même pixel $y = 12$ mm avec $f = 35$ mm : à $Z = 1$ m on obtient $Y = 0{,}343$ m, à 2 m $Y = 0{,}686$ m, à 3 m $Y = 1{,}029$ m. Trois points différents, une seule image.
+</Exemple>
+
+## Profondeur ou distance ?
+
+<Attention titre="Deux grandeurs à ne pas confondre">
+La <Terme en="depth">profondeur</Terme> $Z$ est la composante **le long de l’axe optique**. La <Terme en="range">distance</Terme> $\rho$ est la longueur **le long du rayon** : $\rho^2 = X^2 + Y^2 + Z^2$, donc $Z = \rho\cos\theta$ et $\rho > Z$ hors axe.
+
+Exemple : le point $P = (0, 3, 4)$ m est à une profondeur $Z = 4$ m mais à une distance $\rho = 5$ m. Un capteur à temps de vol (chapitre ToF) mesure $\rho$, pas $Z$.
+</Attention>
+
+## Les coordonnées homogènes
+
+La division par $Z$ empêche d’écrire la projection comme une simple multiplication de matrice. L’astuce : ajouter une coordonnée d’**échelle**.
+
+<Formule titre="Coordonnées homogènes">
+$$
+(x, y) \;\longleftrightarrow\; (a, b, w) = (wx,\; wy,\; w), \quad w \ne 0
+$$
+
+Tous les multiples non nuls représentent le même point : $(2,1,1) \sim (4,2,2) \sim (6,3,3)$. Pour revenir au point euclidien, on **divise par la dernière coordonnée**.
+</Formule>
+
+La projection perspective devient alors linéaire :
+
+$$
+\alpha \begin{pmatrix} x \\ y \\ 1 \end{pmatrix}
+= \underbrace{\begin{pmatrix} f & 0 & 0 & 0 \\ 0 & f & 0 & 0 \\ 0 & 0 & 1 & 0 \end{pmatrix}}_{3\times 4}
+\begin{pmatrix} X \\ Y \\ Z \\ 1 \end{pmatrix}
+= \begin{pmatrix} fX \\ fY \\ Z \end{pmatrix},
+\qquad \alpha = Z.
+$$
+
+<Exemple titre="Projection en deux temps">
+$f = 2$, point $(X, Y, Z) = (3, 1, 4)$ : la matrice donne $(fX, fY, Z) = (6, 2, 4)$, puis on divise par 4 : $(x, y) = (1{,}5;\ 0{,}5)$.
+</Exemple>
+
+L’intérêt : la matrice peut **porter l’échelle** pendant tous les calculs (changements de repère, intrinsèques de la caméra…) et une seule division termine la projection. C’est le langage de la calibration géométrique (chapitre 05).

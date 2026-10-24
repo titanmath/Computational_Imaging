@@ -1,0 +1,26 @@
+---
+titre: "La différentiation automatique"
+resume: "Pour descendre le gradient d’un modèle compliqué, on le décompose en un graphe d’opérations simples et on applique la règle de la chaîne à l’envers : c’est la rétropropagation."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import GrapheAD from '@/components/sims/ch07/GrapheAD.svelte';
+
+Calculer $\nabla L$ à la main devient vite impossible quand $f$ enchaîne optique, capteur, ISP… La <Terme en="automatic differentiation">différentiation automatique</Terme> s’en charge : on construit un **graphe de calcul**, puis la **rétropropagation** calcule tous les gradients en parcourant ce graphe à l’envers.
+
+<Figure legende="Exemple des slides : gain 2, mesure 3, valeur candidate x = 2. La passe avant donne u = 4, r = 1, L = 0,5 ; la passe arrière donne ∂L/∂x = 1 × 1 × 2 = 2. Fais varier x.">
+  <GrapheAD client:visible />
+</Figure>
+
+<Formule titre="Règle de la chaîne">
+$$
+\frac{\partial L}{\partial x} = \frac{\partial L}{\partial r}\,\frac{\partial r}{\partial u}\,\frac{\partial u}{\partial x}
+$$
+</Formule>
+
+<Concept titre="Pourquoi c’est puissant">
+Chaque opération élémentaire connaît sa dérivée locale ; la rétropropagation les multiplie. Le coût du gradient est du même ordre que celui d’une évaluation de $f$, quel que soit le nombre de paramètres. PyTorch, TensorFlow et JAX le font automatiquement. C’est ce qui rend possibles la conception conjointe optique + réseau (chapitre 01) et les proxys différentiables d’ISP (chapitre 03).
+</Concept>

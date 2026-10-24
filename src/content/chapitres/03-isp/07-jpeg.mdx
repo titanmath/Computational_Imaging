@@ -1,0 +1,56 @@
+---
+titre: "JPEG : compresser par blocs de fréquences"
+resume: "JPEG découpe l’image en blocs 8 × 8, les décompose sur 64 motifs cosinus (DCT) et arrondit grossièrement les coefficients des hautes fréquences, peu visibles."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import JPEG from '@/components/sims/ch03/JPEG.svelte';
+
+## La DCT d’un bloc 8 × 8
+
+On découpe l’image (sa luminance $Y$, puis ses chrominances) en blocs de 8 × 8 pixels, on retire 128 pour centrer les valeurs, puis on décompose chaque bloc sur **64 images de base** cosinus : la <Terme en="discrete cosine transform" sigle="DCT">transformée en cosinus discrète</Terme>.
+
+<Formule titre="Coefficients DCT d’un bloc">
+$$
+D_{v,u} = \sum_{y,x} \big(Y_{y,x} - 128\big)\, B_{v,u}(y, x)
+$$
+
+$B_{v,u}$ : base DCT orthonormale de fréquence horizontale $u$ et verticale $v$. $D_{0,0}$ (« DC ») est la moyenne du bloc ; les autres (« AC ») mesurent la présence de motifs de plus en plus fins.
+</Formule>
+
+## Quantifier : la seule étape qui perd de l’information
+
+Chaque coefficient est divisé par un **pas** $Q_{v,u}$ propre à sa fréquence, puis arrondi : c’est l’entier $q_{v,u}$ qui est stocké. Au décodage, on multiplie à nouveau par le pas.
+
+<Formule titre="Quantification JPEG">
+$$
+q_{v,u} = \operatorname{round}\!\left(\frac{D_{v,u}}{Q_{v,u}}\right), \qquad \hat D_{v,u} = q_{v,u}\, Q_{v,u}
+$$
+
+Un $Q$ plus grand est plus grossier ; tout coefficient avec $|D| < Q/2$ devient **nul**. Le réglage « qualité » met la table entière à l’échelle.
+</Formule>
+
+<Exemple titre="Table de luminance Q40 (slides)">
+- $(v, u) = (0, 1)$ : $-470{,}09 \div 14 \to -34$, qui redevient $-476$ au décodage.
+- DC : $389{,}75 \div 20 \to 19$.
+</Exemple>
+
+<Figure legende="Baisse la qualité : les coefficients des hautes fréquences deviennent nuls, les blocs 8 × 8 deviennent visibles et des oscillations (« ringing ») apparaissent autour des bords nets.">
+  <JPEG client:visible />
+</Figure>
+
+<Concept titre="Pourquoi ça marche">
+L’œil est peu sensible aux hautes fréquences de faible amplitude (chapitre 04), et dans une image naturelle la plupart des coefficients de haute fréquence sont proches de zéro. Les tables de JPEG quantifient donc fortement les hautes fréquences, ce qui produit beaucoup de zéros, que le codage entropique compresse ensuite très bien.
+</Concept>
+
+<Exemple titre="Débit et distorsion mesurés (slides, image 960 × 540, 4:4:4)">
+| Qualité | Taille | PSNR |
+| --- | --- | --- |
+| 10 | 21,2 ko | 28,27 dB |
+| 40 | 48,5 ko | 32,15 dB |
+| 90 | 180,5 ko | 37,98 dB |
+</Exemple>

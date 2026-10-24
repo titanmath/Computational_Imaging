@@ -1,0 +1,58 @@
+---
+titre: "Ouverture, temps de pose et gain"
+resume: "Trois réglages pour une même luminosité, trois effets secondaires : profondeur de champ, flou de bougé, bruit. Et l’ISO n’ajoute aucun photon."
+duree: 6
+assignments: ["a1", "a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import TriangleExposition from '@/components/sims/ch02/TriangleExposition.svelte';
+
+## Ouverture et temps de pose : le budget photons
+
+<Formule titre="Photons reçus par un pixel">
+$$
+N_\gamma \propto R^2, \qquad N_\gamma = (\text{photons par seconde}) \times T
+$$
+
+- $R$ : rayon de l’ouverture. Doubler le rayon multiplie l’aire, donc les photons, par **4**.
+- $T$ : temps de pose.
+</Formule>
+
+<Exemple titre="Même lumière, deux réglages">
+Petite ouverture pendant 1 s : 1 000 photons/s × 1 s = 1 000 photons. Grande ouverture (deux fois plus de lumière par seconde) pendant 0,5 s : 2 000 × 0,5 = 1 000 photons. Même exposition, mais la première image a plus de **profondeur de champ** et plus de **flou de bougé**, la seconde l’inverse.
+</Exemple>
+
+## Le gain analogique et la conversion numérique
+
+Après la pose, la charge est convertie en tension, **amplifiée** par un gain analogique, puis numérisée par un convertisseur analogique-numérique (ADC) en un <Terme en="digital number" sigle="DN">nombre numérique</Terme>.
+
+<Formule titre="Valeur du pixel (sans bruit)">
+$$
+I \approx g\,N_e + b
+$$
+
+- $g$ : gain global (DN par électron)
+- $b$ : <Terme en="black level">niveau noir</Terme>, une ligne de base électronique au-dessus de zéro. Sans lumière, on lit environ 64 DN par exemple.
+</Formule>
+
+<Attention titre="L’ISO n’augmente pas le nombre de photons">
+Monter l’ISO change le **gain** (et souvent le rendu de l’image), mais ne fait entrer aucun photon de plus. Le gain amplifie **le signal et le bruit déjà présents** : à luminosité finale égale, une photo à ISO 6 400 est plus bruitée qu’une photo à ISO 100 exposée plus longtemps. C’est exactement ce que tu as constaté en A1 avec le petit sténopé.
+</Attention>
+
+## Le triangle d’exposition
+
+<Figure legende="Règle les trois paramètres. La luminosité dépend de T/N² × ISO ; chaque paramètre a son effet secondaire : ouvrir réduit la profondeur de champ (le fond se floute), allonger la pose fait filer la balle, monter l’ISO fait apparaître le bruit.">
+  <TriangleExposition client:visible />
+</Figure>
+
+<Concept titre="Ce qu’on règle sur les appareils">
+- **Téléphones Android ou iPhone en mode manuel** : ISO et temps de pose. L’ouverture est **fixe** sur la plupart des modules de téléphone.
+- **Reflex ou hybride en mode M** : ISO, temps de pose **et** ouverture.
+
+Pour une mesure quantitative (calibration, A2), on fixe tout sauf le paramètre qu’on veut faire varier : par exemple ISO bas fixe et temps de pose variable.
+</Concept>

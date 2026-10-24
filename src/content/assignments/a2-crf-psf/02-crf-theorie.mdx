@@ -1,0 +1,81 @@
+---
+titre: "Tâche 1 : la courbe de réponse, en théorie"
+resume: "On cherche g = ln f⁻¹ et les ln E de chaque position, à partir de photos à plusieurs temps de pose. Un système linéaire de moindres carrés, avec des poids, un lissage et une normalisation g(128) = 0."
+duree: 9
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Pseudocode from '@/components/contenu/Pseudocode.astro';
+import Checklist from '@/components/contenu/Checklist.svelte';
+import DebevecMalik from '@/components/sims/a2/DebevecMalik.svelte';
+
+<Formule titre="Le modèle de l’énoncé">
+$$
+z = f(E\,t), \qquad g(z) = \ln f^{-1}(z) = \ln E + \ln t
+$$
+
+$z$ : valeur 8 bits du pixel ; $t$ : temps de pose ; $E$ : éclairement du capteur ; $E\,t$ : exposition ; $f$ : la CRF ; $g$ : son inverse logarithmique ; $\ln$ : logarithme népérien. On estime $g$ et $\ln E$ **ensemble**. $g(128) = 0$ fixe l’exposition relative 1 à la valeur 128, **séparément pour chaque canal**.
+</Formule>
+
+La leçon « Quand l’image n’est pas linéaire : la courbe de réponse » du chapitre 06 détaille la méthode. Voici ce qu’il faut en retenir pour l’A2.
+
+## Les inconnues et les équations
+
+Pour un canal : $N$ positions $i$, $P$ photos $j$ de temps $t_j$ connus, observations $z_{ij}$. Les inconnues sont les 256 valeurs $g(0), \dots, g(255)$ et les $N$ valeurs $\ln E_i$.
+
+<Formule titre="L’objectif de Debevec et Malik (1997, § 2.1)">
+$$
+\mathcal O = \sum_{i,j} \Big\{ w(z_{ij})\big[g(z_{ij}) - \ln E_i - \ln t_j\big] \Big\}^2
++ \lambda \sum_{z=1}^{254} \big[w(z)\,\big(g(z-1) - 2g(z) + g(z+1)\big)\big]^2
+$$
+
+- **données** : une équation par observation ;
+- **lissage** : la dérivée seconde discrète, pondérée par $\lambda$ ;
+- **poids chapeau** : $w(z) = z$ pour $z \le 127{,}5$ et $255 - z$ au-delà, presque nul près de 0 et 255 ;
+- **normalisation** : une équation de plus, $g(128) = 0$.
+</Formule>
+
+<Concept titre="Pourquoi c’est un simple problème linéaire">
+Chaque équation est **linéaire** dans les inconnues : « $1 \times g(z_{ij}) - 1 \times \ln E_i = \ln t_j$ ». On empile tout dans $A\,\mathbf x \approx \mathbf b$, avec $\mathbf x = (g(0..255), \ln E_1, \dots, \ln E_N)$, puis on résout par moindres carrés : SVD, `\` de MATLAB, `lstsq` de NumPy… C’est le chapitre 07 appliqué.
+</Concept>
+
+<Pseudocode titre="gsolve (un canal) : construire et résoudre le système">
+```text
+entrée : Z[N][P] (valeurs 0–255), lnT[P], λ, w(z)
+n ← 256 ; lignes ← N·P + 1 + 254 ; inconnues ← n + N
+A ← matrice nulle (lignes × inconnues) ; b ← vecteur nul (lignes)
+k ← 0
+pour chaque position i, chaque photo j :            # équations de données
+    p ← w(Z[i][j])
+    A[k][Z[i][j]] ← p ; A[k][n + i] ← −p ; b[k] ← p · lnT[j] ; k ← k + 1
+A[k][128] ← 1 ; k ← k + 1                          # normalisation g(128) = 0
+pour z de 1 à 254 :                                  # lissage
+    A[k][z−1] ← λ·w(z) ; A[k][z] ← −2·λ·w(z) ; A[k][z+1] ← λ·w(z) ; k ← k + 1
+x ← solution des moindres carrés de A x ≈ b
+renvoyer g = x[0..255], lnE = x[256..]
+```
+</Pseudocode>
+
+<Figure legende="gsolve sur des photos simulées d’une scène HDR, avec une CRF cachée (pointillés). Fais varier le nombre de poses, de positions, λ et le bruit : il faut des poses qui se chevauchent et des positions de luminosités variées. λ = 0 donne une courbe en dents de scie, un λ énorme une droite.">
+  <DebevecMalik client:visible />
+</Figure>
+
+<Attention titre="Assez d’équations, et des valeurs bien réparties">
+Il y a $256 + N$ inconnues pour $N \cdot P$ équations de données : il faut $N(P-1) > 255$ environ, par exemple 60 positions × 6 poses. Surtout, chaque niveau de gris doit apparaître **non saturé** dans plusieurs poses. Choisis des positions sombres, moyennes et claires, et des temps de pose espacés d’environ 1 diaphragme (facteur 2).
+</Attention>
+
+<Checklist
+  client:visible
+  id="a2-crf-theorie"
+  items={[
+    'Expliquer pourquoi un JPEG n’est pas proportionnel à la lumière (ISP : gamma, tonalité)',
+    'Écrire z = f(Et), g = ln f⁻¹ et l’équation g(z_ij) = ln E_i + ln t_j',
+    'Compter les inconnues (256 + N) et les équations, et dire combien de positions et de poses il faut',
+    'Justifier le poids chapeau (pixels sombres bruités, pixels clairs saturés)',
+    'Expliquer le rôle du lissage λ et de la dérivée seconde discrète',
+    'Expliquer pourquoi g(128) = 0 est nécessaire (indétermination d’une constante) et le faire par canal',
+    'Écrire gsolve en pseudo-code : remplissage de A et b, puis moindres carrés',
+  ]}
+/>

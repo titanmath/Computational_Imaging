@@ -1,0 +1,55 @@
+---
+titre: "Le sténopé et la projection perspective"
+resume: "Un trou minuscule ne laisse passer qu’un rayon par point de la scène : l’image est renversée et mise à l’échelle selon x = fX/Z."
+duree: 5
+assignments: ["a1"]
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Projection from '@/components/sims/ch01/Projection.svelte';
+
+Percer un tout petit trou dans une paroi opaque suffit à former une image : c’est la <Terme en="pinhole camera">chambre noire ou sténopé</Terme>, décrite dès l’Antiquité (par le philosophe chinois Mozi, puis Aristote, Alhazen…). Chaque point de la scène n’envoie à travers le trou qu’un mince pinceau de lumière, qui frappe **un seul** endroit de l’écran.
+
+## La géométrie
+
+On place l’origine au trou, appelé <Terme en="optical / camera center">centre optique</Terme> $C$. L’axe $+Z$ pointe vers la scène : c’est l’<Terme en="optical axis">axe optique</Terme>. Le capteur est derrière, à la distance $f$ (plan $z = -f$). Par les triangles semblables :
+
+<Formule titre="Projection perspective (capteur physique)">
+$$
+x_s = -\frac{f\,X}{Z}, \qquad y_s = -\frac{f\,Y}{Z}
+$$
+
+- $(X, Y, Z)$ : point de la scène, $Z > 0$ sa **profondeur** le long de l’axe
+- $f > 0$ : distance trou → capteur
+- le signe moins traduit l’**inversion** de l’image
+</Formule>
+
+Pour éviter ce signe gênant, on raisonne souvent avec un **plan image virtuel** placé *devant* le trou, en $z = +f$ : même géométrie, mais l’image y est droite.
+
+$$
+x = \frac{f\,X}{Z}, \qquad y = \frac{f\,Y}{Z}.
+$$
+
+Ce plan virtuel n’existe pas physiquement : c’est une convention de calcul, utilisée partout en vision par ordinateur (et dans la calibration, chapitre 05).
+
+<Figure legende="Vue de côté d’un sténopé idéal. Déplace le point P : son image se déplace sur le capteur (renversée) et sur le plan virtuel (droite). Rapproche P du trou ou éloigne-le : l’image grandit ou rétrécit comme 1/Z.">
+  <Projection client:visible />
+</Figure>
+
+<Concept titre="Ce que dit la formule">
+- L’image d’un objet est **d’autant plus petite qu’il est loin** (division par $Z$) : c’est la perspective.
+- Elle est **proportionnelle à $f$** : éloigner le capteur du trou agrandit l’image (c’est ce que tu as utilisé dans l’assignment 1 en prenant la plus grande dimension de la boîte comme $f$).
+- Tous les rayons passent par **un seul point**, $C$.
+</Concept>
+
+<Exemple titre="Un point à 2 m">
+Avec $f = 50$ mm, un point situé à $Y = 0{,}4$ m au-dessus de l’axe et à $Z = 2$ m se projette en $y = 50 \times 0{,}4 / 2 = 10$ mm sur le plan virtuel, soit $y_s = -10$ mm sur le capteur réel.
+</Exemple>
+
+<Attention titre="Unités cohérentes">
+$f$ et les coordonnées image doivent être dans la **même unité** (mm, ou pixels si l’on exprime $f$ en pixels, ce qu’on fera en calibration). $X, Y, Z$ peuvent être en mètres : seul leur rapport compte.
+</Attention>

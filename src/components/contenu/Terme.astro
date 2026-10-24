@@ -1,0 +1,22 @@
+---
+// Terme français suivi de son équivalent anglais à la première occurrence :
+// <Terme en="point spread function" sigle="PSF">fonction d'étalement du point</Terme>
+interface Props {
+  en: string;
+  sigle?: string;
+}
+const { en, sigle } = Astro.props;
+---
+<strong class="terme"><slot /></strong> <span class="en">({en}{sigle && <>, <abbr>{sigle}</abbr></>})</span>
+
+<style>
+  .terme {
+    font-weight: 600;
+  }
+  abbr {
+    text-decoration: none;
+    font-style: normal;
+    font-weight: 600;
+    color: var(--encre);
+  }
+</style>

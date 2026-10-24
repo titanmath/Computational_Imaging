@@ -1,0 +1,30 @@
+---
+titre: "Le tone mapping"
+resume: "La radiance estimée et l’image affichée sont deux choses distinctes. Une courbe de tonalité compresse des milliers de rapports de luminance dans les quelques centaines d’un écran."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import ToneMapping from '@/components/sims/ch06/ToneMapping.svelte';
+
+Une carte de radiance HDR ne peut pas être affichée telle quelle : un écran classique couvre quelques centaines de rapports de luminance. Afficher la radiance avec une **faible** exposition donne des ombres noires ; avec une **forte** exposition, des hautes lumières brûlées. Le <Terme en="tone mapping">tone mapping</Terme> produit une image qui montre les deux.
+
+<Formule titre="Une courbe de tonalité globale (Reinhard et al., SIGGRAPH 2002)">
+$$
+L_d = \frac{L}{1 + L}
+$$
+
+- $L$ : luminance de la scène mise à l’échelle (sans dimension), par une « clé » d’exposition
+- $L_d$ : luminance d’affichage normalisée
+- **Globale** : la même courbe s’applique à chaque pixel
+</Formule>
+
+<Figure legende="Compare l’écrêtage linéaire, la courbe de Reinhard et une courbe logarithmique, à différentes clés d’exposition. Reinhard est presque linéaire pour les faibles luminances et compresse progressivement les fortes, sans jamais atteindre 1.">
+  <ToneMapping client:visible />
+</Figure>
+
+<Concept titre="Global ou local">
+Un opérateur **global** applique la même courbe partout : simple, sans halo, mais il peut aplatir le contraste local. Les opérateurs **locaux** adaptent la compression au voisinage de chaque pixel, comme le fait notre système visuel (chapitre 04 : effets de contexte). Ils sont plus contrastés, mais risquent des halos. Dans tous les cas, c’est un choix d’**apparence**, pas une mesure.
+</Concept>

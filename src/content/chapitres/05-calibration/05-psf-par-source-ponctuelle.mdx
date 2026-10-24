@@ -1,0 +1,36 @@
+---
+titre: "Mesure directe : la PSF par source ponctuelle"
+resume: "Un point lumineux de taille négligeable révèle la PSF. S’il n’est pas assez petit, on mesure la PSF convoluée par la source et on surestime le flou."
+duree: 5
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import SourcePonctuelle from '@/components/sims/ch05/SourcePonctuelle.svelte';
+
+<Formule titre="Image d’une source">
+$$
+I = P * h
+$$
+
+$P$ : image idéale de la source ; $h$ : PSF ; $*$ : convolution. Si $P$ est un **point** (une impulsion), alors $I = h$ : l’image **est** la PSF.
+</Formule>
+
+Montage typique : une **LED derrière un petit trou**, à une distance $Z$ **connue**, une lentille fixe et un capteur en RAW. Pour un objet « à l’infini », on utilise un collimateur.
+
+<Figure legende="La PSF vraie est fixe ; seule la taille de l’image de la source change. Dès que la source n’est plus négligeable devant la PSF, la largeur à mi-hauteur (FWHM) mesurée augmente.">
+  <SourcePonctuelle client:visible />
+</Figure>
+
+<Attention titre="La condition clé de l’A2 (méthode 1)">
+La taille de la source doit être **négligeable devant le flou du système**. Dans l’A2, la PSF de ton sténopé fait plusieurs pixels : une petite lampe lointaine ou une LED derrière un trou d’épingle conviennent, pas une ampoule proche. Si ta source est trop grande, la FWHM mesurée sera surestimée, et la différence avec la méthode du bord incliné grandira. Mentionne-le dans l’analyse des écarts.
+</Attention>
+
+## Exemple : DiffuserCam
+
+<Concept titre="Une caméra sans lentille (Antipa et al., Optica 2018)">
+Un simple **diffuseur** posé devant un capteur remplace l’objectif. L’image brute ne ressemble à rien : chaque point de la scène produit une **caustique** étendue, qui dépend de sa profondeur. On **calibre** en balayant une source ponctuelle en profondeur, ce qui donne une PSF par profondeur. La reconstruction 3D combine ces PSF mesurées avec un *a priori* sur la scène (chapitres 07–08). Sans calibration, cette caméra serait inutilisable.
+</Concept>

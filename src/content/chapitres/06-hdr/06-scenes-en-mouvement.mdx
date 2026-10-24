@@ -1,0 +1,35 @@
+---
+titre: "Scènes en mouvement et rafales"
+resume: "Si quelque chose bouge entre les poses, un même pixel ne voit plus le même point. Il faut aligner, rejeter, ou changer de stratégie : une rafale de poses courtes identiques."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Rafale from '@/components/sims/ch06/Rafale.svelte';
+
+## Le mouvement casse la correspondance
+
+Une coordonnée de pixel fixe peut observer **des points différents** d’une pose à l’autre (main qui tremble, personne qui marche). Il faut **aligner** les structures visibles, et gérer l’**occultation** et l’**écrêtage**.
+
+- **Vidéo HDR** (Kang et al., 2003) : on alterne poses courtes et longues (courte, longue, courte…) et on reconstruit une vidéo HDR par recalage entre images voisines.
+- **Fusion apprise** (Kalantari & Ramamoorthi, 2017) : trois expositions fournissent des informations complémentaires ; un réseau apprend à les aligner et à les fusionner sans fantômes.
+
+## La rafale à exposition constante
+
+<Concept titre="L’approche des téléphones (Hasinoff et al., SIGGRAPH Asia 2016)">
+Au lieu de poses différentes, on prend une **rafale de poses courtes identiques** : la pose courte **protège les hautes lumières**, et la **fusion** de nombreuses images réduit le bruit dans les ombres. On aligne les images par **tuiles**, en estimant les décalages du grossier au fin, puis on **pondère à la baisse** le contenu incohérent (objets en mouvement) : c’est une fusion **robuste**.
+</Concept>
+
+<Formule titre="Réduction du bruit par mesures répétées">
+$$
+\sigma_N = \frac{\sigma_1}{\sqrt N}
+$$
+
+Images alignées, même exposition, bruits indépendants : 1, 2, 4, 8 images → bruit × 1 ; 0,71 ; 0,50 ; 0,35.
+</Formule>
+
+<Figure legende="Une rafale d’images bruitées, prises en tremblant, avec une balle qui traverse le champ. La moyenne naïve est floue ; la moyenne alignée est nette mais laisse une traînée de balles fantômes ; la fusion robuste garde la balle de l’image de référence.">
+  <Rafale client:visible />
+</Figure>

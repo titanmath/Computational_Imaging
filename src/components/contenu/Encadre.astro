@@ -1,0 +1,80 @@
+---
+// Encadré sobre à filet gauche. Les variantes donnent l'étiquette et la couleur du filet.
+interface Props {
+  type: 'concept' | 'analogie' | 'attention' | 'exemple' | 'retenir';
+  titre?: string;
+}
+const { type, titre } = Astro.props;
+const etiquettes = {
+  concept: 'Idée clé',
+  analogie: 'Image mentale',
+  attention: 'Piège',
+  exemple: 'Exemple chiffré',
+  retenir: 'À retenir',
+};
+---
+<aside class:list={['encadre', type]}>
+  <p class="tete"><span class="etiquette">{etiquettes[type]}</span>{titre && <span class="titre">{titre}</span>}</p>
+  <div class="contenu"><slot /></div>
+</aside>
+
+<style>
+  .encadre {
+    position: relative;
+    margin-block: 1.8rem;
+    padding: 0.2rem 0 0.2rem 1.25rem;
+    border-left: 2px solid var(--accent);
+  }
+  .tete {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.75rem;
+    align-items: baseline;
+    margin: 0 0 0.4rem;
+  }
+  .tete .etiquette {
+    color: var(--accent);
+  }
+  .titre {
+    font-family: var(--f-titre);
+    font-size: 1.12rem;
+    font-weight: 500;
+  }
+  .contenu > :global(* + *) {
+    margin-top: 0.7em;
+  }
+  .contenu :global(p) {
+    margin: 0;
+  }
+  .analogie {
+    border-left-style: dashed;
+  }
+  .analogie .contenu {
+    font-family: var(--f-titre);
+    font-style: italic;
+    font-size: 1.08rem;
+    color: var(--encre-2);
+  }
+  .attention {
+    border-left-color: var(--ambre);
+  }
+  .attention .tete .etiquette {
+    color: var(--ambre);
+  }
+  .exemple {
+    background: var(--papier-2);
+    border-radius: 0 var(--rayon) var(--rayon) 0;
+    padding: 0.9rem 1.1rem 1rem 1.25rem;
+    border-left-color: var(--encre-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .exemple .tete .etiquette {
+    color: var(--encre-2);
+  }
+  .retenir {
+    border-left-width: 4px;
+  }
+  .retenir .contenu {
+    font-weight: 500;
+  }
+</style>

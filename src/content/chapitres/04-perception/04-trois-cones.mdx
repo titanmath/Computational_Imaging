@@ -1,0 +1,27 @@
+---
+titre: "Trois cônes, trois nombres"
+resume: "Chaque cône intègre le spectre pondéré par sa sensibilité. Toute l’information de couleur se réduit à trois nombres, L, M et S."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import ConesLMS from '@/components/sims/ch04/ConesLMS.svelte';
+
+Les trois classes de cônes ont des sensibilités spectrales **larges** et qui **se chevauchent** (fondamentales de la CIE 2006, champ de 2°).
+
+<Formule titre="Réponse d’un cône">
+$$
+q_c = \int L_\lambda(\lambda)\, s_c(\lambda)\, \mathrm d\lambda, \qquad c \in \{L, M, S\}
+$$
+
+$s_c$ : sensibilité du cône $c$ ; $q_c$ : réponse relative. On **multiplie** puis on **intègre**.
+</Formule>
+
+<Figure legende="Fais varier un spectre (sa longueur d’onde centrale et sa largeur) : les trois barres montrent les réponses des cônes, la pastille la couleur perçue. Une lumière à 580 nm excite fortement L et M, presque pas S : on voit du jaune.">
+  <ConesLMS client:visible />
+</Figure>
+
+<Concept titre="Une projection de dimension infinie sur 3">
+Un spectre a une infinité de valeurs ; les cônes n’en gardent que **trois**. L’œil perd donc énormément d’information spectrale, exactement comme une caméra RGB. Conséquence directe : des spectres différents peuvent donner les mêmes trois nombres. C’est le **métamérisme**, la leçon suivante.
+</Concept>

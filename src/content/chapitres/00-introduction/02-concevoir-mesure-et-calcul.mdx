@@ -1,0 +1,38 @@
+---
+titre: "Concevoir la mesure et le calcul ensemble"
+resume: "En vision classique, le matériel est figé et seul l’algorithme apprend. En imagerie computationnelle, on optimise aussi l’optique et le capteur pour la tâche."
+duree: 4
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Conception from '@/components/sims/ch00/Conception.svelte';
+
+## La chaîne de vision « classique »
+
+Une configuration très répandue : une caméra standard (matériel **fixe**) produit des images, et un programme, souvent un réseau de neurones, les interprète pour accomplir une **tâche** (reconnaître un caméléon, mesurer une distance…). Quand le résultat est mauvais, on améliore le logiciel : plus de données, un meilleur modèle. La caméra, elle, ne change jamais.
+
+## La conception conjointe
+
+L’imagerie computationnelle élargit l’espace de conception : la rétroaction de la tâche peut aussi modifier **l’optique et la façon de mesurer**. On peut par exemple choisir la forme d’une lentille, un motif d’éclairage ou un programme d’exposition des pixels *parce qu’ils* facilitent la reconstruction.
+
+<Figure legende="Bascule entre les deux approches : dans la conception conjointe, la flèche de rétroaction (pointillés) remonte jusqu’au matériel.">
+  <Conception client:visible />
+</Figure>
+
+<Concept titre="Deux couches conçues l’une pour l’autre">
+- **Couche physique** (lumière → mesure) : l’optique, l’éclairage et le capteur **encodent** l’information de la scène.
+- **Couche numérique** (mesure → estimation) : les modèles, l’optimisation et l’apprentissage **décodent** ce qui a été mesuré.
+
+Les deux couches doivent être conçues l’une pour l’autre.
+</Concept>
+
+## Avantages et limites
+
+Optimiser matériel et logiciel ensemble peut nettement améliorer les performances, parce que l’espace des solutions est plus grand : un défaut de l’optique peut être compensé par le calcul, et inversement.
+
+<Attention titre="Pas de garantie d’optimum global">
+Agrandir l’espace de conception ne garantit pas de trouver la meilleure solution. L’optimisation conjointe est en général **non convexe** : son « paysage de perte » a de nombreux creux, et l’algorithme peut se bloquer dans un minimum local. On retrouvera ce phénomène avec la descente de gradient au chapitre 07.
+</Attention>
+
+L’imagerie computationnelle se situe donc au croisement de plusieurs disciplines : **optique**, **traitement du signal**, **vision par ordinateur**, **informatique graphique** et **apprentissage automatique**.

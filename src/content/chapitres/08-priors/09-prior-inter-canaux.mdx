@@ -1,0 +1,36 @@
+---
+titre: "Un a priori entre les couleurs"
+resume: "Dans une image nette, les bords des canaux R, G et B sont au même endroit. L’a priori inter-canaux (Heide et al. 2013) pénalise les canaux qui ne varient pas ensemble ; il corrige l’aberration chromatique des lentilles simples."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import InterCanaux from '@/components/sims/ch08/InterCanaux.svelte';
+
+Les a priori précédents traitent chaque canal couleur séparément. Or les trois canaux d’une photo **ne sont pas indépendants** : un bord d’objet est un bord en rouge, en vert et en bleu à la fois. Seules les intensités relatives changent.
+
+Une lentille simple (une seule lentille, sans correction) a une forte <Terme en="chromatic aberration">aberration chromatique</Terme> (chapitre 01) : chaque couleur est floutée différemment. Déconvoluer chaque canal indépendamment amplifie le bruit et crée des **franges colorées**.
+
+<Formule titre="A priori inter-canaux (Heide et al., ACM TOG 2013, éq. 8-9)">
+Pour une scène dont les canaux sont proportionnels, $\nabla x_\mathrm R / x_\mathrm R \approx \nabla x_\mathrm G / x_\mathrm G$. En multipliant par $x_\mathrm R x_\mathrm G$ :
+$$
+\Psi_\mathrm{RG}(x) = \sum_p \big\| x_\mathrm G(p)\, \nabla x_\mathrm R(p) - x_\mathrm R(p)\, \nabla x_\mathrm G(p) \big\|_1
+$$
+
+En chaque pixel : valeur d’un canal × gradient 2D de l’autre. On applique la même pénalité aux paires RG, RB et GB.
+</Formule>
+
+<Figure legende="Une ligne RGB floutée par une lentille simple : le rouge (σ = 6 px), le bleu (3,5 px) et le vert (1,2 px) n’ont pas le même flou. Le bandeau montre le coût inter-canaux pixel par pixel : rouge sur les bords mal alignés. Pousse le curseur de netteté jusqu’à 100 % : les trois canaux redeviennent proportionnels et le coût s’annule.">
+  <InterCanaux client:visible />
+</Figure>
+
+<Concept titre="Prendre l’information là où elle est">
+Le canal le plus net (souvent le vert) indique **où** sont les bords. L’a priori inter-canaux transmet cette information aux canaux plus flous : leurs bords doivent tomber aux mêmes endroits. C’est un a priori **entre** les canaux, qui s’ajoute à la TV de chaque canal.
+</Concept>
+
+<Exemple titre="Ce que montre l’article">
+Sur des photos prises avec une lentille simple, la déconvolution canal par canal produit des taches colorées et du bruit. La méthode inter-canaux donne une image nette aux couleurs propres. L’exemple frappant est celui d’un QR code redevenu lisible ([Heide et al., *High-Quality Computational Imaging Through Simple Lenses*, 2013, fig. 5](https://doi.org/10.1145/2516971.2516974)).
+</Exemple>

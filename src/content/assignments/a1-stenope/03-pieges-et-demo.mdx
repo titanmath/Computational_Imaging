@@ -1,0 +1,66 @@
+---
+titre: "Pièges et préparation de la démo"
+resume: "Les erreurs qui faussent les images ou les calculs, et les questions qu’on peut te poser le 29 octobre, avec des éléments de réponse."
+duree: 7
+---
+import Attention from '@/components/contenu/Attention.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Checklist from '@/components/contenu/Checklist.svelte';
+
+## Les pièges classiques
+
+<Attention titre="Le diamètre « nominal » n’est pas le diamètre réel">
+Une aiguille de 0,5 mm ne perce pas un trou de 0,5 mm : le papier se déchire, les bords sont irréguliers. **Mesure** le trou (photo à la règle, au microscope du téléphone) et utilise la valeur mesurée dans les calculs. Un trou irrégulier diffracte aussi différemment d’un disque parfait.
+</Attention>
+
+<Attention titre="Les fuites de lumière">
+Le moindre interstice éclaire l’écran uniformément et **écrase le contraste**, comme une brume. Vérifie dans le noir avec une lampe, scotche les arêtes, et peins ou couvre l’intérieur en noir mat, y compris autour de l’objectif du téléphone.
+</Attention>
+
+<Attention titre="Le téléphone n’est pas un capteur neutre">
+En mode automatique, il change l’exposition, la balance des blancs, débruite et accentue : on ne compare plus rien. Utilise le mode **Pro** : temps de pose et ISO fixés, mise au point verrouillée **sur l’écran** (pas à l’infini), balance des blancs fixe. Note les réglages de chaque photo.
+</Attention>
+
+<Attention titre="Le téléphone voit l’écran de biais">
+Placé à côté du trou, il photographie l’écran en oblique : déformation trapézoïdale (perspective) et luminosité inégale. Le vignetage naturel du sténopé, en $\cos^4\theta$, s’y ajoute : pour la boîte de 26 cm, environ 78 % au bord horizontal et 68 % dans les coins. Recadre l’image sur l’écran et mentionne ces effets.
+</Attention>
+
+<Attention titre="L’image est renversée">
+Pense à tourner tes photos de 180° pour les présenter, et dis-le. Une rotation de 180° n’est pas un miroir : la gauche et la droite **et** le haut et le bas sont échangés.
+</Attention>
+
+## Les questions probables à la démo
+
+<Concept titre="« Pourquoi ce diamètre de trou est-il le meilleur ? »">
+Deux flous s’opposent : géométrique ($\approx d$, croît avec le trou) et de diffraction ($2{,}44\,\lambda f/d$, décroît). Leur somme est minimale quand ils sont égaux, en $d_\text{opt} \approx \sqrt{2{,}44\,\lambda f}$, environ 0,6 mm pour 26 cm. Montre le graphe log-log et la position de tes trous dessus.
+</Concept>
+
+<Concept titre="« Pourquoi l’image du plus petit trou n’est-elle pas la plus nette ? »">
+Deux raisons. (1) En dessous de $d_\text{opt}$, la diffraction **élargit** la tache. (2) Avec $(d_1/d_2)^2$ fois moins de lumière, il faut un ISO élevé : le **bruit** masque les détails. La théorie du flou ne tient pas compte du bruit, la photo si.
+</Concept>
+
+<Concept titre="« Que se passe-t-il si on allonge la boîte ? »">
+L’image grandit ($\propto f$), le champ se resserre, la lumière par unité de surface diminue ($\propto 1/f^2$), et le diamètre optimal augmente ($\propto \sqrt f$). Le flou minimal grandit aussi ($\propto \sqrt f$), mais **moins vite** que l’image : en proportion de l’image, la netteté s’améliore comme $\sqrt f$.
+</Concept>
+
+<Concept titre="« Pourquoi ne pas mettre une lentille ? »">
+Une lentille collecte la lumière sur toute son ouverture et la refocalise : image lumineuse **et** nette, mais seulement pour une distance donnée (profondeur de champ limitée, chapitre 01). Le sténopé est net à toutes les distances, au prix de la luminosité.
+</Concept>
+
+<Concept titre="« Comment mesureriez-vous la netteté réellement obtenue ? »">
+En mesurant la **PSF** du système : l’image d’une petite source lumineuse, ou la dérivée du profil d’un bord net (méthode du bord incliné). C’est exactement la tâche 2 de l’A2.
+</Concept>
+
+<Checklist
+  client:visible
+  id="a1-demo"
+  titre="Prêt pour la démo"
+  items={[
+    'La caméra est montée, étanche, avec ses plaques de trous et le téléphone fixé',
+    'Je connais f, la taille de l’écran, le champ de vision et la focale équivalente de MA boîte',
+    'Je connais les diamètres mesurés de mes trous et le d_opt calculé',
+    'J’ai le graphe des flous avec mes trous placés dessus',
+    'Je sais expliquer chaque différence de luminosité, de netteté et de bruit entre mes photos',
+    'Je sais répondre à « et si la boîte était deux fois plus longue ? »',
+  ]}
+/>

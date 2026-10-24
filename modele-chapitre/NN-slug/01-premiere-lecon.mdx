@@ -1,0 +1,46 @@
+---
+titre: "Titre de la leçon"
+resume: "Une ou deux phrases : l’idée de la leçon, affichée dans le plan du chapitre."
+duree: 5
+# assignments: ["a3"]
+# complement: "Complément au cours, d’après …"
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Analogie from '@/components/contenu/Analogie.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+{/* Pour une simulation : ajouter l'import en tête de fichier, avec les autres :
+    import MaSimulation from '@/components/sims/ch09/MaSimulation.svelte';  */}
+
+Un paragraphe d’introduction. Le terme anglais apparaît à la première occurrence :
+<Terme en="point spread function" sigle="PSF">fonction d’étalement du point</Terme>.
+
+<Formule titre="L’équation clé">
+$$
+I = O * h
+$$
+
+$I$ : image ; $O$ : objet ; $h$ : PSF.
+</Formule>
+
+<Concept titre="L’idée à retenir">
+Une phrase forte.
+</Concept>
+
+<Exemple titre="Un calcul chiffré du cours">
+Les valeurs des slides, recalculées.
+</Exemple>
+
+<Attention titre="Le piège">
+Ce qui trompe souvent.
+</Attention>
+
+{/*
+<Figure legende="Ce que montre la simulation et ce qu’il faut y essayer.">
+  <MaSimulation client:visible />
+</Figure>
+*/}

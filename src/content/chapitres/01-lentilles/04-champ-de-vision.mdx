@@ -1,0 +1,40 @@
+---
+titre: "Le champ de vision"
+resume: "Plus le capteur est loin du centre optique, plus l’angle de vue se resserre : FoV = 2 arctan(H / 2f)."
+duree: 4
+assignments: ["a1"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import ChampDeVision from '@/components/sims/ch01/ChampDeVision.svelte';
+
+Le capteur a une taille finie. Seuls les rayons qui passent par le centre optique **et** atteignent le capteur sont enregistrés : ils forment un cône, le <Terme en="field of view" sigle="FoV">champ de vision</Terme>.
+
+<Formule titre="Champ de vision">
+$$
+\mathrm{FoV} = 2 \arctan\!\left(\frac{H}{2f}\right)
+$$
+
+- $H$ : dimension du capteur (hauteur → FoV vertical, largeur → horizontal, diagonale → diagonal)
+- $f$ : distance centre optique → capteur (la focale)
+</Formule>
+
+<Exemple titre="Même capteur, trois focales">
+Avec $H = 24$ mm : $f = 12$ mm donne **90,0°**, $f = 24$ mm donne **53,1°**, $f = 48$ mm donne **28,1°**. Doubler la focale ne divise pas exactement l’angle par deux (à cause de l’arctangente), mais le resserre fortement.
+</Exemple>
+
+<Figure legende="Vue de dessus du cône de vision et image obtenue (projection rectilinéaire d’un panorama). Fais varier la focale du grand-angle au téléobjectif : la caméra ne bouge pas, seul l’angle capté change.">
+  <ChampDeVision client:visible />
+</Figure>
+
+<Concept titre="Focale courte, focale longue">
+- **Focale courte** → champ large (grand-angle) : on voit beaucoup, chaque objet est petit.
+- **Focale longue** → champ étroit (téléobjectif) : on voit peu, mais grossi.
+</Concept>
+
+Les téléphones contournent l’impossibilité de « zoomer » une optique minuscule en empilant **plusieurs modules** : par exemple ultra grand-angle (≈ 13 mm équivalent, ≈ 106°), principal (≈ 24 mm, ≈ 72°) et téléobjectif (≈ 120 mm, ≈ 16°).
+
+**L’équivalent 24 × 36.** Pour comparer des appareils aux capteurs différents, on exprime la focale « équivalente » : celle qui donnerait le même champ sur un capteur plein format (diagonale 43,27 mm), soit $f_{\text{éq}} = f \times 43{,}27 / d_{\text{capteur}}$. Ton sténopé A1 ($f = 26$ cm, écran de 19 × 15 cm, diagonale 24,2 cm) équivaut ainsi à un objectif d’environ 46 mm, proche du « 50 mm normal ».

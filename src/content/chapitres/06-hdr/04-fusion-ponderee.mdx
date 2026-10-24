@@ -1,0 +1,31 @@
+---
+titre: "Poids de fiabilité et fusion"
+resume: "Chaque exposition vote pour la radiance de chaque pixel, avec un poids qui ignore les valeurs saturées et se méfie des valeurs trop sombres."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import FusionHDR from '@/components/sims/ch06/FusionHDR.svelte';
+
+<Formule titre="Reconstruction HDR pondérée">
+$$
+\hat E = \frac{\sum_j w_j\, q_j / t_j}{\sum_j w_j}
+$$
+
+$w_j$ : poids de fiabilité de l’exposition $j$ en ce pixel (de 0 : à ignorer, à 1 : pleine confiance).
+</Formule>
+
+<Concept titre="Bien choisir les poids">
+- **Zéro** pour les mesures **saturées** : elles ne donnent qu’une borne inférieure.
+- **Faible** pour les mesures **très sombres** : le bruit (de lecture) y domine.
+- **Fort** pour les valeurs moyennes.
+
+Le choix classique est une fonction « chapeau » (triangle) sur la valeur du pixel. Un choix plus fin pondère par l’inverse de la variance du bruit, car les poses longues, qui collectent plus de photons, sont plus fiables quand elles ne saturent pas.
+</Concept>
+
+<Figure legende="Les quatre étapes : poses, estimations q/t, poids, fusion. Compare avec des poids uniformes : les pixels saturés tirent la radiance vers le bas autour de la fenêtre et du soleil.">
+  <FusionHDR client:visible />
+</Figure>
+
+Le résultat est une **carte de radiance en virgule flottante** : les valeurs peuvent dépasser 1 et couvrir des milliers de fois la plage d’une seule exposition, sur une échelle relative commune. Elle n’est **pas affichable directement** : c’est le rôle du tone mapping.

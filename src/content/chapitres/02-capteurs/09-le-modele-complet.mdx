@@ -1,0 +1,51 @@
+---
+titre: "Le modèle complet du capteur"
+resume: "Toute la chaîne en une formule, I = Q(g(Nₑ + n_read) + b), et un budget de bruit qui dit quel terme domine à chaque niveau de lumière."
+duree: 5
+assignments: ["a2"]
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import BudgetBruit from '@/components/sims/ch02/BudgetBruit.svelte';
+
+<Formule titre="Propagation du bruit dans le capteur">
+$$
+I = Q\big(g\,(N_e + n_\text{read}) + b\big), \qquad N_e = N_p + N_d
+$$
+
+1. **collecte** : $N_e = N_p + N_d$ (bruit photonique + bruit d’obscurité) ;
+2. **lecture et gain** : $g(N_e + n_\text{read})$ ;
+3. **décalage** : $+\,b$ (niveau noir ; sa position exacte dans la chaîne dépend de la caméra) ;
+4. **ADC** : $Q$ arrondit et écrête (de 0 à $2^\text{bits} - 1$).
+</Formule>
+
+Les sources étant indépendantes, leurs **variances s’ajoutent** :
+
+<Formule titre="Variance du signal mesuré (en DN²)">
+$$
+\sigma_I^2 = g^2\left(\mu_s + \mu_d + \sigma_\text{read}^2\right) + \frac{1}{12}
+$$
+</Formule>
+
+<Exemple titre="Trois niveaux de signal (g = 0,1 DN/e⁻, μd = 4 e⁻, σread = 3 e⁻, pas d’ADC = 1 DN)">
+| Signal | moyenne | σ total |
+| --- | --- | --- |
+| Sombre | 0,1 DN (1 e⁻) | 0,47 DN |
+| Moyen | 2,5 DN (25 e⁻) | 0,68 DN |
+| Clair | 10 DN (100 e⁻) | 1,10 DN |
+
+Le signal est multiplié par 100, le bruit seulement par 2,3 : **le signal croît plus vite que le bruit**.
+</Exemple>
+
+<Figure legende="Budget de bruit : chaque source en fonction du nombre d’électrons de signal. Dans les ombres, le bruit de lecture et la quantification dominent ; dans les tons clairs, le bruit photonique domine. Joue avec le gain et le bruit de lecture.">
+  <BudgetBruit client:visible />
+</Figure>
+
+<Concept titre="Le rapport signal sur bruit">
+Quand le bruit photonique domine, $\mathrm{SNR} = \mu_s/\sqrt{\mu_s} = \sqrt{\mu_s}$ : il faut **4 fois plus de lumière pour doubler le SNR**. C’est la raison d’être des poses longues, des grandes ouvertures, et de la moyenne de plusieurs images (chapitre 06).
+</Concept>
+
+Ce modèle, standardisé par la norme **EMVA 1288**, est la base de tout ce qui suit : le traitement d’image (chapitre 03) part de ce RAW bruité, et la calibration (chapitre 05) mesure $b$, $g$, $\sigma_\text{read}$, etc.

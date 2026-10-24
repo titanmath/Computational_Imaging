@@ -1,0 +1,13 @@
+numero: 8
+titre: "A priori d’image"
+sousTitre: "Ce qu’on sait d’une image avant de la voir"
+resume: "Le terme de régularisation Ψ(x) encode ce qu’est une « bonne » image. Pénalités L0, L1, L2 sur les gradients, variation totale isotrope ou anisotrope, a priori inter-canaux et canal sombre, puis a priori appris sur des données et a priori non entraînés (Deep Image Prior, champs neuronaux)."
+objectifs:
+  - "écrire un problème de débruitage avec un terme d’a priori et dire ce que fait λ"
+  - "calculer les normes L0, L1, L2 d’un vecteur et expliquer pourquoi L1 et L0 rendent parcimonieux"
+  - "comparer les a priori L2², L1 (TV) et L0 sur les gradients, en 1D et en 2D"
+  - "distinguer TV isotrope et anisotrope, et choisir la force du prior"
+  - "expliquer l’a priori inter-canaux et le débrumage par canal sombre"
+  - "situer les a priori appris (débruiteurs supervisés) et non entraînés (DIP, champs neuronaux, arrêt précoce)"
+icone: prior
+source: 8_natural_image_prior_2026.pdf

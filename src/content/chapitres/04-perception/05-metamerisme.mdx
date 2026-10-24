@@ -1,0 +1,32 @@
+---
+titre: "Le métamérisme"
+resume: "Deux spectres différents peuvent produire exactement les mêmes réponses de cônes, donc la même couleur… sous un éclairage donné, et pour un observateur donné."
+duree: 4
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Metamerisme from '@/components/sims/ch04/Metamerisme.svelte';
+
+Deux spectres $A$ et $B$ sont des <Terme en="metamers">métamères</Terme> s’ils produisent les mêmes $(q_L, q_M, q_S)$ (dans l’exemple numérique des slides, $q_L = 89{,}92$, $q_M = 86{,}34$, $q_S = 51{,}95$ pour les deux). Ils ont alors **la même couleur** pour cet observateur, dans ces conditions de vue.
+
+<Formule titre="Égalité métamérique sous un éclairage E₁">
+$$
+\int E_1\, \rho_A\, s_c\, \mathrm d\lambda = \int E_1\, \rho_B\, s_c\, \mathrm d\lambda, \qquad c \in \{L, M, S\}
+$$
+</Formule>
+
+<Figure legende="Deux réflectances de formes différentes, construites pour être identiques pour nos cônes à la lumière du jour. Change l’éclairage : l’égalité est rompue.">
+  <Metamerisme client:visible />
+</Figure>
+
+<Attention titre="Une égalité fragile">
+- **Métamérisme d’illuminant** : changer l’éclairage $E$ peut rompre l’égalité. Deux tissus assortis en magasin ne le sont plus à la lumière du jour.
+- **Métamérisme d’observateur** : les sensibilités $s_c$ varient d’une personne à l’autre ; une égalité pour l’un peut échouer pour l’autre.
+</Attention>
+
+<Concept titre="Lien avec les caméras">
+Une caméra a ses propres « cônes » (ses filtres RGB). Deux objets peuvent être métamères pour la caméra mais pas pour l’œil, ou l’inverse. C’est pourquoi une matrice couleur 3 × 3 ne peut jamais être parfaite (chapitre 03) et pourquoi l’imagerie **spectrale** mesure plus de trois bandes.
+</Concept>

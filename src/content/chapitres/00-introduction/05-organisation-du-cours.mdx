@@ -1,0 +1,49 @@
+---
+titre: "Comment le cours est organisé"
+resume: "Quatre grandes parties, quatre assignments qui mêlent matériel et logiciel, deux sessions de démo. Les règles du jeu en une page."
+duree: 3
+---
+import Attention from '@/components/contenu/Attention.astro';
+import Retenir from '@/components/contenu/Retenir.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Calendrier from '@/components/sims/ch00/Calendrier.svelte';
+
+Le cours CSED520 / AIGS529 est donné par le Prof. Seung-Hwan Baek (POSTECH Computational Imaging Group), les mardis et jeudis de 9 h 30 à 10 h 45. Les supports et le planning sont sur le site du cours ; les questions, annonces et rendus passent par PLMS.
+
+## Le semestre en un coup d’œil
+
+<Figure legende="Les quatre parties du cours, les quatre assignments (de la sortie au rendu) et les deux sessions de démonstration. Toutes les échéances sont à 23 h 59, heure coréenne.">
+  <Calendrier client:visible />
+</Figure>
+
+1. **Formation de l’image** (septembre) : lentilles, capteurs, chaîne de traitement (ISP), perception humaine, calibration.
+2. **Calcul** (octobre) : imagerie HDR, problèmes inverses, solveurs (classiques et neuronaux), rendu.
+3. **Au-delà du RGB** (novembre) : apparence et spectre, caméras à événements, temps de vol, polarisation.
+4. **Optique ondulatoire et imagerie active** (novembre-décembre) : optique ondulatoire, optique adaptative, nanophotonique, holographie, réseaux de neurones optiques, lumière structurée, transport de la lumière.
+
+Ce site couvre les chapitres au fur et à mesure qu’ils sont vus en cours.
+
+## Prérequis
+
+- **Attendus** : programmation Python, algèbre linéaire.
+- **Utiles mais pas obligatoires** : informatique graphique, vision par ordinateur, apprentissage automatique, optique et traitement du signal. Ce site réexplique ce dont on a besoin.
+
+## Évaluation
+
+<Retenir>
+100 % de la note vient des **quatre assignments**. Chacun associe du **matériel** (une construction, des prises de vue) et du **logiciel** (un traitement, un calcul). La note se partage entre le **rendu** (50 %) et la **démo / présentation** (50 %).
+</Retenir>
+
+- **Rendu** : ta propre solution, déposée sur PLMS. Discuter avec les autres est encouragé, mais chacun rend son travail.
+- **Retard** : −1 % par heure.
+- **Démos** : le 29 octobre (A1 et A2) et le 24 décembre (A3 et A4). Il faut savoir expliquer comment fonctionne ce qu’on a rendu.
+
+<Attention titre="Assistants IA autorisés, mais…">
+ChatGPT, Claude, Copilot, etc. sont autorisés pour les assignments. En contrepartie, tu dois **démontrer ta compréhension** dans le rapport et pendant la démo : tu es responsable de ce que tu rends. C’est l’objectif de la section *Assignments* de ce site : savoir expliquer **pourquoi** chaque étape marche.
+</Attention>
+
+## Présence
+
+- Il faut assister à **au moins 3/4** des heures de cours pour obtenir une note.
+- Les **conférences invitées** sont obligatoires : chaque absence non justifiée coûte **5 %** de la note finale.
+- Les absences justifiées se déclarent sur rollbook.postech.ac.kr, à l’avance ou dans les 7 jours (au plus 1/4 des séances).

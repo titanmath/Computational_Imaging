@@ -1,0 +1,34 @@
+---
+titre: "Les aberrations des vraies lentilles"
+resume: "Une lentille réelle à surfaces sphériques ne focalise pas parfaitement : aberration sphérique, coma, aberration chromatique. On les corrige en combinant plusieurs lentilles."
+duree: 6
+---
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Aberrations from '@/components/sims/ch01/Aberrations.svelte';
+
+Les formules de la lentille mince sont *paraxiales* : elles supposent des rayons proches de l’axe et peu inclinés. Une vraie lentille, avec des surfaces sphériques et une ouverture large, s’en écarte. Ces écarts sont les <Terme en="aberrations">aberrations</Terme>. Elles **déforment la PSF**, même au meilleur foyer.
+
+<Attention titre="Une histoire célèbre : le télescope Hubble">
+Lancé en 1990, Hubble a renvoyé des images floues : son miroir primaire avait été poli avec une erreur de forme d’environ 2 µm sur le bord. Cela suffisait à produire une forte aberration sphérique. La mission de 1993 a installé une optique correctrice, conçue pour compenser exactement l’erreur mesurée, et rendu au télescope sa netteté.
+</Attention>
+
+<Figure legende="Un singulet biconvexe réel, tracé rayon par rayon en appliquant la loi de Snell à chaque dioptre sphérique. Les couleurs codent la zone de la pupille (bleu : centre, magenta : bord) ou la longueur d’onde. Déplace le capteur autour du foyer paraxial et observe le diagramme de points.">
+  <Aberrations client:visible />
+</Figure>
+
+## Les trois aberrations du simulateur
+
+1. <Terme en="spherical aberration">Aberration sphérique</Terme>. Les zones de la pupille ne focalisent pas à la même distance : avec une lentille sphérique simple, les rayons **marginaux** (du bord) se croisent **avant** les rayons paraxiaux. Au foyer paraxial, la tache est un **cœur entouré d’un halo**. D’autres conceptions peuvent inverser cet ordre.
+2. <Terme en="coma">Coma</Terme>. Pour un point **hors axe**, chaque anneau de la pupille forme une petite image légèrement décalée : la PSF devient **asymétrique**, en forme de comète. Elle se voit sur les petites lumières près des bords d’une photo prise à grande ouverture, et dépend de la conception de l’objectif et de la position dans le champ.
+3. <Terme en="chromatic aberration">Aberration chromatique</Terme>. À cause de la dispersion, $n_\text{bleu} > n_\text{rouge}$, donc $f_\text{bleu} < f_\text{rouge}$ pour une lentille convergente simple : les couleurs focalisent à des profondeurs différentes (aberration **longitudinale**). Hors axe, elles ont aussi des grandissements différents (aberration **latérale**), ce qui crée des liserés rouges et cyan le long des bords contrastés.
+
+## La correction : combiner des verres
+
+<Concept titre="Équilibrer les aberrations">
+Un objectif photo contient souvent 6 à 20 lentilles. Le concepteur choisit courbures, verres et espacements pour que les aberrations des différents éléments **se compensent** sur tout le champ et tout le spectre. Le cas d’école est le **doublet achromatique** : une lentille convergente en verre peu dispersif (crown) collée à une lentille divergente en verre très dispersif (flint). Elles focalisent ensemble deux couleurs au même point et réduisent fortement le flou chromatique.
+</Concept>
+
+Le dernier type de défaut, la **distorsion**, ne rend pas l’image floue : elle la **déforme**. C’est l’objet de la leçon suivante.

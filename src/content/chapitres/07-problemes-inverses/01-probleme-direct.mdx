@@ -1,0 +1,25 @@
+---
+titre: "Le problème direct"
+resume: "Un modèle direct prédit la mesure b à partir des paramètres x de la scène et du système. Tout ce qu’on a vu jusqu’ici en est un morceau."
+duree: 3
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import ProblemeDirect from '@/components/schemas/ch07/ProblemeDirect.astro';
+
+<Formule titre="Problème direct">
+$$
+b = f(x)
+$$
+
+Étant donnés les paramètres d’entrée $x$, prédire la mesure $b$.
+</Formule>
+
+Le <Terme en="forward model">modèle direct</Terme> peut couvrir plus ou moins de la chaîne, selon ce qu’on appelle $x$ :
+
+<ProblemeDirect />
+
+<Concept titre="Un modèle de capteur général">
+Plus abstraitement : un « capteur » (au sens large, avec son optique et son traitement) transforme des **paramètres du monde** $x$ (une image, une carte de profondeur, un spectre, une densité) en **mesures** $b$. Les chapitres 01 à 06 ont construit ces modèles : PSF, bruit, ISP, CRF… Ce chapitre fait le chemin **inverse**.
+</Concept>

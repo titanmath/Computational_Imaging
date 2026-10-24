@@ -1,0 +1,51 @@
+---
+titre: "Vision spatiale : contraste et fréquences"
+resume: "Ce que l’œil distingue dépend de l’angle visuel, de la fréquence spatiale et du contraste. La fonction de sensibilité au contraste résume tout cela, et tu peux mesurer la tienne."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import CampbellRobson from '@/components/sims/ch04/CampbellRobson.svelte';
+
+## L’angle visuel
+
+La taille qui compte pour l’œil n’est pas la taille physique, mais l’**angle** sous lequel on voit un objet. Le champ de vision binoculaire couvre près de 200° horizontalement, mais la vision fine se limite à quelques degrés autour du point fixé.
+
+<Formule titre="Fréquence spatiale">
+$$
+f = \frac{N_\text{cycles}}{\theta_\text{deg}} \quad \text{(cycles par degré)}
+$$
+
+Un cycle = une bande claire + une bande sombre. 4 cycles dans 1° d’angle visuel font 4 cycles/degré.
+</Formule>
+
+<Formule titre="Contraste de Michelson">
+$$
+C = \frac{L_\max - L_\min}{L_\max + L_\min}
+$$
+
+$L_\max$, $L_\min$ : luminances maximale et minimale d’un réseau sinusoïdal. $C$ va de 0 (uniforme) à 1.
+</Formule>
+
+<Exemple titre="Deux réseaux">
+Autour d’une luminance moyenne de 50 cd/m², un réseau de $C = 0{,}2$ oscille entre 40 et 60 cd/m², un réseau de $C = 0{,}8$ entre 10 et 90 cd/m².
+</Exemple>
+
+## La sensibilité au contraste
+
+La <Terme en="contrast sensitivity function" sigle="CSF">fonction de sensibilité au contraste</Terme> est l’inverse du contraste minimal détectable à chaque fréquence :
+
+$$
+\mathrm{CSF}(f) = \frac{1}{C_\text{seuil}(f)}.
+$$
+
+<Figure legende="La mire de Campbell-Robson : fréquence croissante vers la droite, contraste décroissant vers le haut, sur toute l’image. Les barres disparaissent plus bas aux fréquences extrêmes. Clique, de gauche à droite, à la hauteur où tu ne vois plus les barres : tu traces ta propre CSF, en forme de cloche.">
+  <CampbellRobson client:visible />
+</Figure>
+
+<Concept titre="Ce que montre la courbe">
+L’œil est le plus sensible aux fréquences **moyennes** (quelques cycles par degré) et beaucoup moins aux très basses et très hautes fréquences. Campbell & Robson (1968) l’ont mesuré par des expériences de seuil, avec différentes tailles d’ouverture et distances de vue. C’est la base de la compression JPEG : on quantifie fortement ce que l’œil voit mal (chapitre 03).
+</Concept>

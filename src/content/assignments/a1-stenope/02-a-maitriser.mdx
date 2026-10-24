@@ -1,0 +1,46 @@
+---
+titre: "Ce qu’il faut maîtriser"
+resume: "La liste de ce que tu dois savoir refaire sans aide, avec les ordres de grandeur pour une boîte de 26 cm."
+duree: 5
+---
+import Checklist from '@/components/contenu/Checklist.svelte';
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+
+<Checklist
+  client:visible
+  id="a1-maitrise"
+  items={[
+    'Expliquer pourquoi un petit trou forme une image, et pourquoi elle est renversée (projection x = −fX/Z)',
+    'Calculer les champs de vision horizontal et vertical à partir de f et de la taille de l’écran',
+    'Calculer la focale équivalente 24 × 36 et dire si la caméra est « grand-angle », « normale » ou « téléobjectif »',
+    'Écrire les deux flous b_g = d(s + f)/s et b_d = 2,44 λf/d, et dire lequel domine pour un trou donné',
+    'Retrouver d_opt ≈ √(2,44 λf) en égalisant les deux flous, et donner son ordre de grandeur pour ta boîte',
+    'Relier la luminosité de l’écran à (d/f)² et en déduire le changement d’ISO entre deux trous',
+    'Expliquer pourquoi le trou le plus petit donne une image bruitée (gain, bruit de lecture, bruit photonique)',
+    'Justifier tes choix de construction : longueur de la boîte, intérieur noir, étanchéité, position du téléphone',
+  ]}
+/>
+
+<Formule titre="Le résumé en quatre lignes">
+$$
+\theta = 2\arctan\frac{w_e}{2f}, \qquad
+b \approx d + 2{,}44\,\frac{\lambda f}{d}, \qquad
+d_\text{opt} \approx \sqrt{2{,}44\,\lambda f}, \qquad
+E_\text{écran} \propto \Big(\frac{d}{f}\Big)^2
+$$
+</Formule>
+
+| Grandeur | Boîte de 26 cm, écran 19 × 15 cm | Comment l’obtenir |
+| --- | --- | --- |
+| Champ de vision | 40,1° × 32,2° | $2\arctan(19/52)$, $2\arctan(15/52)$ |
+| Focale équivalente | ≈ 46 mm | $260 \times 43{,}27 / 242$ |
+| Diamètre optimal (λ = 550 nm) | ≈ 0,59 mm | $\sqrt{2{,}44 \cdot 550\cdot10^{-6} \cdot 260}$ |
+| Flou minimal | ≈ 1,2 mm | $2\,d_\text{opt}$ |
+| Flou, trou de 1 mm | ≈ 1,03 + 0,35 = 1,38 mm | géométrie dominante |
+| Flou, trou de 0,1 mm | ≈ 0,10 + 3,49 = 3,59 mm | diffraction dominante |
+| Lumière, 5 mm vs 0,1 mm | × 2 500 | $(5/0{,}1)^2$ |
+
+<Concept titre="Le lien avec l’A2">
+La même boîte sert dans la **tâche 2 de l’A2** : tu vas y **mesurer** la PSF du système trou → écran → téléphone, par une source ponctuelle et par un bord incliné. Les flous calculés ici, convertis en pixels du téléphone, sont donc une prédiction que l’A2 permet de vérifier.
+</Concept>

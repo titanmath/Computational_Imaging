@@ -1,0 +1,31 @@
+---
+titre: "Le problème inverse"
+resume: "Retrouver la scène x à partir de la mesure b. C’est le décodage numérique d’un encodage physique, et il exige une inverse unique et stable."
+duree: 3
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Terme from '@/components/contenu/Terme.astro';
+
+<Formule titre="Encodage, décodage">
+$$
+\underbrace{b = f(x)}_{\text{problème direct (couche physique)}} \qquad\Longrightarrow\qquad \underbrace{x = f^{-1}(b)}_{\text{problème inverse (couche numérique)}}
+$$
+</Formule>
+
+C’est exactement la séparation du chapitre 00 : l’optique et le capteur **encodent** une propriété de la scène, le calcul la **décode**.
+
+## Des problèmes inverses partout
+
+Différents capteurs encodent différentes propriétés :
+- la **tomographie** (scanner) mesure des projections de l’atténuation des rayons X : il faut reconstruire l’intérieur ;
+- l’**IRM** mesure des échantillons du signal dans le domaine des fréquences spatiales : il faut retrouver l’image ;
+- l’**imagerie hyperspectrale** veut un spectre en chaque point de la scène à partir de quelques mesures codées ;
+- l’**image floue** d’un objectif : retrouver l’image nette (déconvolution, fil conducteur de ce chapitre).
+
+<Attention titre="Une inversion exacte suppose deux choses">
+1. **L’unicité** : une seule scène $x$ explique la mesure $b$.
+2. **La stabilité** : un petit changement de $b$ (le bruit) ne change que peu $x$.
+
+Quand l’une des deux manque, le problème est dit <Terme en="ill-posed">mal posé</Terme> (au sens de Hadamard). On verra que la déconvolution l’est, et comment s’en sortir.
+</Attention>

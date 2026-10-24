@@ -1,0 +1,15 @@
+code: "A1"
+titre: "Caméra sténopé"
+resume: "Fabriquer un appareil photo sans lentille : une boîte, un trou, un écran et un téléphone qui photographie l’écran. Toute la difficulté est de choisir la longueur de la boîte et le diamètre du trou, puis de prédire netteté et luminosité."
+sortie: "10 septembre 2026"
+rendu: "1er octobre 2026, 23 h 59 (KST)"
+demo: "29 octobre 2026"
+livrables:
+  - "Une caméra sténopé : boîte opaque, trou interchangeable, écran blanc au fond, téléphone qui photographie l’écran"
+  - "Les dimensions de la caméra et son champ de vision"
+  - "Des photos de quelques scènes avec plusieurs diamètres de trou"
+  - "Le diamètre optimal calculé, et la comparaison des flous prédits avec les images obtenues"
+  - "La démo et la présentation du 29 octobre (A1 et A2)"
+chapitresLies:
+  - "01-lentilles"
+  - "02-capteurs"

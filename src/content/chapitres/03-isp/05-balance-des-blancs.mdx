@@ -1,0 +1,49 @@
+---
+titre: "La balance des blancs"
+resume: "La même feuille blanche paraît orange sous une ampoule et bleutée à l’ombre. La balance des blancs estime l’illuminant et le compense par trois gains, un par canal."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import BalanceBlancs from '@/components/sims/ch03/BalanceBlancs.svelte';
+
+Notre cerveau compense spontanément la couleur de l’éclairage (la <Terme en="color constancy">constance des couleurs</Terme>) ; un capteur, non. La <Terme en="white balance">balance des blancs</Terme> en est une approximation dans l’espace couleur de la caméra.
+
+## Estimer l’illuminant
+
+Une surface **neutre** (blanche ou grise) devrait donner $R = G = B$. Sa réponse mesurée $(\ell_R, \ell_G, \ell_B)$ révèle donc directement la couleur de l’illuminant **dans le RGB de la caméra**. Par exemple $(0{,}2;\ 0{,}8;\ 0{,}8)$ : un éclairage qui manque de rouge pour cette caméra.
+
+<Formule titre="Balance des blancs par gains de canal">
+$$
+a_c = \frac{k}{\ell_c}, \quad c \in \{R, G, B\}, \qquad R_\text{wb} = a_R R,\;\; G_\text{wb} = a_G G,\;\; B_\text{wb} = a_B B
+$$
+
+$\ell_c$ : réponse de la surface neutre ; $k$ : niveau cible commun.
+</Formule>
+
+<Exemple titre="L’exemple des slides">
+$\ell = (0{,}2;\ 0{,}8;\ 0{,}8)$ et $k = 0{,}8$ : gains $(a_R, a_G, a_B) = (4, 1, 1)$. La surface neutre devient $(0{,}2;\ 0{,}8;\ 0{,}8) \times (4, 1, 1) = (0{,}8;\ 0{,}8;\ 0{,}8)$ : elle est grise.
+</Exemple>
+
+<Figure legende="Change la température de l’éclairage (2 000 K : bougie, 3 000 K : ampoule, 6 500 K : jour). Puis corrige à la main en cliquant sur une surface neutre, ou automatiquement avec l’hypothèse du monde gris.">
+  <BalanceBlancs client:visible />
+</Figure>
+
+## Manuelle ou automatique
+
+- **Manuelle** : on désigne une zone neutre (carte grise, mur blanc) ou un préréglage calibré (« lumière du jour », « tungstène »).
+- **Automatique** : on **estime** l’illuminant à partir de statistiques de l’image. L’hypothèse la plus simple, le « monde gris », suppose que la moyenne de la scène est neutre.
+
+Les deux estiment **la même quantité** : la couleur de l’illuminant en RGB caméra.
+
+<Attention titre="Dans quel ordre ?">
+Les gains s’appliquent sur des données **linéaires** en RGB caméra, **avant** l’écrêtage de sortie et avant l’encodage sRGB. Appliquer une balance des blancs sur un JPEG (gamma, valeurs écrêtées) donne des résultats faux dans les hautes lumières.
+</Attention>
+
+<Concept titre="Après la balance, on est encore en RGB caméra">
+Les gains compensent l’illuminant, mais les trois canaux restent ceux des filtres de **cette** caméra. Pour obtenir des couleurs standard, il faut encore une **matrice de couleur** calibrée.
+</Concept>

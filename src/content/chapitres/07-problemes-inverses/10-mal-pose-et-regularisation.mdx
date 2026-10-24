@@ -1,0 +1,36 @@
+---
+titre: "Problèmes mal posés et régularisation"
+resume: "Trop d’équations contradictoires, ou pas assez : dans les deux cas, les données seules ne suffisent pas. Un terme de régularisation exprime ce qu’on attend de la solution."
+duree: 5
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Systemes2D from '@/components/sims/ch07/Systemes2D.svelte';
+
+Une mesure floue peut-elle déterminer **de façon unique** des détails que le flou a effacés ? Non, et c’est le cœur de la difficulté.
+
+## Surdéterminé et sous-déterminé
+
+- **Surdéterminé** ($M > N$) : plus de mesures que d’inconnues. Exemple : $x_1 + x_2 = 3$, $2x_1 - x_2 = 0$, $x_1 - x_2 = 1$. Trois contraintes, deux inconnues, aucune solution exacte : les moindres carrés **compromettent** entre contraintes bruitées. Une solution unique exige encore le rang colonne plein.
+- **Sous-déterminé** ($M < N$) : plus d’inconnues que de mesures. Les données **ne déterminent pas** une solution unique. Le rang et d’éventuelles contraintes supplémentaires comptent aussi.
+
+<Figure legende="Chaque équation est une droite. Surdéterminé : le point des moindres carrés est un compromis entre les trois droites. Sous-déterminé : toute la droite convient ; un a priori choisit le point le plus plausible.">
+  <Systemes2D client:visible />
+</Figure>
+
+## Terme de données + terme de régularisation
+
+<Formule titre="Problème régularisé">
+$$
+\min_x \underbrace{\|b - Ax\|_2^2}_{\text{données}} + \lambda\, \underbrace{\Psi(x)}_{\text{régularisation}}, \qquad \text{ou, en général : } \min_x \|b - f(x)\|_2^2 + \lambda\Psi(x)
+$$
+
+- $\Psi(x)$ : le <Terme en="regularizer">régulariseur</Terme>. Une pénalité **faible** signifie un bon accord avec l’a priori.
+- $\lambda \ge 0$ : l’équilibre entre fidélité aux données et régularisation.
+</Formule>
+
+<Concept titre="Une formulation universelle">
+La même formulation sert dans toutes les sciences et en ingénierie : imagerie médicale, astronomie (l’image du trou noir de l’EHT, chapitre 00), géophysique, apprentissage. C’est la forme MAP de la leçon précédente, avec $\lambda\Psi = -\log p(x)$ à une constante près.
+</Concept>

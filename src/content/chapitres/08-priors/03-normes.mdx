@@ -1,0 +1,53 @@
+---
+titre: "Normes L2, L1 et « norme » L0"
+resume: "Trois façons de mesurer la taille d’un vecteur, trois comportements très différents : le carré tolère les petites valeurs, L1 et L0 poussent les composantes à zéro."
+duree: 6
+---
+import Formule from '@/components/contenu/Formule.astro';
+import Concept from '@/components/contenu/Concept.astro';
+import Exemple from '@/components/contenu/Exemple.astro';
+import Attention from '@/components/contenu/Attention.astro';
+import Figure from '@/components/contenu/Figure.astro';
+import Terme from '@/components/contenu/Terme.astro';
+import Normes from '@/components/sims/ch08/Normes.svelte';
+import Boules3D from '@/components/sims/ch08/Boules3D.svelte';
+
+Les a priori de ce chapitre appliquent une norme aux gradients de l’image. Il faut donc d’abord savoir ce que chaque norme récompense.
+
+<Formule titre="Norme p">
+$$
+\|x\|_p = \Big(\sum_{i=1}^{N} |x_i|^p\Big)^{1/p}, \qquad 1 \le p < \infty
+$$
+
+$x$ : vecteur de $N$ valeurs ; $i$ : indice de la composante ; $p$ : ordre de la norme. On prend la valeur absolue, on l’élève à la puissance $p$, on somme, puis on prend la racine $p$-ième.
+</Formule>
+
+<Exemple titre="x = (0, −3, 4)">
+- $\|x\|_2 = \sqrt{0^2 + (-3)^2 + 4^2} = \sqrt{25} = 5$, et la pénalité au carré vaut $\|x\|_2^2 = 25$ ;
+- $\|x\|_1 = |0| + |-3| + |4| = 7$ ;
+- $\|x\|_0 = \sum_i \mathbf 1[x_i \neq 0] = 2$, le nombre de composantes non nulles.
+</Exemple>
+
+<Attention titre="L0 n’est pas une norme">
+$\|x\|_0$ compte les composantes non nulles ($\mathbf 1$ vaut 1 pour une composante non nulle, 0 sinon). Ce n’est pas une norme : $\|2x\|_0 = \|x\|_0$, alors qu’une norme doublerait. On garde la notation par commodité. Elle est aussi la limite de $\sum_i |x_i|^p$ quand $p \to 0$.
+</Attention>
+
+<Figure legende="Le vecteur de l’exemple, modifiable, et la pénalité d’une seule composante pour chaque norme. Le curseur p trace la courbe |t|^p : elle passe continûment du carré (p = 2) à la valeur absolue (p = 1), puis à l’indicatrice de L0 (p → 0).">
+  <Normes client:visible />
+</Figure>
+
+<Concept titre="Ce que chaque pénalité favorise">
+- **L2²** : une composante de 0,1 ne coûte que 0,01. Le carré tolère beaucoup de petites valeurs mais punit fort les grandes : il **étale** l’énergie.
+- **L1** : le coût est proportionnel à la taille. Ramener une petite composante à zéro rapporte autant que réduire une grande : L1 **met des composantes à zéro**.
+- **L0** : seul compte le fait d’être nul ou non. C’est la parcimonie à l’état pur, mais la fonction n’est ni convexe ni continue, donc difficile à optimiser.
+</Concept>
+
+## Pourquoi L1 donne des solutions parcimonieuses
+
+Une image a souvent plus d’inconnues que de contraintes. Prenons trois inconnues et une seule équation $n \cdot x = 1$ : les solutions forment un plan. Parmi elles, laquelle a la plus petite norme ? On « gonfle » la boule $\{\|x\|_p \le r\}$ jusqu’à ce qu’elle touche le plan.
+
+<Figure legende="La boule L2 est une sphère : elle touche le plan en un point quelconque, sans composante nulle. La boule L1 est un octaèdre : ses pointes sont sur les axes et c’est presque toujours une pointe qui touche en premier. La solution n’a alors qu’une composante non nulle sur trois. Pour p < 1, l’étoile est encore plus pointue.">
+  <Boules3D client:visible />
+</Figure>
+
+C’est la géométrie qu’exploite la <Terme en="compressed sensing">détection comprimée</Terme> et, dans ce chapitre, les a priori de gradients : on veut des images dont **presque tous les gradients sont nuls**.
