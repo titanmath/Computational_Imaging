@@ -10,16 +10,17 @@ import Figure from '@/components/contenu/Figure.astro';
 import Pseudocode from '@/components/contenu/Pseudocode.astro';
 import Checklist from '@/components/contenu/Checklist.svelte';
 import DebevecMalik from '@/components/sims/a2/DebevecMalik.svelte';
+import Voir from '@/components/contenu/Voir.astro';
 
 <Formule titre="Le modèle de l’énoncé">
 $$
 z = f(E\,t), \qquad g(z) = \ln f^{-1}(z) = \ln E + \ln t
 $$
 
-$z$ : valeur 8 bits du pixel ; $t$ : temps de pose ; $E$ : éclairement du capteur ; $E\,t$ : exposition ; $f$ : la CRF ; $g$ : son inverse logarithmique ; $\ln$ : logarithme népérien. On estime $g$ et $\ln E$ **ensemble**. $g(128) = 0$ fixe l’exposition relative 1 à la valeur 128, **séparément pour chaque canal**.
+$z$ : valeur 8 bits du pixel ; $t$ : <Voir l="02-capteurs/07-ouverture-temps-gain">temps de pose</Voir> ; $E$ : éclairement du capteur ; $E\,t$ : <Voir l="02-capteurs/03-exposition-et-saturation">exposition</Voir> ; $f$ : la <Voir l="06-hdr/05-courbe-de-reponse">CRF</Voir> ; $g$ : son inverse logarithmique ; $\ln$ : logarithme népérien. On estime $g$ et $\ln E$ **ensemble**. $g(128) = 0$ fixe l’exposition relative 1 à la valeur 128, **séparément pour chaque canal**.
 </Formule>
 
-La leçon « Quand l’image n’est pas linéaire : la courbe de réponse » du chapitre 06 détaille la méthode. Voici ce qu’il faut en retenir pour l’A2.
+La leçon <Voir l="06-hdr/05-courbe-de-reponse">« Quand l’image n’est pas linéaire : la courbe de réponse »</Voir> détaille la méthode. Voici ce qu’il faut en retenir pour l’A2.
 
 ## Les inconnues et les équations
 
@@ -32,13 +33,13 @@ $$
 $$
 
 - **données** : une équation par observation ;
-- **lissage** : la dérivée seconde discrète, pondérée par $\lambda$ ;
-- **poids chapeau** : $w(z) = z$ pour $z \le 127{,}5$ et $255 - z$ au-delà, presque nul près de 0 et 255 ;
+- **<Voir l="07-problemes-inverses/10-mal-pose-et-regularisation">lissage</Voir>** : la dérivée seconde discrète, pondérée par $\lambda$ ;
+- **<Voir l="06-hdr/04-fusion-ponderee">poids chapeau</Voir>** : $w(z) = z$ pour $z \le 127{,}5$ et $255 - z$ au-delà, presque nul près de 0 et 255 ;
 - **normalisation** : une équation de plus, $g(128) = 0$.
 </Formule>
 
 <Concept titre="Pourquoi c’est un simple problème linéaire">
-Chaque équation est **linéaire** dans les inconnues : « $1 \times g(z_{ij}) - 1 \times \ln E_i = \ln t_j$ ». On empile tout dans $A\,\mathbf x \approx \mathbf b$, avec $\mathbf x = (g(0..255), \ln E_1, \dots, \ln E_N)$, puis on résout par moindres carrés : SVD, `\` de MATLAB, `lstsq` de NumPy… C’est le chapitre 07 appliqué.
+Chaque équation est **linéaire** dans les inconnues : « $1 \times g(z_{ij}) - 1 \times \ln E_i = \ln t_j$ ». On empile tout dans un <Voir l="07-problemes-inverses/02-systemes-lineaires">système linéaire</Voir> $A\,\mathbf x \approx \mathbf b$, avec $\mathbf x = (g(0..255), \ln E_1, \dots, \ln E_N)$, puis on résout par <Voir l="07-problemes-inverses/06-moindres-carres">moindres carrés</Voir> : SVD, `\` de MATLAB, `lstsq` de NumPy… C’est le chapitre 07 appliqué.
 </Concept>
 
 <Pseudocode titre="gsolve (un canal) : construire et résoudre le système">
@@ -63,19 +64,19 @@ renvoyer g = x[0..255], lnE = x[256..]
 </Figure>
 
 <Attention titre="Assez d’équations, et des valeurs bien réparties">
-Il y a $256 + N$ inconnues pour $N \cdot P$ équations de données : il faut $N(P-1) > 255$ environ, par exemple 60 positions × 6 poses. Surtout, chaque niveau de gris doit apparaître **non saturé** dans plusieurs poses. Choisis des positions sombres, moyennes et claires, et des temps de pose espacés d’environ 1 diaphragme (facteur 2).
+Il y a $256 + N$ inconnues pour $N \cdot P$ équations de données : il faut $N(P-1) > 255$ environ, par exemple 60 positions × 6 poses. Surtout, chaque niveau de gris doit apparaître **<Voir l="02-capteurs/03-exposition-et-saturation">non saturé</Voir>** dans plusieurs poses. Choisis des positions sombres, moyennes et claires, et des temps de pose espacés d’environ 1 <Voir l="06-hdr/02-dynamique-en-diaphragmes">diaphragme</Voir> (facteur 2).
 </Attention>
 
 <Checklist
   client:visible
   id="a2-crf-theorie"
   items={[
-    'Expliquer pourquoi un JPEG n’est pas proportionnel à la lumière (ISP : gamma, tonalité)',
-    'Écrire z = f(Et), g = ln f⁻¹ et l’équation g(z_ij) = ln E_i + ln t_j',
-    'Compter les inconnues (256 + N) et les équations, et dire combien de positions et de poses il faut',
-    'Justifier le poids chapeau (pixels sombres bruités, pixels clairs saturés)',
-    'Expliquer le rôle du lissage λ et de la dérivée seconde discrète',
-    'Expliquer pourquoi g(128) = 0 est nécessaire (indétermination d’une constante) et le faire par canal',
-    'Écrire gsolve en pseudo-code : remplissage de A et b, puis moindres carrés',
+    { texte: 'Expliquer pourquoi un JPEG n’est pas proportionnel à la lumière (ISP : gamma, tonalité)', voir: '03-isp/09-donnees-lineaires' },
+    { texte: 'Écrire z = f(Et), g = ln f⁻¹ et l’équation g(z_ij) = ln E_i + ln t_j', voir: '06-hdr/05-courbe-de-reponse' },
+    { texte: 'Compter les inconnues (256 + N) et les équations, et dire combien de positions et de poses il faut', voir: '06-hdr/05-courbe-de-reponse' },
+    { texte: 'Justifier le poids chapeau (pixels sombres bruités, pixels clairs saturés)', voir: '06-hdr/04-fusion-ponderee' },
+    { texte: 'Expliquer le rôle du lissage λ et de la dérivée seconde discrète', voir: '07-problemes-inverses/10-mal-pose-et-regularisation' },
+    { texte: 'Expliquer pourquoi g(128) = 0 est nécessaire (indétermination d’une constante) et le faire par canal', voir: '06-hdr/05-courbe-de-reponse' },
+    { texte: 'Écrire gsolve en pseudo-code : remplissage de A et b, puis moindres carrés', voir: '07-problemes-inverses/06-moindres-carres' },
   ]}
 />

@@ -6,11 +6,12 @@ duree: 7
 import Attention from '@/components/contenu/Attention.astro';
 import Concept from '@/components/contenu/Concept.astro';
 import Checklist from '@/components/contenu/Checklist.svelte';
+import Voir from '@/components/contenu/Voir.astro';
 
 ## Pièges de la tâche 1
 
 <Attention titre="Le téléphone change ses réglages en douce">
-Balance des blancs automatique, débruitage adaptatif, « HDR » automatique, mode scène : chaque photo a alors **sa propre** CRF, et le modèle (une seule $f$) est faux. Reste en mode Pro, tout en manuel. Vérifie dans les EXIF que l’ISO est identique partout.
+<Voir l="03-isp/05-balance-des-blancs">Balance des blancs</Voir> automatique, <Voir l="03-isp/04-debruitage">débruitage</Voir> adaptatif, « HDR » automatique, mode scène : chaque photo a alors **sa propre** <Voir l="06-hdr/05-courbe-de-reponse">CRF</Voir>, et le modèle (une seule $f$) est faux. Reste en mode Pro, tout en manuel. Vérifie dans les EXIF que l’<Voir l="02-capteurs/07-ouverture-temps-gain">ISO</Voir> est identique partout.
 </Attention>
 
 <Attention titre="La scène ou la lumière bouge">
@@ -18,35 +19,35 @@ Une lumière du jour qui varie, un écran d’ordinateur qui scintille, un néon
 </Attention>
 
 <Attention titre="Trop peu de diversité">
-Des positions toutes de luminosité moyenne, ou des poses trop rapprochées : certaines plages de $z$ n’ont aucune donnée, et la courbe y est inventée par le lissage. Couvre du noir au blanc, et espace les poses d’environ un facteur 2.
+Des positions toutes de luminosité moyenne, ou des poses trop rapprochées : certaines plages de $z$ n’ont aucune donnée, et la courbe y est inventée par le <Voir l="07-problemes-inverses/10-mal-pose-et-regularisation">lissage</Voir>. Couvre du noir au blanc, et espace les poses d’environ un facteur 2.
 </Attention>
 
 ## Pièges de la tâche 2
 
 <Attention titre="Mesurer sur le JPEG brut">
-Sans linéarisation, la CRF déforme l’ESF : profil asymétrique, FWHM faussée. C’est **la** raison pour laquelle la tâche 1 vient d’abord.
+Sans <Voir l="03-isp/09-donnees-lineaires">linéarisation</Voir>, la <Voir l="06-hdr/05-courbe-de-reponse">CRF</Voir> déforme l’ESF : profil asymétrique, FWHM faussée. C’est **la** raison pour laquelle la tâche 1 vient d’abord.
 </Attention>
 
 <Attention titre="La source sature ou n’est pas ponctuelle">
-Une LED trop brillante sature le centre de la tache, qui s’aplatit et s’élargit ; une source trop grosse ajoute sa propre taille au flou. Baisse l’exposition, éloigne la source ou mets-la derrière un trou d’épingle.
+Une LED trop brillante <Voir l="02-capteurs/03-exposition-et-saturation">sature</Voir> le centre de la tache, qui s’aplatit et s’élargit ; une source trop grosse ajoute sa propre taille au flou. Baisse l’exposition, éloigne la source ou mets-la derrière un trou d’épingle.
 </Attention>
 
 <Attention titre="Une mauvaise ROI">
-Un coin de la feuille, le bord de l’écran, une ombre ou un reflet dans la ROI faussent l’ajustement de la droite et l’ESF. Un bord à 0° ou à 45° détruit le suréchantillonnage : reste vers 5°.
+Un coin de la feuille, le bord de l’écran, une ombre ou un reflet dans la ROI faussent l’<Voir l="07-problemes-inverses/06-moindres-carres">ajustement</Voir> de la droite et l’ESF. Un bord à 0° ou à 45° détruit le suréchantillonnage : reste vers 5°.
 </Attention>
 
 ## Questions probables à la démo
 
 <Concept titre="« Pourquoi g(128) = 0 ? »">
-Les équations ne déterminent $g$ et $\ln E$ qu’à une constante près : $(g + c, \ln E + c)$ est aussi solution. On fixe cette constante en imposant qu’une valeur de référence, 128, corresponde à une exposition relative de 1. On le fait pour chaque canal.
+Les équations ne déterminent $g$ et $\ln E$ qu’<Voir l="06-hdr/05-courbe-de-reponse">à une constante près</Voir> : $(g + c, \ln E + c)$ est aussi solution. On fixe cette constante en imposant qu’une valeur de référence, 128, corresponde à une exposition relative de 1. On le fait pour chaque canal.
 </Concept>
 
 <Concept titre="« À quoi servent les poids et le lissage ? »">
-Les poids chapeau écartent les pixels peu fiables : presque noirs (bruit, quantification) ou presque saturés (écrêtage). Le lissage impose une courbe régulière là où les données sont rares, et évite qu’elle suive le bruit. Sans lui ($\lambda = 0$), la courbe est en dents de scie ; avec un λ trop grand, elle devient une droite.
+Les <Voir l="06-hdr/04-fusion-ponderee">poids chapeau</Voir> écartent les pixels peu fiables : presque noirs (<Voir l="02-capteurs/08-les-bruits">bruit, quantification</Voir>) ou presque saturés (écrêtage). Le <Voir l="07-problemes-inverses/10-mal-pose-et-regularisation">lissage</Voir> impose une courbe régulière là où les données sont rares, et évite qu’elle suive le bruit. Sans lui ($\lambda = 0$), la courbe est en dents de scie ; avec un λ trop grand, elle devient une droite.
 </Concept>
 
 <Concept titre="« Pourquoi faut-il linéariser avant la PSF ? »">
-La convolution $I = O * h$ décrit la **lumière**. Une transformation non linéaire $f$ appliquée après coup ne commute pas avec la convolution : $f(O * h) \ne f(O) * h$. Mesurer $h$ sur des valeurs $f(\cdot)$ donne une « PSF » qui dépend du contraste de la cible.
+La <Voir l="01-lentilles/08-psf-et-convolution">convolution</Voir> $I = O * h$ décrit la **lumière**. Une <Voir l="03-isp/09-donnees-lineaires">transformation non linéaire</Voir> $f$ appliquée après coup ne commute pas avec la convolution : $f(O * h) \ne f(O) * h$. Mesurer $h$ sur des valeurs $f(\cdot)$ donne une « PSF » qui dépend du contraste de la cible.
 </Concept>
 
 <Concept titre="« Pourquoi un bord incliné plutôt qu’une ligne ou un point ? »">
@@ -54,11 +55,11 @@ Un bord est facile à fabriquer (une feuille A4), donne beaucoup de signal (tout
 </Concept>
 
 <Concept titre="« Vos deux FWHM diffèrent : pourquoi ? »">
-Énumère les causes probables avec leur sens : source trop grosse ou saturée (la FWHM de la source est plus grande), bruit (la dérivée de l’ESF amplifie le bruit, d’où un éventuel lissage, à déclarer), géométrie légèrement différente, ajustement de la droite, binning de la projection. Montre la superposition.
+Énumère les causes probables avec leur sens : source trop grosse ou saturée (la FWHM de la source est plus grande), bruit (la dérivée de l’ESF <Voir l="07-problemes-inverses/07-deconvolution-par-fourier">amplifie le bruit</Voir>, d’où un éventuel lissage, à déclarer), géométrie légèrement différente, ajustement de la droite, binning de la projection. Montre la superposition.
 </Concept>
 
 <Concept titre="« Comment relier la FWHM mesurée à la théorie de l’A1 ? »">
-L’A1 prédit un flou $b \approx b_g + b_d$ en millimètres **sur l’écran**. Pour comparer, il faut convertir en pixels de la photo, avec l’échelle mm/pixel de l’écran vu par le téléphone (mesurable sur l’écran lui-même). Le flou mesuré inclut aussi l’écran (diffusion du papier) et le téléphone.
+L’A1 prédit un <Voir l="01-lentilles/05-taille-du-trou">flou</Voir> $b \approx b_g + b_d$ en millimètres **sur l’écran**. Pour comparer, il faut convertir en pixels de la photo, avec l’échelle mm/pixel de l’écran vu par le téléphone (mesurable sur l’écran lui-même). Le flou mesuré inclut aussi l’écran (diffusion du papier) et le téléphone.
 </Concept>
 
 <Checklist
@@ -67,10 +68,10 @@ L’A1 prédit un flou $b \approx b_g + b_d$ en millimètres **sur l’écran**.
   titre="Prêt pour la démo"
   items={[
     'Le PDF unique <numéro étudiant>.pdf est déposé sur PLMS avant le 27 octobre 23 h 59',
-    'Je sais expliquer l’équation g(z) = ln E + ln t, le système, les poids, λ et g(128) = 0',
-    'J’ai mes trois CRF avec des axes lisibles, et je sais commenter leur forme',
-    'Je sais pourquoi la tâche 2 utilise des valeurs linéarisées',
-    'Je sais expliquer le bord incliné, dx ≈ 0,25 px, la dérivation et la normalisation',
-    'J’ai la superposition des deux PSF 1D, leurs FWHM et leur écart, et des hypothèses sur l’écart',
+    { texte: 'Je sais expliquer l’équation g(z) = ln E + ln t, le système, les poids, λ et g(128) = 0', voir: '06-hdr/05-courbe-de-reponse' },
+    { texte: 'J’ai mes trois CRF avec des axes lisibles, et je sais commenter leur forme', voir: '06-hdr/02-dynamique-en-diaphragmes' },
+    { texte: 'Je sais pourquoi la tâche 2 utilise des valeurs linéarisées', voir: '03-isp/09-donnees-lineaires' },
+    { texte: 'Je sais expliquer le bord incliné, dx ≈ 0,25 px, la dérivation et la normalisation', voir: '05-calibration/05-psf-par-source-ponctuelle' },
+    { texte: 'J’ai la superposition des deux PSF 1D, leurs FWHM et leur écart, et des hypothèses sur l’écart', voir: '05-calibration/05-psf-par-source-ponctuelle' },
   ]}
 />

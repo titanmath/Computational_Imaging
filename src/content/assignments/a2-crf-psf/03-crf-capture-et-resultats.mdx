@@ -9,15 +9,16 @@ import Exemple from '@/components/contenu/Exemple.astro';
 import Attention from '@/components/contenu/Attention.astro';
 import Pseudocode from '@/components/contenu/Pseudocode.astro';
 import Checklist from '@/components/contenu/Checklist.svelte';
+import Voir from '@/components/contenu/Voir.astro';
 
 ## Capturer
 
 <Concept titre="Une seule chose change : le temps de pose">
 - **Fixer le téléphone** (trépied, support) : les positions doivent se superposer au pixel près.
-- **Mode Pro** : ISO **bas et fixe**, mise au point manuelle verrouillée, **balance des blancs fixe**. L’ouverture d’un téléphone est déjà fixe. Même scène, même éclairage : pas de lumière du jour qui varie, pas d’objet qui bouge.
-- **Faire varier seulement $t$**, sur une large plage, par paliers d’environ un facteur 2 : du plus court (presque tout noir) au plus long (presque tout saturé).
+- **Mode Pro** : <Voir l="02-capteurs/07-ouverture-temps-gain">ISO</Voir> **bas et fixe**, mise au point manuelle verrouillée, **<Voir l="03-isp/05-balance-des-blancs">balance des blancs</Voir> fixe**. L’ouverture d’un téléphone est déjà fixe. Même scène, même éclairage : pas de lumière du jour qui varie, pas d’objet qui bouge.
+- **Faire varier seulement $t$**, sur une large plage, par paliers d’environ un facteur 2 : du plus court (presque tout noir) au plus long (presque tout <Voir l="02-capteurs/03-exposition-et-saturation">saturé</Voir>).
 - **Une scène contrastée**, avec des zones sombres, moyennes et claires, pour que chaque niveau de gris soit observé non saturé dans plusieurs poses.
-- On suppose **une seule CRF fixe** pendant toute la série : désactive les modes « HDR », « IA », « scène » et l’optimisation automatique.
+- On suppose **une seule <Voir l="06-hdr/05-courbe-de-reponse">CRF</Voir> fixe** pendant toute la série : désactive les modes « HDR », « IA », « scène » et l’optimisation automatique.
 </Concept>
 
 <Attention titre="Lire les EXIF, ne pas croire l’interface">
@@ -27,15 +28,15 @@ Le rapport doit contenir un **tableau EXIF** : temps de pose (s), ISO, ouverture
 ## Échantillonner
 
 <Concept titre="Des patchs lisses, pas des pixels isolés">
-Un pixel isolé est bruité et sensible à un décalage d’un pixel. On choisit des **patchs** lisses (par exemple 9 × 9 pixels) et on utilise leur **moyenne** par canal. Il faut :
+Un pixel isolé est <Voir l="02-capteurs/08-les-bruits">bruité</Voir> et sensible à un décalage d’un pixel. On choisit des **patchs** lisses (par exemple 9 × 9 pixels) et on utilise leur **moyenne** par canal. Il faut :
 - les positions **marquées** sur une image (le rapport le demande) ;
 - la taille des patchs ;
-- la règle de sélection : patchs uniformes (écart-type faible), répartis du sombre au clair, loin des bords d’objets ;
+- la règle de sélection : patchs uniformes (<Voir l="05-calibration/03-noir-et-statistiques">écart-type</Voir> faible), répartis du sombre au clair, loin des bords d’objets ;
 - l’**alignement** : trépied, et vérification qu’un patch couvre la même zone dans toutes les poses.
 </Concept>
 
 <Exemple titre="L’exemple de l’assistant (Galaxy A34, ISO 50, f/1.8)">
-Centres de patchs lisses de 9 × 9 pixels : 2 015 pour l’entraînement, 1 019 mis de côté pour la validation, soit 3 034 au total dans l’ajustement final. Moyennes de patchs. La pose saturée de 1 s a été exclue. Plage de valeurs « supportée » : 6 à 249.
+Centres de patchs lisses de 9 × 9 pixels : 2 015 pour l’entraînement, 1 019 mis de côté pour la <Voir l="05-calibration/11-non-calibre-et-validation">validation</Voir>, soit 3 034 au total dans l’ajustement final. Moyennes de patchs. La pose saturée de 1 s a été exclue. Plage de valeurs « supportée » : 6 à 249.
 </Exemple>
 
 <Pseudocode titre="Échantillonnage et appel de gsolve (par canal)">
@@ -58,7 +59,7 @@ $$
 \qquad \text{axe vertical : } z
 $$
 
-Zéro diaphragme ↔ $z = 128$ ; +1 diaphragme = exposition doublée. Trace R, G et B sur le même graphe, dans leur couleur.
+Zéro <Voir l="06-hdr/02-dynamique-en-diaphragmes">diaphragme</Voir> ↔ $z = 128$ ; +1 diaphragme = exposition doublée. Trace R, G et B sur le même graphe, dans leur couleur.
 </Formule>
 
 <Pseudocode titre="Tracer les CRF directes">
@@ -72,18 +73,18 @@ indiquer la plage supportée (ex. 6–249) et les poses exclues
 </Pseudocode>
 
 <Attention titre="Les extrémités sont mal contraintes">
-Près de 0 et de 255, les poids sont presque nuls et il y a peu de données : la courbe y est surtout déterminée par le lissage. Ne l’interprète pas là, et indique la plage valide.
+Près de 0 et de 255, les poids sont presque nuls et il y a peu de données : la courbe y est surtout déterminée par le <Voir l="07-problemes-inverses/10-mal-pose-et-regularisation">lissage</Voir>. Ne l’interprète pas là, et indique la plage valide.
 </Attention>
 
 <Checklist
   client:visible
   id="a2-crf-capture"
   items={[
-    'Décrire un protocole où SEUL le temps de pose varie (ISO, mise au point, balance des blancs, scène et éclairage fixes)',
+    { texte: 'Décrire un protocole où SEUL le temps de pose varie (ISO, mise au point, balance des blancs, scène et éclairage fixes)', voir: '02-capteurs/07-ouverture-temps-gain' },
     'Construire le tableau EXIF (temps de pose réel, ISO, ouverture) et utiliser les temps réels',
-    'Choisir et justifier la taille des patchs, la règle de sélection et l’alignement',
-    'Exclure les observations saturées ou trop sombres et énoncer la règle',
-    'Tracer les CRF directes R, G, B en diaphragmes relatifs, 0 ↔ z = 128, axes étiquetés',
-    'Commenter la forme des courbes (épaule, pied, différences entre canaux)',
+    { texte: 'Choisir et justifier la taille des patchs, la règle de sélection et l’alignement', voir: '05-calibration/03-noir-et-statistiques' },
+    { texte: 'Exclure les observations saturées ou trop sombres et énoncer la règle', voir: '06-hdr/04-fusion-ponderee' },
+    { texte: 'Tracer les CRF directes R, G, B en diaphragmes relatifs, 0 ↔ z = 128, axes étiquetés', voir: '06-hdr/02-dynamique-en-diaphragmes' },
+    { texte: 'Commenter la forme des courbes (épaule, pied, différences entre canaux)', voir: '06-hdr/05-courbe-de-reponse' },
   ]}
 />

@@ -8,8 +8,9 @@ import Concept from '@/components/contenu/Concept.astro';
 import Exemple from '@/components/contenu/Exemple.astro';
 import Attention from '@/components/contenu/Attention.astro';
 import Pseudocode from '@/components/contenu/Pseudocode.astro';
+import Voir from '@/components/contenu/Voir.astro';
 
-Cette partie est **facultative** : elle n’affecte pas la note. Mais c’est l’idée de la validation sur données réservées du chapitre 05, et une excellente matière pour la démo.
+Cette partie est **facultative** : elle n’affecte pas la note. Mais c’est l’idée de la <Voir l="05-calibration/11-non-calibre-et-validation">validation sur données réservées</Voir> du chapitre 05, et une excellente matière pour la démo.
 
 <Concept titre="1. Séparer les données avant tout ajustement">
 On partage les **positions** (entraînement / validation) et les **images** (de référence / de test). On ajuste $g$ uniquement sur les positions d’entraînement et les poses de référence. Aux positions réservées, la luminosité n’est estimée qu’à partir des poses de référence. Les images de test n’entrent **ni** dans l’ajustement de $g$, **ni** dans l’estimation de la luminosité.
@@ -30,7 +31,7 @@ $$
 \mathrm{RMSE}_c = \sqrt{\frac{\sum e_{ij,c}^2}{N_c}}
 $$
 
-Une RMSE par canal, en **unités de valeur de pixel** (échelle 0–255, pas des pixels spatiaux). $N_c$ compte les observations de test valides. Une prédiction de 120 contre une observation de 123 donne un résidu de −3. On peut aussi faire la moyenne pondérée de $g(z) - \ln t$, puis l’exponentielle : il faut dire quel estimateur on utilise.
+Une RMSE (<Voir l="03-isp/08-mse-et-psnr">erreur quadratique moyenne</Voir>, en racine) par canal, en **unités de valeur de pixel** (échelle 0–255, pas des pixels spatiaux). $N_c$ compte les observations de test valides. Une prédiction de 120 contre une observation de 123 donne un résidu de −3. On peut aussi faire la moyenne pondérée de $g(z) - \ln t$, puis l’exponentielle : il faut dire quel estimateur on utilise.
 </Formule>
 
 <Pseudocode titre="Validation (un canal)">
@@ -49,5 +50,5 @@ RMSE de prédiction R/G/B : **2,98 / 2,57 / 2,32** unités de valeur de pixel, s
 </Exemple>
 
 <Attention titre="Interpréter, pas seulement chiffrer">
-Une petite RMSE signifie une bonne prédiction **sur les données choisies**. Elle mélange le bruit, les erreurs d’alignement, d’éclairage et de temps de pose, un ISP qui change de comportement, et l’erreur de la CRF elle-même. Trace les résidus en fonction de l’exposition ou de la luminosité : une **tendance** (résidus positifs aux fortes poses, par exemple) révèle un défaut du modèle ou de la capture. Explique-la et propose une amélioration. Énonce aussi tes règles d’exclusion (saturation, données sombres peu fiables).
+Une petite RMSE signifie une bonne prédiction **sur les données choisies**. Elle mélange le <Voir l="02-capteurs/08-les-bruits">bruit</Voir>, les erreurs d’alignement, d’éclairage et de temps de pose, un <Voir l="03-isp/01-la-chaine-isp">ISP</Voir> qui change de comportement, et l’erreur de la <Voir l="06-hdr/05-courbe-de-reponse">CRF</Voir> elle-même. Trace les résidus en fonction de l’exposition ou de la luminosité : une **tendance** (résidus positifs aux fortes poses, par exemple) révèle un défaut du modèle ou de la capture. Explique-la et propose une amélioration. Énonce aussi tes règles d’exclusion (<Voir l="02-capteurs/03-exposition-et-saturation">saturation</Voir>, données sombres peu fiables).
 </Attention>

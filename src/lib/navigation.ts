@@ -3,16 +3,9 @@
 // Les assignments forment chacun leur propre petite séquence.
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { accent, nmDuChapitre, type Accent } from './spectre';
+import { slugSansNumero, url } from './chemins';
+export { lienLecon, slugSansNumero, url } from './chemins';
 
-/** Lien interne qui respecte `base` (déploiement dans un sous-dossier). */
-export function url(chemin = ''): string {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-  const propre = chemin.replace(/^\/+/, '').replace(/\/?$/, '/');
-  return chemin === '' || chemin === '/' ? `${base}/` : `${base}/${propre}`;
-}
-
-/** "04-champ-de-vision" → "champ-de-vision" */
-export const slugSansNumero = (nom: string) => nom.replace(/^\d+[-_]/, '');
 const nomFichier = (id: string) => id.split('/').pop()!;
 
 export interface Page {

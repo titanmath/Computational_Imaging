@@ -9,14 +9,15 @@ import Exemple from '@/components/contenu/Exemple.astro';
 import Attention from '@/components/contenu/Attention.astro';
 import Pseudocode from '@/components/contenu/Pseudocode.astro';
 import Checklist from '@/components/contenu/Checklist.svelte';
+import Voir from '@/components/contenu/Voir.astro';
 
 ## Le montage
 
 <Concept titre="Mêmes conditions pour les deux méthodes">
-- La **cible** (bord A4 noir/blanc, puis source ponctuelle) est **dehors**, devant le trou, à une distance **mesurée** ; le rapport donne la géométrie, le diamètre du trou, les distances cible–trou et trou–écran.
+- La **cible** (bord A4 noir/blanc, puis source ponctuelle) est **dehors**, devant le trou, à une distance **mesurée** ; le rapport donne la géométrie, le <Voir l="01-lentilles/05-taille-du-trou">diamètre du trou</Voir>, les distances cible–trou et trou–écran.
 - Même distance de cible, même **zone de l’écran**, même géométrie du téléphone, même mise au point, même zoom, même résolution.
-- **Pas de saturation**, ni sur le blanc du bord, ni sur la source.
-- Les valeurs sont **linéarisées** avec la CRF de la tâche 1 : $E\,t = e^{g(z)}$, canal par canal.
+- **Pas de <Voir l="02-capteurs/03-exposition-et-saturation">saturation</Voir>**, ni sur le blanc du bord, ni sur la source.
+- Les valeurs sont **<Voir l="03-isp/09-donnees-lineaires">linéarisées</Voir>** avec la <Voir l="06-hdr/05-courbe-de-reponse">CRF</Voir> de la tâche 1 : $E\,t = e^{g(z)}$, canal par canal.
 </Concept>
 
 <Concept titre="Le bord : une feuille A4 noir / blanc">
@@ -25,7 +26,7 @@ Sur la photo, choisis un bord incliné de **5 à 10°** par rapport à la vertic
 
 ## SFRMAT5 : ce qu’il fait, ce qu’il rend
 
-SFRMAT5 (P. D. Burns, fourni sur PLMS) prend une ROI à **un seul canal** (le **vert** est recommandé). Il localise le bord, projette les lignes, et renvoie l’**ESF suréchantillonnée** et le pas **dx** (≈ 0,25 pixel d’origine). Il calcule la LSF en interne mais **ne la renvoie pas** : c’est à toi de dériver l’ESF.
+SFRMAT5 (P. D. Burns, fourni sur PLMS) prend une ROI à **un seul canal** (le **vert** est recommandé : c’est le canal le plus échantillonné de la <Voir l="02-capteurs/05-filtres-de-couleur">mosaïque de Bayer</Voir>). Il localise le bord, projette les lignes, et renvoie l’**ESF suréchantillonnée** et le pas **dx** (≈ 0,25 pixel d’origine). Il calcule la LSF en interne mais **ne la renvoie pas** : c’est à toi de dériver l’ESF.
 
 <Pseudocode titre="De l’ESF renvoyée à la PSF 1D du bord">
 ```text
@@ -63,23 +64,23 @@ Superpose les deux profils normalisés, recentrés au même maximum, sur le mêm
 </Formule>
 
 <Exemple titre="D’où peut venir un écart ?">
-Les cibles diffèrent (un bord vs un point), le bruit, l’ajustement, la capture, une source pas tout à fait ponctuelle (trop grosse, saturée) ou un léger changement de géométrie entre les deux photos. En revanche, le flou de l’écran et celui du téléphone **font partie du système** : ce n’est pas une erreur de mesure, c’est ce qu’on mesure.
+Les cibles diffèrent (un bord vs un point), le <Voir l="02-capteurs/08-les-bruits">bruit</Voir>, l’ajustement, la capture, une source pas tout à fait ponctuelle (trop grosse, saturée) ou un léger changement de géométrie entre les deux photos. En revanche, le flou de l’écran et celui du téléphone **font partie du système** : ce n’est pas une erreur de mesure, c’est ce qu’on mesure.
 </Exemple>
 
 <Attention titre="Les unités">
-Tout est en **pixels de la photo du téléphone** : pas de taille de photosite, pas de conversion en millimètres sur l’écran. Pour relier tes FWHM aux flous prédits dans l’A1 (en mm sur l’écran), il faudrait l’échelle mm/pixel de l’écran dans la photo. C’est un bon commentaire à faire, mais ce n’est pas demandé.
+Tout est en **pixels de la photo du téléphone** : pas de taille de photosite, pas de conversion en millimètres sur l’écran. Pour relier tes FWHM aux <Voir l="01-lentilles/05-taille-du-trou">flous prédits dans l’A1</Voir> (en mm sur l’écran), il faudrait l’échelle mm/pixel de l’écran dans la photo. C’est un bon commentaire à faire, mais ce n’est pas demandé.
 </Attention>
 
 <Checklist
   client:visible
   id="a2-psf-mesure"
   items={[
-    'Documenter le montage : diamètre du trou, distances cible–trou et trou–écran, géométrie',
-    'Photographier le bord (5°, noir à gauche) et la source dans les MÊMES conditions, sans saturation',
-    'Linéariser les photos avec la CRF de la tâche 1 avant toute mesure',
-    'Lancer SFRMAT5 sur une ROI du canal vert et récupérer ESF et dx',
-    'Dériver l’ESF avec le pas dx, normaliser l’aire, calculer la FWHM',
-    'Projeter la tache de la source parallèlement au bord, normaliser, calculer la FWHM',
+    { texte: 'Documenter le montage : diamètre du trou, distances cible–trou et trou–écran, géométrie', voir: '01-lentilles/05-taille-du-trou' },
+    { texte: 'Photographier le bord (5°, noir à gauche) et la source dans les MÊMES conditions, sans saturation', voir: '02-capteurs/03-exposition-et-saturation' },
+    { texte: 'Linéariser les photos avec la CRF de la tâche 1 avant toute mesure', voir: '06-hdr/05-courbe-de-reponse' },
+    { texte: 'Lancer SFRMAT5 sur une ROI du canal vert et récupérer ESF et dx', voir: '02-capteurs/05-filtres-de-couleur' },
+    { texte: 'Dériver l’ESF avec le pas dx, normaliser l’aire, calculer la FWHM', voir: '05-calibration/05-psf-par-source-ponctuelle' },
+    { texte: 'Projeter la tache de la source parallèlement au bord, normaliser, calculer la FWHM', voir: '05-calibration/05-psf-par-source-ponctuelle' },
     'Superposer les deux profils et donner les deux FWHM et leur écart en pixels',
     'Discuter l’écart (cible, bruit, ajustement, taille de la source, géométrie)',
   ]}

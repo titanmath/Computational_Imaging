@@ -6,13 +6,14 @@ duree: 5
 import Concept from '@/components/contenu/Concept.astro';
 import Formule from '@/components/contenu/Formule.astro';
 import Attention from '@/components/contenu/Attention.astro';
+import Voir from '@/components/contenu/Voir.astro';
 
 ## Le problème concret
 
 Tu disposes d’un téléphone et de la caméra sténopé de l’A1. Tu veux répondre à deux questions de **mesure**.
 
-1. **Quelle lumière a produit tel pixel ?** Un JPEG de téléphone n’est pas linéaire : l’ISP applique gamma, courbes de tonalité et « look » maison (chapitre 03). Doubler la lumière ne double pas la valeur du pixel.
-2. **Quelle est la netteté réelle de la caméra sténopé ?** C’est sa réponse impulsionnelle, la <abbr title="point spread function">PSF</abbr> : l’image d’un point. Le chapitre 01 en a prédit l’ordre de grandeur ($b_g + b_d$) ; l’A2 la **mesure**.
+1. **Quelle lumière a produit tel pixel ?** Un <Voir l="03-isp/09-donnees-lineaires">JPEG de téléphone n’est pas linéaire</Voir> : l’<Voir l="03-isp/01-la-chaine-isp">ISP</Voir> applique <Voir l="03-isp/06-couleur-et-encodage">gamma</Voir>, courbes de tonalité et « look » maison. Doubler la lumière ne double pas la valeur du pixel.
+2. **Quelle est la netteté réelle de la caméra sténopé ?** C’est sa réponse impulsionnelle, la <Voir l="01-lentilles/08-psf-et-convolution">PSF</Voir> : l’image d’un point. Le chapitre 01 en a prédit l’ordre de grandeur ($b_g + b_d$, voir <Voir l="01-lentilles/05-taille-du-trou">la taille du trou</Voir>) ; l’A2 la **mesure**.
 
 <Formule titre="Le fil conducteur">
 $$
@@ -23,24 +24,24 @@ $$
 \underbrace{I = O * h}_{\text{tâche 2 : trouver } h}
 $$
 
-Le modèle de convolution $I = O * h$ (image = objet ∗ PSF) n’est valable que pour des grandeurs **proportionnelles à la lumière**. L’énoncé le précise : la PSF est estimée « en supposant linéarité et invariance par translation locales **après correction de la CRF** ».
+Le <Voir l="01-lentilles/08-psf-et-convolution">modèle de convolution</Voir> $I = O * h$ (image = objet ∗ PSF) n’est valable que pour des grandeurs **proportionnelles à la lumière**. L’énoncé le précise : la PSF est estimée « en supposant linéarité et invariance par translation locales **après correction de la CRF** ».
 </Formule>
 
 <Attention titre="Mesurer une PSF sur un JPEG brut, c’est mesurer autre chose">
-La CRF compresse les hautes lumières et relève les ombres. Appliquée à un bord flou, elle déforme le profil, qui devient asymétrique, et change sa largeur à mi-hauteur. Le simulateur de la tâche 2 permet de le voir (bascule « JPEG brut »).
+La <Voir l="06-hdr/05-courbe-de-reponse">CRF</Voir> compresse les hautes lumières et relève les ombres. Appliquée à un bord flou, elle déforme le profil, qui devient asymétrique, et change sa largeur à mi-hauteur. Le simulateur de la tâche 2 permet de le voir (bascule « JPEG brut »).
 </Attention>
 
 ## Le parcours
 
 <Concept titre="Tâche 1 : courbe de réponse (CRF)">
-- **Théorie** : l’équation $g(z) = \ln E + \ln t$ et la méthode de Debevec et Malik.
+- **Théorie** : l’équation $g(z) = \ln E + \ln t$ et la <Voir l="06-hdr/05-courbe-de-reponse">méthode de Debevec et Malik</Voir>.
 - **Capture et résultats** : le protocole photo, l’échantillonnage, le tracé des trois CRF.
-- **Validation** (facultative) : prédire des poses mises de côté et mesurer l’erreur.
+- **Validation** (facultative) : prédire des poses mises de côté et mesurer l’erreur (<Voir l="05-calibration/11-non-calibre-et-validation">validation sur données réservées</Voir>).
 </Concept>
 
 <Concept titre="Tâche 2 : PSF de la caméra sténopé">
-- **Théorie** : PSF, LSF, ESF, et pourquoi un bord **incliné** donne un profil suréchantillonné.
-- **Mesure** : source ponctuelle, bord incliné avec SFRMAT5, dérivation, normalisation, FWHM, comparaison.
+- **Théorie** : <Voir l="01-lentilles/08-psf-et-convolution">PSF</Voir>, LSF, ESF, et pourquoi un bord **incliné** donne un profil suréchantillonné.
+- **Mesure** : <Voir l="05-calibration/05-psf-par-source-ponctuelle">source ponctuelle</Voir>, bord incliné avec SFRMAT5, dérivation, normalisation, FWHM, comparaison.
 </Concept>
 
 Chaque étape se termine par une liste « à maîtriser absolument ». La dernière rassemble les pièges et les questions probables de la démo du 29 octobre. Le code est donné en **pseudo-code** : à toi de l’écrire dans ton langage.

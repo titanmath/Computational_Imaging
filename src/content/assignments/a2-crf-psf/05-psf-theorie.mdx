@@ -10,8 +10,9 @@ import Figure from '@/components/contenu/Figure.astro';
 import Terme from '@/components/contenu/Terme.astro';
 import Checklist from '@/components/contenu/Checklist.svelte';
 import BordIncline from '@/components/sims/a2/BordIncline.svelte';
+import Voir from '@/components/contenu/Voir.astro';
 
-On réutilise le système trou → écran → téléphone de l’A1. On cherche sa **PSF 1D horizontale**, en pixels du téléphone, par deux méthodes, et on compare.
+On réutilise le système trou → écran → téléphone de l’A1 (un <Voir l="01-lentilles/02-stenope-et-projection">sténopé</Voir>). On cherche sa **<Voir l="01-lentilles/08-psf-et-convolution">PSF</Voir> 1D horizontale**, en pixels du téléphone, par deux méthodes, et on compare.
 
 <Formule titre="Trois réponses liées">
 $$
@@ -20,7 +21,7 @@ $$
 \text{LSF}(u) = \frac{d\,\text{ESF}(u)}{du}
 $$
 
-- $h$ : la PSF 2D, l’image d’un **point** ;
+- $h$ : la <Voir l="01-lentilles/08-psf-et-convolution">PSF</Voir> 2D, l’image d’un **point** ;
 - <Terme en="line spread function" sigle="LSF">fonction d’étalement d’une ligne</Terme> : l’image d’une **ligne** fine, c’est-à-dire la PSF **intégrée le long de la ligne** ;
 - <Terme en="edge spread function" sigle="ESF">fonction d’étalement d’un bord</Terme> : l’image d’un **bord** net (noir → blanc), l’intégrale de la LSF.
 
@@ -29,7 +30,7 @@ $u$ est la coordonnée **normale** au bord (presque horizontale ici), $v$ la coo
 
 ## Méthode 1 : la source ponctuelle
 
-Une petite source lumineuse extérieure, **négligeable** devant le flou du système, donne directement une tache 2D $\approx h$. Pour la comparer à la méthode 2, on la **projette parallèlement au bord** : on somme le long de $v$, ce qui donne une LSF.
+Une <Voir l="05-calibration/05-psf-par-source-ponctuelle">petite source lumineuse</Voir> extérieure, **négligeable** devant le flou du système, donne directement une tache 2D $\approx h$. Pour la comparer à la méthode 2, on la **projette parallèlement au bord** : on somme le long de $v$, ce qui donne une LSF.
 
 ## Méthode 2 : le bord incliné
 
@@ -43,7 +44,7 @@ $$
 h_\text{bord}(u) = \frac{\text{LSF}(u)}{\int \text{LSF}(s)\,ds}
 $$
 
-On normalise l’**aire** à 1 pour comparer avec la source projetée. On compare les largeurs par la <Terme en="full width at half maximum" sigle="FWHM">largeur à mi-hauteur</Terme> : la distance entre les deux passages à mi-hauteur du pic principal.
+On normalise l’**aire** à 1 (<Voir l="05-calibration/05-psf-par-source-ponctuelle">comme pour une PSF mesurée</Voir>) pour comparer avec la source projetée. On compare les largeurs par la <Terme en="full width at half maximum" sigle="FWHM">largeur à mi-hauteur</Terme> : la distance entre les deux passages à mi-hauteur du pic principal.
 </Formule>
 
 <Figure legende="Une PSF de caméra sténopé simulée, mesurée par les deux méthodes. À gauche, la ROI du bord avec la droite ajustée et l’image de la source. Au milieu, chaque point gris est un pixel projeté sur la normale : c’est le suréchantillonnage. À droite, les deux PSF 1D superposées. Fausse la mesure comme en vrai : passe en « JPEG brut », grossis la source, surexpose-la, ou mets le bord à 1°.">
@@ -51,22 +52,22 @@ On normalise l’**aire** à 1 pour comparer avec la source projetée. On compar
 </Figure>
 
 <Attention titre="Un bord ne mesure qu’une direction">
-La LSF intègre la PSF **parallèlement** au bord. Un seul bord ne permet pas de reconstruire la PSF 2D. Choisis « Anisotrope » dans le simulateur : la PSF du bord ne voit que la largeur horizontale. C’est pour cela que l’énoncé demande seulement la PSF 1D horizontale, sans LSF verticale ni reconstruction 2D.
+La LSF intègre la PSF **parallèlement** au bord. Un seul bord ne permet pas de <Voir l="01-lentilles/13-simuler-et-mesurer-la-psf">reconstruire la PSF 2D</Voir>. Choisis « Anisotrope » dans le simulateur : la PSF du bord ne voit que la largeur horizontale. C’est pour cela que l’énoncé demande seulement la PSF 1D horizontale, sans LSF verticale ni reconstruction 2D.
 </Attention>
 
 <Attention titre="Le suréchantillonnage n’améliore pas la résolution du capteur">
-Le suréchantillonnage donne un profil **mieux échantillonné** de ce que voit déjà le système (optique + écran + téléphone + pixels), pas des détails plus fins que le pixel. Le guide le dit : « oversampling does not improve sensor resolution ».
+Le suréchantillonnage donne un profil **mieux échantillonné** de ce que voit déjà le système (<Voir l="01-lentilles/13-simuler-et-mesurer-la-psf">optique</Voir> + écran + téléphone + <Voir l="02-capteurs/04-anatomie-d-un-pixel">pixels</Voir>), pas des détails plus fins que le pixel. Le guide le dit : « oversampling does not improve sensor resolution ».
 </Attention>
 
 <Checklist
   client:visible
   id="a2-psf-theorie"
   items={[
-    'Définir PSF, LSF et ESF et les relier (intégrale, dérivée)',
-    'Expliquer pourquoi la source doit être négligeable devant le flou, et ce qui se passe sinon',
-    'Expliquer le suréchantillonnage par un bord incliné de 5° et l’origine de dx ≈ 0,25 px',
-    'Normaliser la LSF par son aire et calculer une FWHM par interpolation',
-    'Expliquer pourquoi la mesure doit se faire sur des valeurs linéarisées (CRF corrigée)',
-    'Expliquer pourquoi un seul bord ne donne que la PSF 1D le long de sa normale',
+    { texte: 'Définir PSF, LSF et ESF et les relier (intégrale, dérivée)', voir: '01-lentilles/08-psf-et-convolution' },
+    { texte: 'Expliquer pourquoi la source doit être négligeable devant le flou, et ce qui se passe sinon', voir: '05-calibration/05-psf-par-source-ponctuelle' },
+    { texte: 'Expliquer le suréchantillonnage par un bord incliné de 5° et l’origine de dx ≈ 0,25 px', voir: '01-lentilles/13-simuler-et-mesurer-la-psf' },
+    { texte: 'Normaliser la LSF par son aire et calculer une FWHM par interpolation', voir: '05-calibration/05-psf-par-source-ponctuelle' },
+    { texte: 'Expliquer pourquoi la mesure doit se faire sur des valeurs linéarisées (CRF corrigée)', voir: '03-isp/09-donnees-lineaires' },
+    { texte: 'Expliquer pourquoi un seul bord ne donne que la PSF 1D le long de sa normale', voir: '01-lentilles/08-psf-et-convolution' },
   ]}
 />

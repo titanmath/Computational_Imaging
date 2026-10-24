@@ -2,11 +2,14 @@
   // « À maîtriser absolument » : liste cochable, mémorisée dans ce navigateur (localStorage, try/catch :
   // le site fonctionne aussi sans). C'est le seul état persistant du site.
   import { onMount } from 'svelte';
+  import { lienLecon } from '@/lib/chemins';
+  /** une case : un texte, ou un texte et la leçon à revoir ("06-hdr/05-courbe-de-reponse") */
+  type Item = string | { texte: string; voir: string };
   interface Props {
     /** identifiant stable (ex. "a2-crf") : clé de stockage */
     id: string;
     titre?: string;
-    items: string[];
+    items: Item[];
   }
   let { id, titre = 'À maîtriser absolument', items }: Props = $props();
   const cle = `checklist:${id}`;
@@ -43,8 +46,9 @@
         <label>
           <input type="checkbox" checked={coches[i]} onchange={() => basculer(i)} />
           <span class="case" aria-hidden="true"></span>
-          <span class="texte">{item}</span>
+          <span class="texte">{typeof item === 'string' ? item : item.texte}</span>
         </label>
+        {#if typeof item !== 'string'}<a class="revoir" href={lienLecon(item.voir)}>revoir&nbsp;→</a>{/if}
       </li>
     {/each}
   </ul>
@@ -66,6 +70,10 @@
   .barre { height: 3px; border-radius: 2px; background: var(--filet); margin: 0.6rem 0 0.7rem; overflow: hidden; }
   .barre span { display: block; height: 100%; background: var(--accent); transition: width 0.3s var(--ease); }
   ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.15rem; }
+  li { display: flex; align-items: flex-start; gap: 0.5rem; }
+  li label { flex: 1; }
+  .revoir { flex: none; margin-top: 0.4rem; font-size: 0.78rem; color: var(--accent); text-decoration: none; white-space: nowrap; opacity: 0.8; }
+  .revoir:hover { opacity: 1; text-decoration: underline; }
   label { display: grid; grid-template-columns: 1.4rem 1fr; gap: 0.5rem; align-items: start; padding: 0.35rem 0.2rem; border-radius: 6px; cursor: pointer; }
   label:hover { background: color-mix(in oklch, var(--accent) 7%, transparent); }
   input { position: absolute; opacity: 0; pointer-events: none; }
